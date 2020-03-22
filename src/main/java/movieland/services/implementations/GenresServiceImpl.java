@@ -2,6 +2,9 @@ package movieland.services.implementations;
 
 import movieland.domain.entities.Genre;
 import movieland.domain.models.service.GenreServiceModel;
+import movieland.errors.duplicate.GenreAlreadyExistsException;
+import movieland.errors.invalid.InvalidGenreModelException;
+import movieland.errors.notfound.GenreNotFoundException;
 import movieland.repositories.GenresRepository;
 import movieland.services.interfaces.GenresService;
 import movieland.services.validation.GenresValidationService;
@@ -28,39 +31,53 @@ public class GenresServiceImpl implements GenresService {
         this.modelMapper = modelMapper;
     }
 
+    //TODO: add to constants
     @Override
     public GenreServiceModel create(GenreServiceModel genreServiceModel) {
         if (!genresValidationService.isValid(genreServiceModel)) {
-            //TODO: throw custom exception
-            throw new IllegalArgumentException();
+            throw new InvalidGenreModelException("Invalid genre service model");
         }
+
         if (genresRepository.existsByName(genreServiceModel.getName())) {
-            //TODO: throw another exception
-            throw new IllegalArgumentException();
+            throw new GenreAlreadyExistsException("A genre with such name already exists");
         }
+
         Genre genre = modelMapper.map(genreServiceModel, Genre.class);
-        genresRepository.save(genre);
+        genre = genresRepository.save(genre);
         return modelMapper.map(genre, GenreServiceModel.class);
     }
 
     @Override
-    public GenreServiceModel update(GenreServiceModel serviceModel) {
-        //TODO: implement me!!!!
+    public GenreServiceModel update(String id, GenreServiceModel genreServiceModelToUpdate) {
+        if (!genresValidationService.isValid(genreServiceModelToUpdate)) {
+            throw new InvalidGenreModelException("Invalid genre service model");
+        }
 
-        //TODO: Make some validations
-        //TODO: Check if the genre with this id exists -> update
-        //TODO: check if the genre with updated name already exists
-        return null;
+        if (!genresRepository.existsById(id)) {
+            throw new GenreNotFoundException("Genre with such id does not exist");
+        }
+
+        if (genresRepository.existsByName(genreServiceModelToUpdate.getName())) {
+            throw new GenreAlreadyExistsException("Genre with such name exists already.");
+        }
+
+        Genre genreToUpdate = modelMapper.map(genreServiceModelToUpdate, Genre.class);
+        Genre updatedGenre = genresRepository.save(genreToUpdate);
+        return modelMapper.map(updatedGenre, GenreServiceModel.class);
     }
 
     @Override
     public GenreServiceModel delete(String id) {
-        //TODO: implement me
-        return null;
+        Genre genreToDelete = genresRepository.findById(id)
+                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+
+        genresRepository.delete(genreToDelete);
+
+        return modelMapper.map(genreToDelete, GenreServiceModel.class);
     }
 
     @Override
-    public GenreServiceModel findById(GenreServiceModel id) {
+    public GenreServiceModel findById(String id) {
         //TODO: implement me
         return null;
     }

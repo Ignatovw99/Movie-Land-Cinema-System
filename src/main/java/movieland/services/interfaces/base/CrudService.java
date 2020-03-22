@@ -8,11 +8,11 @@ public interface CrudService<T extends BaseServiceModel, I> {
 
     T create(T serviceModel);
 
-    T update(T serviceModel);
+    T update(I id, T serviceModel);
 
     T delete(I id);
 
-    T findById(T id);
+    T findById(I id);
 
     List<T> findAll();
 }
