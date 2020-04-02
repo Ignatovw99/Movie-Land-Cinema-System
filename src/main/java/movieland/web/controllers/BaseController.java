@@ -39,7 +39,8 @@ public class BaseController {
 
     ModelAndView view(String viewName) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(viewName);
+        modelAndView.setViewName("fragments/layout");
+        modelAndView.addObject("view", viewName);
         return modelAndView;
     }
 

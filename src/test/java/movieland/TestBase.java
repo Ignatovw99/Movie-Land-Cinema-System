@@ -23,5 +23,7 @@ public abstract class TestBase {
     protected abstract void before();
 
     //Mock Beans Class setting, which allows the method to execute successfully
-    protected abstract void setupMockBeansActions();
+    protected void setupMockBeansActions() {
+
+    }
 }

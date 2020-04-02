@@ -35,9 +35,9 @@ public class GenresController extends BaseController {
     }
 
     @PostMapping("/create")
-    public ModelAndView createGenreConfirm(@Valid @ModelAttribute GenreCreateBindingModel genreCreateBindingModel, BindingResult bindingResult) {
+    public ModelAndView createGenreConfirm(@Valid @ModelAttribute(name = "model") GenreCreateBindingModel genreCreateBindingModel, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return view("genres-add");
+            return view("genres-create");
         }
 
         GenreServiceModel cinemaServiceModel = modelMapper.map(genreCreateBindingModel, GenreServiceModel.class);

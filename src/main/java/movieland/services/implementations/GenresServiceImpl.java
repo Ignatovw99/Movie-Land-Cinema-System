@@ -78,18 +78,15 @@ public class GenresServiceImpl implements GenresService {
 
     @Override
     public GenreServiceModel findById(String id) {
-        //TODO: implement me
-        return null;
+        Genre foundGenre = genresRepository.findById(id)
+                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+
+        return modelMapper.map(foundGenre, GenreServiceModel.class);
     }
 
     @Override
     public List<GenreServiceModel> findAll() {
-        List<Genre> allGenres = genresRepository.findAll();
-        if (allGenres.isEmpty()) {
-            //TODO: throw custom ex
-            throw new IllegalArgumentException();
-        }
-        return allGenres
+        return genresRepository.findAll()
                 .stream()
                 .map(genre -> modelMapper.map(genre, GenreServiceModel.class))
                 .collect(Collectors.toUnmodifiableList());

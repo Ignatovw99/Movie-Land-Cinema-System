@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,6 +63,8 @@ public class GenresServiceTest extends TestBase {
     protected void setupMockBeansActions() {
         setupCreateMethod();
         setupUpdateMethod();
+        setupDeleteMethod();
+        setupFindAllMethod();
     }
 
     private void setupCreateMethod() {
@@ -80,6 +84,16 @@ public class GenresServiceTest extends TestBase {
                 .thenReturn(true);
         when(genresRepository.save(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    private void setupDeleteMethod() {
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.of(genre));
+    }
+
+    private void setupFindAllMethod() {
+        when(genresRepository.findAll())
+                .thenReturn(List.of(genre, genre, genre, genre));
     }
 
     @Test
@@ -212,14 +226,87 @@ public class GenresServiceTest extends TestBase {
 
     @Test
     public void delete_WhenGenreExists_ShouldDeleteGenre() {
-        when(genresRepository.findById(anyString()))
-                .thenReturn(Optional.of(genre));
-
         GenreServiceModel deletedGenre = genresService.delete(DEFAULT_ID);
 
         verify(genresRepository).delete(genre);
 
         assertEquals(genre.getId(), deletedGenre.getId());
         assertEquals(genre.getName(), deletedGenre.getName());
+    }
+
+    @Test
+    public void findById_WhenGenreWithGivenIdDoesNotExist_ShouldThrowException() {
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GenreNotFoundException.class,
+                () -> genresService.findById(DEFAULT_ID)
+        );
+    }
+
+    @Test
+    public void findById_WhenGenreWithSuchIdExists_ShouldReturnTheCorrectGenre() {
+        when(genresRepository.findById(any()))
+                .thenReturn(Optional.of(genre));
+
+        GenreServiceModel returnedGenre = genresService.findById(DEFAULT_ID);
+
+        verify(genresRepository).findById(anyString());
+        assertEquals(genre.getId(), returnedGenre.getId());
+        assertEquals(genre.getName(), returnedGenre.getName());
+    }
+
+    @Test
+    public void findAll_WhenThereAreNoGenresInDb_ShouldNotReturnNull() {
+        when(genresRepository.findAll())
+                .thenReturn(new ArrayList<>());
+
+        assertNotNull(genresService.findAll());
+        verify(genresRepository).findAll();
+    }
+
+    @Test
+    public void findAll_WhenGenreDbTableIsEmpty_ShouldReturnEmptyList() {
+        when(genresRepository.findAll())
+                .thenReturn(new ArrayList<>());
+
+        List<GenreServiceModel> emptyGenresList = genresService.findAll();
+
+        verify(genresRepository).findAll();
+        assertEquals(0, emptyGenresList.size());
+        assertTrue(emptyGenresList.isEmpty());
+    }
+
+    @Test
+    public void findAll_WhenThereAreMoreThanZeroEntriesInDb_ResultShouldNotBeEmpty() {
+        List<GenreServiceModel> allFoundGenres = genresService.findAll();
+
+        assertFalse(allFoundGenres.isEmpty());
+    }
+
+    @Test
+    public void findAll_WhenThereAreManyEntriesInDb_ShouldReturnAllOfThem() {
+        List<GenreServiceModel> allFoundGenres = genresService.findAll();
+
+        verify(genresRepository).findAll();
+        assertEquals(4, allFoundGenres.size());
+    }
+
+    @Test
+    public void findAll_WhenResultIsReturned_ShouldBeUnmodifiable() {
+        when(genresRepository.findAll())
+                .thenReturn(new ArrayList<>());
+
+        List<GenreServiceModel> foundGenres = genresService.findAll();
+
+        assertTrue(foundGenres.isEmpty());
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> foundGenres.add(genreServiceModel)
+        );
+
+        assertTrue(foundGenres.isEmpty());
     }
 }
