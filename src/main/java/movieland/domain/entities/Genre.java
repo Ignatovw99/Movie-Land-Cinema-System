@@ -43,8 +43,7 @@ public class Genre extends BaseEntity implements Nameable {
         this.classification = classification;
     }
 
-    @Column(name = "age_restriction", nullable = false)
-    @NotNull
+    @Column(name = "age_restriction")
     public Integer getAgeRestriction() {
         return ageRestriction;
     }

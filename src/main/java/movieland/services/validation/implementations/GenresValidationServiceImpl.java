@@ -11,13 +11,8 @@ public class GenresValidationServiceImpl implements GenresValidationService {
         return name != null;
     }
 
-    private boolean isAgeRestrictionValid(Integer ageRestriction) {
-        return ageRestriction != null;
-    }
-
     @Override
     public boolean isValid(GenreServiceModel genreServiceModel) {
-        return isNameValid(genreServiceModel.getName())
-                && isAgeRestrictionValid(genreServiceModel.getAgeRestriction());
+        return isNameValid(genreServiceModel.getName());
     }
 }

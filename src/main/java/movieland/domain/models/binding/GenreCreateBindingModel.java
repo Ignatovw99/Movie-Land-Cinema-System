@@ -2,17 +2,12 @@ package movieland.domain.models.binding;
 
 import movieland.domain.entities.enumerations.Classification;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 public class GenreCreateBindingModel {
 
-    @NotBlank
     private String name;
 
     private Classification classification;
 
-    @NotNull
     private Integer ageRestriction;
 
     private final Classification[] availableClassifications = Classification.values();

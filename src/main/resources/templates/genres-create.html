@@ -9,8 +9,8 @@
             <label for="name">Name</label>
             <input type="text" class="form-control" id="name" placeholder="Name..." name="name" th:field="*{name}"
                    th:styleappend="${#fields.hasErrors('name')} ? 'border-color: red'">
-            <th:block th:each="error : ${#fields.errors('name')}" >
-                <small class="field-error" th:text="${error}"></small>
+            <th:block th:if="${#fields.hasErrors('name')}" >
+                <small class="field-error" th:errors="*{name}"></small>
                 <br />
             </th:block>
         </div>
@@ -21,16 +21,16 @@
                     <option th:value="${classification}" th:text="${classification}" th:selected="(${classification} == *{classification})"></option>
                 </th:block>
             </select>
-            <th:block th:each="error : ${#fields.errors('classification')}" >
-                <small class="field-error" th:text="${error}"></small>
+            <th:block th:if="${#fields.hasErrors('classification')}" >
+                <small class="field-error" th:errors="*{classification}"></small>
                 <br />
             </th:block>
         </div>
         <div class="form-group">
             <label for="ageRestriction">Age Restriction</label>
             <input type="number" class="form-control" id="ageRestriction" placeholder="Age Restriction..." name="ageRestriction" th:field="*{ageRestriction}">
-            <th:block th:each="error : ${#fields.errors('ageRestriction')}" >
-                <small class="field-error" th:text="${error}"></small>
+            <th:block th:if="${#fields.hasErrors('ageRestriction')}" >
+                <small class="field-error" th:errors="*{ageRestriction}"></small>
                 <br />
             </th:block>
         </div>
