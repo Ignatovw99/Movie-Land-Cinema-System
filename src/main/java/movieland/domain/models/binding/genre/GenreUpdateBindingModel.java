@@ -1,8 +1,10 @@
-package movieland.domain.models.service;
+package movieland.domain.models.binding.genre;
 
 import movieland.domain.entities.enumerations.Classification;
 
-public class GenreServiceModel extends BaseServiceModel {
+public class GenreUpdateBindingModel {
+
+    private String id;
 
     private String name;
 
@@ -10,7 +12,17 @@ public class GenreServiceModel extends BaseServiceModel {
 
     private Boolean isAgeRestrictionRequired;
 
-    public GenreServiceModel() {
+    private final Classification[] availableClassifications = Classification.values();
+
+    public GenreUpdateBindingModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -35,5 +47,9 @@ public class GenreServiceModel extends BaseServiceModel {
 
     public void setIsAgeRestrictionRequired(Boolean isAgeRestrictionRequired) {
         this.isAgeRestrictionRequired = isAgeRestrictionRequired;
+    }
+
+    public Classification[] getAvailableClassifications() {
+        return availableClassifications;
     }
 }

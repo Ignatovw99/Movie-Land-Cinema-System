@@ -43,7 +43,7 @@ public class GenresServiceTest extends TestBase {
 
     private static final Classification DEFAULT_CLASSIFICATION = Classification.A;
 
-    private static final Integer DEFAULT_AGE_RESTRICTION = 18;
+    private static final Boolean DEFAULT_IS_AGE_RESTRICTION_REQUIRED = true;
 
     @Override
     public void before() {
@@ -51,12 +51,12 @@ public class GenresServiceTest extends TestBase {
         genre.setId(DEFAULT_ID);
         genre.setName(DEFAULT_NAME);
         genre.setClassification(DEFAULT_CLASSIFICATION);
-        genre.setAgeRestriction(DEFAULT_AGE_RESTRICTION);
+        genre.setIsAgeRestrictionRequired(DEFAULT_IS_AGE_RESTRICTION_REQUIRED);
 
         genreServiceModel = new GenreServiceModel();
         genreServiceModel.setName(DEFAULT_NAME);
         genreServiceModel.setClassification(DEFAULT_CLASSIFICATION);
-        genreServiceModel.setAgeRestriction(DEFAULT_AGE_RESTRICTION);
+        genreServiceModel.setIsAgeRestrictionRequired(DEFAULT_IS_AGE_RESTRICTION_REQUIRED);
     }
 
     @Override
@@ -80,8 +80,10 @@ public class GenresServiceTest extends TestBase {
         genreServiceModel.setId(DEFAULT_ID);
         when(genresValidationService.isValid(any()))
                 .thenReturn(true);
-        when(genresRepository.existsById(anyString()))
-                .thenReturn(true);
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.of(genre));
+        when(genresRepository.existsByName(anyString()))
+                .thenReturn(false);
         when(genresRepository.save(any()))
                 .thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -142,7 +144,7 @@ public class GenresServiceTest extends TestBase {
 
         assertEquals(genreServiceModel.getName(), persistedGenre.getName());
         assertEquals(genreServiceModel.getClassification(), persistedGenre.getClassification());
-        assertEquals(genreServiceModel.getAgeRestriction(), persistedGenre.getAgeRestriction());
+        assertEquals(genreServiceModel.getIsAgeRestrictionRequired(), persistedGenre.getIsAgeRestrictionRequired());
     }
 
     @Test
@@ -158,16 +160,13 @@ public class GenresServiceTest extends TestBase {
 
     @Test
     public void update_WhenValidServiceModel_ShouldNotThrowException() {
-        when(genresValidationService.isValid(any()))
-                .thenReturn(true);
-
         assertDoesNotThrow(() -> genresService.update(DEFAULT_ID, genreServiceModel));
     }
 
     @Test
     public void update_WhenGenreDoesNotExist_ShouldThrowException() {
-        when(genresRepository.existsById(anyString()))
-                .thenReturn(false);
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
 
         assertThrows(
                 GenreNotFoundException.class,
@@ -177,14 +176,22 @@ public class GenresServiceTest extends TestBase {
 
     @Test
     public void update_WhenGenreExists_ShouldNotThrowException() {
-        when(genresRepository.existsById(anyString()))
-                .thenReturn(true);
+        assertDoesNotThrow(() -> genresService.update(DEFAULT_ID, genreServiceModel));
+    }
+
+    @Test
+    public void update_WhenGenreNameToUpdateIsAssignedToTheGenreToUpdate_ShouldNotThrowException() {
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.of(genre));
 
         assertDoesNotThrow(() -> genresService.update(DEFAULT_ID, genreServiceModel));
     }
 
     @Test
-    public void update_WhenGenreNameAlreadyExists_ShouldThrowException() {
+    public void update_WhenGenreNameToUpdateIsAlreadyAssignedToAnotherEntry_ShouldThrowException() {
+        genreServiceModel.setName("Name assigned to another genre");
+        when(genresRepository.findById(anyString()))
+                .thenReturn(Optional.of(genre));
         when(genresRepository.existsByName(anyString()))
                 .thenReturn(true);
 
@@ -210,7 +217,7 @@ public class GenresServiceTest extends TestBase {
 
         assertEquals(genreServiceModel.getName(), updatedGenre.getName());
         assertEquals(genreServiceModel.getClassification(), updatedGenre.getClassification());
-        assertEquals(genreServiceModel.getAgeRestriction(), updatedGenre.getAgeRestriction());
+        assertEquals(genreServiceModel.getIsAgeRestrictionRequired(), updatedGenre.getIsAgeRestrictionRequired());
     }
 
     @Test

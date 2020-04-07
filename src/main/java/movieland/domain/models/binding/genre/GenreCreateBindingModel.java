@@ -1,4 +1,4 @@
-package movieland.domain.models.binding;
+package movieland.domain.models.binding.genre;
 
 import movieland.domain.entities.enumerations.Classification;
 
@@ -8,7 +8,7 @@ public class GenreCreateBindingModel {
 
     private Classification classification;
 
-    private Integer ageRestriction;
+    private Boolean isAgeRestrictionRequired;
 
     private final Classification[] availableClassifications = Classification.values();
 
@@ -31,12 +31,12 @@ public class GenreCreateBindingModel {
         this.classification = classification;
     }
 
-    public Integer getAgeRestriction() {
-        return ageRestriction;
+    public Boolean getIsAgeRestrictionRequired() {
+        return isAgeRestrictionRequired;
     }
 
-    public void setAgeRestriction(Integer ageRestriction) {
-        this.ageRestriction = ageRestriction;
+    public void setIsAgeRestrictionRequired(Boolean isAgeRestrictionRequired) {
+        this.isAgeRestrictionRequired = isAgeRestrictionRequired;
     }
 
     public Classification[] getAvailableClassifications() {

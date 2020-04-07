@@ -1,0 +1,31 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">All Genres</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="java.util.List<GenreViewModel>"*/-->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Classification</th>
+            <th scope="col">Is Age Restriction Required</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="genre : ${model}" th:object="${genre}">
+            <tr>
+                <td scope="col" th:text="${genreStat.index + 1}"></td>
+                <td scope="col" th:text="*{name}"></td>
+                <td scope="col" th:text="*{classification}"></td>
+                <td scope="col" th:text="*{isAgeRestrictionRequired} ? 'Yes' : 'No'"></td>
+                <td scope="col"><a class="btn btn-info" th:href="@{/genres/update/{id}(id=*{id})}" th:text="Update"></a></td>
+                <td scope="col"><a class="btn btn-danger" th:href="@{/genres/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>

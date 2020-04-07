@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,15 +54,16 @@ public class GenresServiceImpl implements GenresService {
             throw new InvalidGenreModelException("Invalid genre service model");
         }
 
-        if (!genresRepository.existsById(id)) {
-            throw new GenreNotFoundException("Genre with such id does not exist");
+        Genre genreToUpdate = genresRepository.findById(id)
+                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+
+        if (!genreToUpdate.getName().equals(genreServiceModelToUpdate.getName())) {
+            if (genresRepository.existsByName(genreServiceModelToUpdate.getName())) {
+                throw new GenreAlreadyExistsException("Genre with such name exists already.");
+            }
         }
 
-        if (genresRepository.existsByName(genreServiceModelToUpdate.getName())) {
-            throw new GenreAlreadyExistsException("Genre with such name exists already.");
-        }
-
-        Genre genreToUpdate = modelMapper.map(genreServiceModelToUpdate, Genre.class);
+        genreToUpdate = modelMapper.map(genreServiceModelToUpdate, Genre.class);
         Genre updatedGenre = genresRepository.save(genreToUpdate);
         return modelMapper.map(updatedGenre, GenreServiceModel.class);
     }

@@ -1,8 +1,8 @@
-package movieland.domain.models.service;
+package movieland.domain.models.view;
 
 import movieland.domain.entities.enumerations.Classification;
 
-public class GenreServiceModel extends BaseServiceModel {
+public class GenreViewModel extends BaseViewModel {
 
     private String name;
 
@@ -10,7 +10,7 @@ public class GenreServiceModel extends BaseServiceModel {
 
     private Boolean isAgeRestrictionRequired;
 
-    public GenreServiceModel() {
+    public GenreViewModel() {
     }
 
     public String getName() {

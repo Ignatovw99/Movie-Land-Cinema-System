@@ -23,7 +23,7 @@ public class GenresValidationServiceTest extends TestBase {
         genreServiceModel = new GenreServiceModel();
         genreServiceModel.setId(UUID.randomUUID().toString());
         genreServiceModel.setName("Comedy");
-        genreServiceModel.setAgeRestriction(12);
+        genreServiceModel.setIsAgeRestrictionRequired(true);
         genreServiceModel.setClassification(Classification.A);
     }
 
@@ -46,14 +46,27 @@ public class GenresValidationServiceTest extends TestBase {
     }
 
     @Test
-    public void isValid_WhenAgeRestrictionIsNull_ShouldReturnFalse() {
-        genreServiceModel.setAgeRestriction(null);
+    public void isValid_WhenClassificationIsNull_ShouldReturnFalse() {
+        genreServiceModel.setClassification(null);
         boolean isValid = genresValidationService.isValid(genreServiceModel);
         assertFalse(isValid);
     }
 
     @Test
-    public void isValid_WhenAgeRestrictionIsNotNull_ShouldReturnTrue() {
+    public void isValid_WhenClassificationIsNotNull_ShouldReturnTrue() {
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void isValid_WhenIsAgeRestrictionRequiredIsNull_ShouldReturnFalse() {
+        genreServiceModel.setIsAgeRestrictionRequired(null);
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void isValid_WhenIsAgeRestrictionRequiredIsNotNull_ShouldReturnTrue() {
         boolean isValid = genresValidationService.isValid(genreServiceModel);
         assertTrue(isValid);
     }

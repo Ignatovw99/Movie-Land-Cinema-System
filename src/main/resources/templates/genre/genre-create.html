@@ -1,0 +1,48 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">Add a new Genre</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.genre.GenreCreateBindingModel"*/-->
+    <form th:action="@{/genres/create}" method="POST" th:object="${model}">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Name..." name="name" th:field="*{name}"
+                   th:styleappend="${#fields.hasErrors('name')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('name')}" >
+                <small class="field-error" th:errors="*{name}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="classification">Classification</label>
+            <select class="form-control" name="classification" id="classification" th:field="*{classification}">
+                <option value="" th:selected="(*{classification == null})"></option>
+                <th:block th:each="classification : *{availableClassifications}">
+                    <option th:value="${classification}" th:text="${classification}" th:selected="(${classification} == *{classification})"></option>
+                </th:block>
+            </select>
+            <th:block th:if="${#fields.hasErrors('classification')}" >
+                <small class="field-error" th:errors="*{classification}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="isAgeRestrictionRequired">Is Age Restriction Required</label>
+            <select class="form-control" name="isAgeRestrictionRequired" id="isAgeRestrictionRequired" th:field="*{isAgeRestrictionRequired}">
+                <option value="" th:selected="(*{isAgeRestrictionRequired == null})"></option>
+                <option value="true" th:text="Yes" th:selected="(*{isAgeRestrictionRequired})"></option>
+                <option value="false" th:text="No" th:selected="(*{isAgeRestrictionRequired == false})"></option>
+            </select>
+            <th:block th:if="${#fields.hasErrors('isAgeRestrictionRequired')}" >
+                <small class="field-error" th:errors="*{isAgeRestrictionRequired}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Add</button>
+            </div>
+        </div>
+    </form>
+</div>

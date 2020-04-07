@@ -44,6 +44,14 @@ public class BaseController {
         return modelAndView;
     }
 
+    ModelAndView view(String viewName, Object viewModel) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("fragments/layout");
+        modelAndView.addObject("view", viewName);
+        modelAndView.addObject("model", viewModel);
+        return modelAndView;
+    }
+
     ModelAndView redirect(String route) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:" + route);

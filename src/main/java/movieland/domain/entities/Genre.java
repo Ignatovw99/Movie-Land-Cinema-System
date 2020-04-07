@@ -15,7 +15,7 @@ public class Genre extends BaseEntity implements Nameable {
 
     private Classification classification;
 
-    private Integer ageRestriction;
+    private Boolean isAgeRestrictionRequired;
 
     public Genre() {
     }
@@ -43,12 +43,13 @@ public class Genre extends BaseEntity implements Nameable {
         this.classification = classification;
     }
 
-    @Column(name = "age_restriction")
-    public Integer getAgeRestriction() {
-        return ageRestriction;
+    @Column(name = "is_age_restriction_required", nullable = false)
+    @NotNull
+    public Boolean getIsAgeRestrictionRequired() {
+        return isAgeRestrictionRequired;
     }
 
-    public void setAgeRestriction(Integer ageRestriction) {
-        this.ageRestriction = ageRestriction;
+    public void setIsAgeRestrictionRequired(Boolean isAgeRestrictionRequired) {
+        this.isAgeRestrictionRequired = isAgeRestrictionRequired;
     }
 }

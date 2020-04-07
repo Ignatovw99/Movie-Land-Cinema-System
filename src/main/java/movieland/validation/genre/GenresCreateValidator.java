@@ -1,6 +1,6 @@
 package movieland.validation.genre;
 
-import movieland.domain.models.binding.GenreCreateBindingModel;
+import movieland.domain.models.binding.genre.GenreCreateBindingModel;
 import movieland.repositories.GenresRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -36,9 +36,8 @@ public class GenresCreateValidator implements Validator {
             errors.rejectValue(NAME_FIELD, ALREADY_EXISTS_ERROR, ALREADY_EXISTS_WITH_SUCH_NAME);
         }
 
-        if (genreCreateBindingModel.getAgeRestriction() != null &&
-                (genreCreateBindingModel.getAgeRestriction() < 6 || genreCreateBindingModel.getAgeRestriction() > 21)) {
-            errors.rejectValue(AGE_RESTRICTION_FIELD, RANGE_ERROR, AGE_RESTRICTION_RANGE);
+        if (genreCreateBindingModel.getIsAgeRestrictionRequired() == null) {
+            errors.rejectValue(IS_AGE_RESTRICTION_REQUIRED_FIELD, NULL_ERROR_VALUE, IS_AGE_RESTRICTION_REQUIRED_NOT_NULL);
         }
 
         if (genreCreateBindingModel.getClassification() == null) {
