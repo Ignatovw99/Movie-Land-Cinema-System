@@ -13,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static movieland.constants.entities.GenreConstants.*;
 
 @Service
 public class GenresServiceImpl implements GenresService {
@@ -32,15 +33,14 @@ public class GenresServiceImpl implements GenresService {
         this.modelMapper = modelMapper;
     }
 
-    //TODO: add to constants
     @Override
     public GenreServiceModel create(GenreServiceModel genreServiceModel) {
         if (!genresValidationService.isValid(genreServiceModel)) {
-            throw new InvalidGenreModelException("Invalid genre service model");
+            throw new InvalidGenreModelException(INVALID_GENRE_MODEL);
         }
 
         if (genresRepository.existsByName(genreServiceModel.getName())) {
-            throw new GenreAlreadyExistsException("A genre with such name already exists");
+            throw new GenreAlreadyExistsException(GENRE_WITH_SUCH_NAME_EXISTS);
         }
 
         Genre genre = modelMapper.map(genreServiceModel, Genre.class);
@@ -51,15 +51,15 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenreServiceModel update(String id, GenreServiceModel genreServiceModelToUpdate) {
         if (!genresValidationService.isValid(genreServiceModelToUpdate)) {
-            throw new InvalidGenreModelException("Invalid genre service model");
+            throw new InvalidGenreModelException(INVALID_GENRE_MODEL);
         }
 
         Genre genreToUpdate = genresRepository.findById(id)
-                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+                .orElseThrow(() -> new GenreNotFoundException(GENRE_WITH_SUCH_ID_DOES_NOT_EXIST));
 
         if (!genreToUpdate.getName().equals(genreServiceModelToUpdate.getName())) {
             if (genresRepository.existsByName(genreServiceModelToUpdate.getName())) {
-                throw new GenreAlreadyExistsException("Genre with such name exists already.");
+                throw new GenreAlreadyExistsException(GENRE_WITH_SUCH_NAME_EXISTS);
             }
         }
 
@@ -71,7 +71,7 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenreServiceModel delete(String id) {
         Genre genreToDelete = genresRepository.findById(id)
-                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+                .orElseThrow(() -> new GenreNotFoundException(GENRE_WITH_SUCH_ID_DOES_NOT_EXIST));
 
         genresRepository.delete(genreToDelete);
 
@@ -81,7 +81,7 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenreServiceModel findById(String id) {
         Genre foundGenre = genresRepository.findById(id)
-                .orElseThrow(() -> new GenreNotFoundException("Genre with such id does not exist"));
+                .orElseThrow(() -> new GenreNotFoundException(GENRE_WITH_SUCH_ID_DOES_NOT_EXIST));
 
         return modelMapper.map(foundGenre, GenreServiceModel.class);
     }

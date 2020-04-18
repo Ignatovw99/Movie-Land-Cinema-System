@@ -18,4 +18,14 @@ public class GenreConstants {
     // Constraints constants
     public static final int NAME_MIN_LENGTH = 3;
     public static final int NAME_MAX_LENGTH = 25;
+
+    // Invalid constants
+    public static final String INVALID_GENRE_MODEL = "Invalid Genre Model";
+    public static final String GENRE_WITH_SUCH_NAME_EXISTS = "A genre with such name already exists";
+    public static final String GENRE_WITH_SUCH_ID_DOES_NOT_EXIST = "Genre with such id does not exist";
+
+    // Error handling constants
+    public static final String GENRE_ALREADY_EXISTS = "Genre already exists";
+    public static final String GENRE_NOT_FOUND = "Genre was not found";
+
 }
