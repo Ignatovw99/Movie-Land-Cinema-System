@@ -5,7 +5,7 @@ import movieland.domain.entities.Genre;
 import movieland.domain.entities.enumerations.Classification;
 import movieland.domain.models.service.GenreServiceModel;
 import movieland.errors.duplicate.GenreAlreadyExistsException;
-import movieland.errors.invalid.InvalidGenreModelException;
+import movieland.errors.invalid.InvalidGenreException;
 import movieland.errors.notfound.GenreNotFoundException;
 import movieland.repositories.GenresRepository;
 import movieland.services.interfaces.GenresService;
@@ -45,18 +45,27 @@ public class GenresServiceTest extends TestBase {
 
     private static final Boolean DEFAULT_IS_AGE_RESTRICTION_REQUIRED = true;
 
-    @Override
-    public void before() {
-        genre = new Genre();
+    public static Genre initializeEntity() {
+        Genre genre = new Genre();
         genre.setId(DEFAULT_ID);
         genre.setName(DEFAULT_NAME);
         genre.setClassification(DEFAULT_CLASSIFICATION);
         genre.setIsAgeRestrictionRequired(DEFAULT_IS_AGE_RESTRICTION_REQUIRED);
+        return genre;
+    }
 
-        genreServiceModel = new GenreServiceModel();
+    public static GenreServiceModel initializeServiceModel() {
+        GenreServiceModel genreServiceModel = new GenreServiceModel();
         genreServiceModel.setName(DEFAULT_NAME);
         genreServiceModel.setClassification(DEFAULT_CLASSIFICATION);
         genreServiceModel.setIsAgeRestrictionRequired(DEFAULT_IS_AGE_RESTRICTION_REQUIRED);
+        return genreServiceModel;
+    }
+
+    @Override
+    public void before() {
+        genre = GenresServiceTest.initializeEntity();
+        genreServiceModel = GenresServiceTest.initializeServiceModel();
     }
 
     @Override
@@ -104,7 +113,7 @@ public class GenresServiceTest extends TestBase {
             .thenReturn(false);
 
         assertThrows(
-                InvalidGenreModelException.class,
+                InvalidGenreException.class,
                 () -> genresService.create(genreServiceModel)
         );
     }
@@ -153,7 +162,7 @@ public class GenresServiceTest extends TestBase {
                 .thenReturn(false);
 
         assertThrows(
-                InvalidGenreModelException.class,
+                InvalidGenreException.class,
                 () -> genresService.update(DEFAULT_ID, genreServiceModel)
         );
     }

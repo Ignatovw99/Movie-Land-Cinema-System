@@ -3,7 +3,7 @@ package movieland.services.implementations;
 import movieland.domain.entities.Genre;
 import movieland.domain.models.service.GenreServiceModel;
 import movieland.errors.duplicate.GenreAlreadyExistsException;
-import movieland.errors.invalid.InvalidGenreModelException;
+import movieland.errors.invalid.InvalidGenreException;
 import movieland.errors.notfound.GenreNotFoundException;
 import movieland.repositories.GenresRepository;
 import movieland.services.interfaces.GenresService;
@@ -36,7 +36,7 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenreServiceModel create(GenreServiceModel genreServiceModel) {
         if (!genresValidationService.isValid(genreServiceModel)) {
-            throw new InvalidGenreModelException(INVALID_GENRE_MODEL);
+            throw new InvalidGenreException(INVALID_GENRE_MODEL);
         }
 
         if (genresRepository.existsByName(genreServiceModel.getName())) {
@@ -51,7 +51,7 @@ public class GenresServiceImpl implements GenresService {
     @Override
     public GenreServiceModel update(String id, GenreServiceModel genreServiceModelToUpdate) {
         if (!genresValidationService.isValid(genreServiceModelToUpdate)) {
-            throw new InvalidGenreModelException(INVALID_GENRE_MODEL);
+            throw new InvalidGenreException(INVALID_GENRE_MODEL);
         }
 
         Genre genreToUpdate = genresRepository.findById(id)

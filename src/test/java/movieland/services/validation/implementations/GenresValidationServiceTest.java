@@ -1,13 +1,11 @@
-package movieland.services.validation.implementaions;
+package movieland.services.validation.implementations;
 
 import movieland.TestBase;
-import movieland.domain.entities.enumerations.Classification;
 import movieland.domain.models.service.GenreServiceModel;
+import movieland.services.implementations.GenresServiceTest;
 import movieland.services.validation.GenresValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,16 +18,7 @@ public class GenresValidationServiceTest extends TestBase {
 
     @Override
     public void before() {
-        genreServiceModel = new GenreServiceModel();
-        genreServiceModel.setId(UUID.randomUUID().toString());
-        genreServiceModel.setName("Comedy");
-        genreServiceModel.setIsAgeRestrictionRequired(true);
-        genreServiceModel.setClassification(Classification.A);
-    }
-
-    @Override
-    protected void setupMockBeansActions() {
-
+        genreServiceModel = GenresServiceTest.initializeServiceModel();
     }
 
     @Test
