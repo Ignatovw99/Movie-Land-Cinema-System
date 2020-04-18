@@ -33,7 +33,7 @@ public class GenresUpdateValidator implements Validator {
 
         if (genreUpdateBindingModel.getName() == null || genreUpdateBindingModel.getName().trim().length() == 0) {
             errors.rejectValue(NAME_FIELD, NULL_ERROR_VALUE, NAME_NOT_EMPTY);
-        } else if (genreUpdateBindingModel.getName().length() < 3 || genreUpdateBindingModel.getName().length() > 25) {
+        } else if (genreUpdateBindingModel.getName().trim().length() < 3 || genreUpdateBindingModel.getName().trim().length() > 25) {
             errors.rejectValue(NAME_FIELD, INVALID_LENGTH_ERROR, NAME_CHARACTERS_LENGTH);
         } else if (genresRepository.existsByName(genreUpdateBindingModel.getName())) {
             Optional<Genre> genreToUpdate = genresRepository.findById(genreUpdateBindingModel.getId());

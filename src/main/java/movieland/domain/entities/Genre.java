@@ -3,9 +3,12 @@ package movieland.domain.entities;
 import movieland.domain.entities.base.BaseEntity;
 import movieland.domain.entities.enumerations.Classification;
 import movieland.domain.entities.interfaces.Nameable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
+import static movieland.constants.entities.GenreConstants.*;
 
 @Entity
 @Table(name = "genres")
@@ -20,9 +23,10 @@ public class Genre extends BaseEntity implements Nameable {
     public Genre() {
     }
 
-    @Column(name = "name", nullable = false, unique = true)
     @Override
-    @NotNull
+    @Column(name = "name", nullable = false, unique = true, length = 25)
+    @NotNull(message = NAME_NOT_EMPTY)
+    @Length(min = 3, max = 25, message = NAME_CHARACTERS_LENGTH)
     public String getName() {
         return name;
     }
@@ -34,7 +38,7 @@ public class Genre extends BaseEntity implements Nameable {
 
     @Column(name = "classification", nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @NotNull(message = CLASSIFICATION_NOT_NULL)
     public Classification getClassification() {
         return classification;
     }
@@ -44,7 +48,7 @@ public class Genre extends BaseEntity implements Nameable {
     }
 
     @Column(name = "is_age_restriction_required", nullable = false)
-    @NotNull
+    @NotNull(message = IS_AGE_RESTRICTION_REQUIRED_NOT_NULL)
     public Boolean getIsAgeRestrictionRequired() {
         return isAgeRestrictionRequired;
     }

@@ -46,6 +46,33 @@ public class GenresValidationServiceTest extends TestBase {
     }
 
     @Test
+    public void isValid_WhenNameIsBlank_ShouldReturnFalse() {
+        genreServiceModel.setName(" ".repeat(6));
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void isValid_WhenNameLengthIsLessThan3_ShouldReturnFalse() {
+        genreServiceModel.setName("Ab");
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void isValid_WhenNameLengthIsGreaterThan25_ShouldReturnFalse() {
+        genreServiceModel.setName("A".repeat(26));
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertFalse(isValid);
+    }
+
+    @Test
+    public void isValid_WhenNameLengthIsInRange_ShouldReturnTrue() {
+        boolean isValid = genresValidationService.isValid(genreServiceModel);
+        assertTrue(isValid);
+    }
+
+    @Test
     public void isValid_WhenClassificationIsNull_ShouldReturnFalse() {
         genreServiceModel.setClassification(null);
         boolean isValid = genresValidationService.isValid(genreServiceModel);

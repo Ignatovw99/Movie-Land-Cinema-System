@@ -30,7 +30,7 @@ public class GenresCreateValidator implements Validator {
 
         if (genreCreateBindingModel.getName() == null || genreCreateBindingModel.getName().trim().length() == 0) {
             errors.rejectValue(NAME_FIELD, NULL_ERROR_VALUE, NAME_NOT_EMPTY);
-        } else if (genreCreateBindingModel.getName().length() < 3 || genreCreateBindingModel.getName().length() > 25) {
+        } else if (genreCreateBindingModel.getName().trim().length() < 3 || genreCreateBindingModel.getName().trim().length() > 25) {
             errors.rejectValue(NAME_FIELD, INVALID_LENGTH_ERROR, NAME_CHARACTERS_LENGTH);
         } else if (genresRepository.existsByName(genreCreateBindingModel.getName())) {
             errors.rejectValue(NAME_FIELD, ALREADY_EXISTS_ERROR, ALREADY_EXISTS_WITH_SUCH_NAME);

@@ -2,6 +2,7 @@ package movieland.constants.entities;
 
 public class GenreConstants {
 
+    // Validation constants
     public static final String NAME_FIELD = "name";
     public static final String IS_AGE_RESTRICTION_REQUIRED_FIELD = "isAgeRestrictionRequired";
     public static final String CLASSIFICATION_FIELD = "classification";
@@ -13,4 +14,8 @@ public class GenreConstants {
     public static final String IS_AGE_RESTRICTION_REQUIRED_NOT_NULL = "Age restriction requirement should not be null";
 
     public static final String CLASSIFICATION_NOT_NULL = "Classification should not be null";
+
+    // Constraints constants
+    public static final int NAME_MIN_LENGTH = 3;
+    public static final int NAME_MAX_LENGTH = 25;
 }
