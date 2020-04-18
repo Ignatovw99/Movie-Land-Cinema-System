@@ -52,4 +52,6 @@ public class MovieConstants {
 
     // Error handling constants
     public static final String MOVIE_ALREADY_EXISTS = "Movie already exists";
+    public static final String MOVIE_NOT_FOUND = "Movie was not found";
+    public static final String MOVIE_WITH_SUCH_ID_NOT_FOUND = "Movie with such id was not found";
 }

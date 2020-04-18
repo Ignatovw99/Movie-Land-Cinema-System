@@ -42,7 +42,7 @@ public class MoviesController extends BaseController {
 
         MovieServiceModel movieServiceModel = modelMapper.map(movieAddBindingModel, MovieServiceModel.class);
 
-        moviesService.addMovie(movieServiceModel);
+//        moviesService.addMovie(movieServiceModel);
 
         return redirect("/");
     }

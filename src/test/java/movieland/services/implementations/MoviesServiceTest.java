@@ -3,10 +3,12 @@ package movieland.services.implementations;
 import movieland.TestBase;
 import movieland.domain.entities.Genre;
 import movieland.domain.entities.Movie;
+import movieland.domain.models.service.GenreServiceModel;
 import movieland.domain.models.service.MovieServiceModel;
 import movieland.errors.duplicate.MovieAlreadyExistsException;
 import movieland.errors.invalid.InvalidMovieException;
 import movieland.errors.notfound.GenreNotFoundException;
+import movieland.errors.notfound.MovieNotFoundException;
 import movieland.repositories.GenresRepository;
 import movieland.repositories.MoviesRepository;
 import movieland.services.interfaces.MoviesService;
@@ -94,11 +96,6 @@ public class MoviesServiceTest extends TestBase {
         movieServiceModel = MoviesServiceTest.initializeServiceModel();
     }
 
-    @Override
-    protected void setupMockBeansActions() {
-        setupCreateMethod();
-    }
-
     private void setupCreateMethod() {
         when(moviesValidationService.isValid(any(MovieServiceModel.class)))
                 .thenReturn(true);
@@ -108,6 +105,25 @@ public class MoviesServiceTest extends TestBase {
                 .thenReturn(Optional.of(GenresServiceTest.initializeEntity()));
         when(moviesRepository.save(any(Movie.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
+    }
+
+    private void setupUpdateMethod() {
+        when(moviesValidationService.isValid(any(MovieServiceModel.class)))
+                .thenReturn(true);
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+    }
+
+    private void setupDeleteMethod() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+    }
+
+    @Override
+    protected void setupMockBeansActions() {
+        setupCreateMethod();
+        setupUpdateMethod();
+        setupDeleteMethod();
     }
 
     @Test
@@ -212,5 +228,182 @@ public class MoviesServiceTest extends TestBase {
 
         assertEquals(movie.getId(), persistedMovie.getId());
         assertEquals(movie.getTitle(), persistedMovie.getTitle());
+    }
+
+    @Test
+    public void update_WhenMovieServiceModelIsInvalid_ShouldThrowException() {
+        when(moviesValidationService.isValid(any(MovieServiceModel.class)))
+                .thenReturn(false);
+
+        assertThrows(
+                InvalidMovieException.class,
+                () -> moviesService.update(movieServiceModel.getId(), movieServiceModel)
+        );
+
+        verify(moviesValidationService).isValid(any(MovieServiceModel.class));
+    }
+
+    @Test
+    public void update_WhenMovieServiceModelIsValid_ShouldNotThrowException() {
+        when(moviesValidationService.isValid(any(MovieServiceModel.class)))
+                .thenReturn(true);
+
+        assertDoesNotThrow(() -> moviesService.update(movieServiceModel.getId(), movieServiceModel));
+
+        verify(moviesValidationService).isValid(any(MovieServiceModel.class));
+    }
+
+    @Test
+    public void update_WhenMovieWithTheGivenIdDoesNotExist_ShouldThrowException() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> moviesService.update(UUID.randomUUID().toString(), movieServiceModel)
+        );
+
+        verify(moviesRepository).findById(any(String.class));
+    }
+
+    @Test
+    public void update_WhenMovieWithTheGivenIdExists_ShouldNotThrowException() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+
+        assertDoesNotThrow(() -> moviesService.update(DEFAULT_ID, movieServiceModel));
+
+        verify(moviesRepository).findById(any(String.class));
+    }
+
+    @Test
+    public void update_WhenUpdatedMovieTitleAlreadyExists_ShouldThrowException() {
+        movieServiceModel.setTitle("Updated Title");
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+        when(moviesRepository.existsByTitle(anyString()))
+                .thenReturn(true);
+
+        assertThrows(
+                MovieAlreadyExistsException.class,
+                () -> moviesService.update(DEFAULT_ID, movieServiceModel)
+        );
+
+        verify(moviesRepository).findById(any(String.class));
+        verify(moviesRepository).existsByTitle(anyString());
+    }
+
+    @Test
+    public void update_WhenUpdatedMovieTitleDoesNotExist_ShouldNotThrowException() {
+        movieServiceModel.setTitle("Updated Title");
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+        when(moviesRepository.existsByTitle(anyString()))
+                .thenReturn(false);
+
+        assertDoesNotThrow(() -> moviesService.update(DEFAULT_ID, movieServiceModel));
+
+        verify(moviesRepository).findById(any(String.class));
+        verify(moviesRepository).existsByTitle(anyString());
+    }
+
+    @Test
+    public void update_WhenMovieTitleWasNotChanged_ShouldNotThrowException() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+
+        assertDoesNotThrow(() -> moviesService.update(DEFAULT_ID, movieServiceModel));
+
+        verify(moviesRepository).findById(any(String.class));
+        verify(moviesRepository, never()).existsByTitle(anyString());
+    }
+
+    @Test
+    public void update_WhenMovieGenreWasNotUpdated_ShouldNotCheckIfGenreExists() {
+        moviesService.update(DEFAULT_ID, movieServiceModel);
+        verify(genresRepository, never()).findById(any(String.class));
+    }
+
+    @Test
+    public void update_WhenUpdatedMovieGenreDoesNotExist_ShouldThrowException() {
+        movieServiceModel.getGenre().setId(UUID.randomUUID().toString());
+        when(genresRepository.findById(any(String.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                GenreNotFoundException.class,
+                () -> moviesService.update(DEFAULT_ID, movieServiceModel)
+        );
+
+        verify(genresRepository).findById(any(String.class));
+    }
+
+    @Test
+    public void update_WhenUpdatedGenreExists_ShouldChangeMovieGenre() {
+        Genre updatedGenre = GenresServiceTest.initializeEntity();
+        String genreIdUpdated = UUID.randomUUID().toString();
+        updatedGenre.setId(genreIdUpdated);
+        movieServiceModel.getGenre().setId(genreIdUpdated);
+        when(genresRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(updatedGenre));
+        when(moviesRepository.save(any(Movie.class)))
+                .then(invocation -> invocation.getArgument(0));
+
+        assertNotEquals(updatedGenre.getId(), movie.getGenre().getId());
+
+        MovieServiceModel updatedMovie = moviesService.update(DEFAULT_ID, movieServiceModel);
+
+        assertEquals(updatedGenre.getId(), updatedMovie.getGenre().getId());
+    }
+
+    @Test
+    public void update_WhenOnlyTitleAndDescriptionAreUpdatedAndOtherFieldsAreNull_ShouldNotMapAnotherNullValues() {
+        MovieServiceModel movieToUpdate = new MovieServiceModel();
+        movieToUpdate.setId(DEFAULT_ID);
+        movieToUpdate.setTitle("Updated title");
+        movieToUpdate.setDescription("Updated description");
+        movieToUpdate.setGenre(new GenreServiceModel());
+
+        assertEquals(DEFAULT_TITLE, movie.getTitle());
+        assertEquals(DEFAULT_DESCRIPTION, movie.getDescription());
+
+        MovieServiceModel updatedMovie = moviesService.update(DEFAULT_ID, movieToUpdate);
+
+        assertEquals("Updated title", updatedMovie.getTitle());
+        assertEquals("Updated description", updatedMovie.getDescription());
+        assertEquals(DEFAULT_DIRECTOR, updatedMovie.getDirector());
+    }
+
+    @Test
+    public void delete_WhenMovieWithTheGivenIdDoesNotExist_ShouldThrowException() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> moviesService.delete(DEFAULT_ID)
+        );
+
+        verify(moviesRepository).findById(any(String.class));
+    }
+
+    @Test
+    public void delete_WhenMovieWithTheGivenIdExists_ShouldNotThrowException() {
+        when(moviesRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(movie));
+
+        assertDoesNotThrow(() -> moviesService.delete(DEFAULT_ID));
+
+        verify(moviesRepository).findById(any(String.class));
+    }
+
+    @Test
+    public void delete_WhenMovieExists_ShouldBeDeleted() {
+        MovieServiceModel deletedMovie = moviesService.delete(DEFAULT_ID);
+
+        verify(moviesRepository).delete(movie);
+
+        assertEquals(movie.getId(), deletedMovie.getId());
+        assertEquals(movie.getTitle(), deletedMovie.getTitle());
     }
 }

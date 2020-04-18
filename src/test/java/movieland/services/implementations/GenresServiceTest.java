@@ -68,14 +68,6 @@ public class GenresServiceTest extends TestBase {
         genreServiceModel = GenresServiceTest.initializeServiceModel();
     }
 
-    @Override
-    protected void setupMockBeansActions() {
-        setupCreateMethod();
-        setupUpdateMethod();
-        setupDeleteMethod();
-        setupFindAllMethod();
-    }
-
     private void setupCreateMethod() {
         when(genresValidationService.isValid(any()))
                 .thenReturn(true);
@@ -105,6 +97,14 @@ public class GenresServiceTest extends TestBase {
     private void setupFindAllMethod() {
         when(genresRepository.findAll())
                 .thenReturn(List.of(genre, genre, genre, genre));
+    }
+
+    @Override
+    protected void setupMockBeansActions() {
+        setupCreateMethod();
+        setupUpdateMethod();
+        setupDeleteMethod();
+        setupFindAllMethod();
     }
 
     @Test

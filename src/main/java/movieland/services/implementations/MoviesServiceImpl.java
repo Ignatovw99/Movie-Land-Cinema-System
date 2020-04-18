@@ -7,6 +7,7 @@ import movieland.domain.models.service.MovieServiceModel;
 import movieland.errors.duplicate.MovieAlreadyExistsException;
 import movieland.errors.invalid.InvalidMovieException;
 import movieland.errors.notfound.GenreNotFoundException;
+import movieland.errors.notfound.MovieNotFoundException;
 import movieland.repositories.GenresRepository;
 import movieland.repositories.MoviesRepository;
 import movieland.services.interfaces.MoviesService;
@@ -21,8 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static movieland.constants.entities.MovieConstants.INVALID_MOVIE_MODEL;
-import static movieland.constants.entities.MovieConstants.MOVIE_ALREADY_EXISTS;
+import static movieland.constants.entities.MovieConstants.*;
 
 @Service
 public class MoviesServiceImpl implements MoviesService {
@@ -66,12 +66,38 @@ public class MoviesServiceImpl implements MoviesService {
 
     @Override
     public MovieServiceModel update(String id, MovieServiceModel movieServiceModel) {
-        return null;
+        if (!moviesValidationService.isValid(movieServiceModel)) {
+            throw new InvalidMovieException(INVALID_MOVIE_MODEL);
+        }
+
+        Movie movieToUpdate = moviesRepository.findById(id)
+                .orElseThrow(() -> new MovieNotFoundException(MOVIE_NOT_FOUND));
+
+        if (!movieToUpdate.getTitle().equals(movieServiceModel.getTitle())) {
+            if (moviesRepository.existsByTitle(movieServiceModel.getTitle())) {
+                throw new MovieAlreadyExistsException(MOVIE_ALREADY_EXISTS);
+            }
+        }
+
+        if (!movieToUpdate.getGenre().getId().equals(movieServiceModel.getGenre().getId())) {
+            Genre newMovieGenre = genresRepository.findById(movieServiceModel.getGenre().getId())
+                    .orElseThrow(() -> new GenreNotFoundException(GenreConstants.GENRE_NOT_FOUND));
+            movieToUpdate.setGenre(newMovieGenre);
+        }
+
+        modelMapper.map(movieServiceModel, movieToUpdate);
+        Movie updatedMovie = moviesRepository.save(movieToUpdate);
+        return modelMapper.map(updatedMovie, MovieServiceModel.class);
     }
 
     @Override
     public MovieServiceModel delete(String id) {
-        return null;
+        Movie movieToDelete = moviesRepository.findById(id)
+                .orElseThrow(() -> new MovieNotFoundException(MOVIE_WITH_SUCH_ID_NOT_FOUND));
+
+        moviesRepository.delete(movieToDelete);
+
+        return modelMapper.map(movieToDelete, MovieServiceModel.class);
     }
 
     @Override
