@@ -10,4 +10,8 @@ public class ValidationErrorCodes {
 
     public static final String RANGE_ERROR = "field.invalidRange";
 
+    public static final String NOT_FOUND_ERROR = "field.notFound";
+
+    public static final String INVALID_VALUE = "field.invalidValue";
+
 }

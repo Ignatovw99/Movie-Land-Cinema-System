@@ -4,6 +4,17 @@ public class MovieConstants {
 
     // Fields name
     public static final String TITLE_FIELD = "title";
+    public static final String DESCRIPTION_FIELD = "description";
+    public static final String DIRECTOR_FIELD = "director";
+    public static final String CAST_FIELD = "cast";
+    public static final String RUNNING_TIME_FIELD = "runningTime";
+    public static final String COUNTRY_FIELD = "country";
+    public static final String YEAR_OF_PRODUCTION_FIELD = "yearOfProduction";
+    public static final String RELEASE_DATE_FIELD = "releaseDate";
+    public static final String BUDGET_FIELD = "budget";
+    public static final String AGE_RESTRICTION_FIELD = "ageRestriction";
+    public static final String GENRE_FIELD = "genre";
+    public static final String GENRE_CREATE_BINDING_MODEL_FIELD = "genreId";
 
     // Validation constants
     public static final String TITLE_NOT_EMPTY = "Title should not be empty";
@@ -20,14 +31,18 @@ public class MovieConstants {
     public static final String RUNNING_TIME_NOT_NULL = "Running time should not be null";
     public static final String RUNNING_TIME_MIN_VALUE = "Running time should not be less than 30 minutes";
     public static final String RUNNING_TIME_MAX_VALUE = "Running time should not be greater than 270 minutes";
+    public static final String RUNNING_TIME_RANGE = "Running time should be between 30 and 270 minutes";
 
     public static final String YEAR_OF_PRODUCTION_NOT_NULL = "Year of production should not be null";
-    public static final String YEAR_OF_PRODUCTION_MAX_VALUE = "Year of production should not be greater than %s year";
+    public static final String YEAR_OF_PRODUCTION_MAX_VALUE = "Year of production should not be greater than %d year";
 
-    public static final String RELEASE_DAY_NOT_NULL = "Release day should not be null";
+    public static final String RELEASE_DATE_NOT_NULL = "Release date should not be null";
+    public static final String RELEASE_DATE_INVALID_VALUE = "Release date should not be before %s";
 
+    public static final String AGE_RESTRICTION_NOT_NULL = "Age restriction should not be null";
     public static final String AGE_RESTRICTION_MIN_VALUE = "Age restriction should not be less than 12";
     public static final String AGE_RESTRICTION_MAX_VALUE = "Age restriction should not be greater than 21";
+    public static final String AGE_RESTRICTION_RANGE = "Age restriction should be between 12 and 21";
 
     public static final String GENRE_NOT_NULL = "Genre should not be null";
 
@@ -46,6 +61,8 @@ public class MovieConstants {
 
     public static final int RUNNING_TIME_MIN = 30;
     public static final int RUNNING_TIME_MAX = 270;
+
+    public static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd";
 
     // Invalid constants
     public static final String INVALID_MOVIE_MODEL = "Invalid Movie Model";

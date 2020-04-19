@@ -50,8 +50,8 @@ public class GenresController extends BaseController {
             return view("genre/genre-create");
         }
 
-        GenreServiceModel cinemaServiceModel = modelMapper.map(genreCreateBindingModel, GenreServiceModel.class);
-        genresService.create(cinemaServiceModel);
+        GenreServiceModel genreToCreateServiceModel = modelMapper.map(genreCreateBindingModel, GenreServiceModel.class);
+        genresService.create(genreToCreateServiceModel);
 
         return redirect("/");
     }

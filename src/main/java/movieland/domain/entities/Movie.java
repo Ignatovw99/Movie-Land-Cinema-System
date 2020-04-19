@@ -119,7 +119,7 @@ public class Movie extends BaseEntity {
     }
 
     @Column(name = "release_date", nullable = false)
-    @NotNull(message = RELEASE_DAY_NOT_NULL)
+    @NotNull(message = RELEASE_DATE_NOT_NULL)
     public LocalDate getReleaseDate() {
         return releaseDate;
     }

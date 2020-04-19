@@ -1,0 +1,152 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">Add a new Movie</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.movie.MovieCreateBindingModel"*/-->
+    <form th:action="@{/movies/create}" method="POST" th:object="${model}">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Title..." name="title" th:field="*{title}"
+                   th:styleappend="${#fields.hasErrors('title')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('title')}" >
+                <small class="text-danger" th:errors="*{title}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" class="form-control" id="description" placeholder="Description..." name="description" th:field="*{description}"
+                   th:styleappend="${#fields.hasErrors('description')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('description')}" >
+                <small class="text-danger" th:errors="*{description}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="director">Director</label>
+            <input type="text" class="form-control" id="director" placeholder="Director..." name="director" th:field="*{director}"
+                   th:styleappend="${#fields.hasErrors('director')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('director')}" >
+                <small class="text-danger" th:errors="*{director}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="cast">Cast</label>
+            <input type="text" class="form-control" id="cast" placeholder="Cast..." name="cast" th:field="*{cast}"
+                   th:styleappend="${#fields.hasErrors('cast')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('cast')}" >
+                <small class="text-danger" th:errors="*{cast}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="runningTime">Running Time (in minutes)</label>
+            <input type="number" class="form-control" id="runningTime" placeholder="Running Time..." name="runningTime" th:field="*{runningTime}"
+                   th:styleappend="${#fields.hasErrors('runningTime')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('runningTime')}" >
+                <small class="text-danger" th:errors="*{runningTime}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" class="form-control" id="country" placeholder="Country..." name="country" th:field="*{country}">
+        </div>
+        <div class="form-group">
+            <label for="yearOfProduction">Year of Production</label>
+            <input type="number" class="form-control" id="yearOfProduction" placeholder="Year of Production..." name="yearOfProduction" th:field="*{yearOfProduction}"
+                   th:styleappend="${#fields.hasErrors('yearOfProduction')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('yearOfProduction')}" >
+                <small class="text-danger" th:errors="*{yearOfProduction}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="releaseDate">Release Date</label>
+            <input type="date" class="form-control" id="releaseDate" placeholder="Release Date..." name="releaseDate" th:field="*{releaseDate}"
+                   th:styleappend="${#fields.hasErrors('releaseDate')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('releaseDate')}" >
+                <small class="text-danger" th:errors="*{releaseDate}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="budget">Budget</label>
+            <input type="number" class="form-control" id="budget" placeholder="Budget ($)..." name="budget" th:field="*{budget}">
+        </div>
+        <div class="form-group">
+            <label for="genreId">Genre</label>
+            <select class="form-control" id="genreId" name="genreId" th:styleappend="${#fields.hasErrors('genreId')} ? 'border-color: red'">
+                <option value="" selected disabled hidden>Choose here</option>
+            </select>
+            <th:block th:if="${#fields.hasErrors('genreId')}" >
+                <small class="text-danger" th:errors="*{genreId}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group" id="ageRestrictionBlock" hidden="hidden">
+            <label for="ageRestriction">Age Restriction</label>
+            <input type="number" class="form-control" id="ageRestriction" placeholder="Age Restriction..." name="ageRestriction" th:field="*{ageRestriction}"
+                   th:styleappend="${#fields.hasErrors('ageRestriction')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('ageRestriction')}" >
+                <small class="text-danger" th:errors="*{ageRestriction}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Add</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8000/api/genres/all',
+            success: function (genres) {
+                /*<![CDATA[*/
+                let genreId = '[[${model.genreId}]]';
+                /*]]>*/
+                for (let genre of genres) {
+                    let optionValue = $('<option/>')
+                        .attr({'value': genre.id})
+                        .text(genre.name);
+
+                    if (genre.id === genreId) {
+                        optionValue.prop("selected", true);
+                    }
+
+                    $('#genreId')
+                        .append(optionValue);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    })
+</script>
+
+<script>
+    $('#genreId').change(function () {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8000/api/genres/is-age-restriction-required/' + $('#genreId').val(),
+            success: function (isAgeRestrictionRequired) {
+                if (isAgeRestrictionRequired) {
+                    $('#ageRestrictionBlock').removeAttr('hidden');
+                } else {
+                    $('#ageRestrictionBlock').attr({'hidden': 'hidden'})
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    })
+</script>

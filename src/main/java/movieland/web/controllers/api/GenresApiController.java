@@ -1,10 +1,13 @@
 package movieland.web.controllers.api;
 
-import movieland.domain.models.rest.GenreIdAndNameResponseModel;
+import movieland.domain.models.rest.GenreResponseModel;
+import movieland.errors.notfound.GenreNotFoundException;
 import movieland.services.interfaces.GenresService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,11 +29,24 @@ public class GenresApiController {
     }
 
     @GetMapping("/all")
-    public Set<GenreIdAndNameResponseModel> allGenresNames() {
-        return genresService
+    public ResponseEntity<Set<GenreResponseModel>> allGenresNames() {
+        Set<GenreResponseModel> allGenres = genresService
                 .findAll()
                 .stream()
-                .map(genreServiceModel -> modelMapper.map(genreServiceModel, GenreIdAndNameResponseModel.class))
+                .map(genreServiceModel -> modelMapper.map(genreServiceModel, GenreResponseModel.class))
                 .collect(Collectors.toUnmodifiableSet());
+        return ResponseEntity.ok(allGenres);
+    }
+
+    @GetMapping("/is-age-restriction-required/{id}")
+    public ResponseEntity<Boolean> checkIfGenreRequiresAgeRestriction(@PathVariable String id) {
+        Boolean isAgeRestrictionRequired;
+        //TODO: add controller local exception handling
+        try {
+            isAgeRestrictionRequired = genresService.findById(id).getIsAgeRestrictionRequired();
+        } catch (GenreNotFoundException ex) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(isAgeRestrictionRequired);
     }
 }
