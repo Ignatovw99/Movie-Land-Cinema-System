@@ -1,12 +1,19 @@
 package movieland.domain.models.binding.movie;
 
+import movieland.config.mappings.CustomMappable;
 import movieland.constants.entities.MovieConstants;
+import movieland.domain.models.service.MovieServiceModel;
+import org.modelmapper.Converter;
+import org.modelmapper.ModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-public class MovieCreateBindingModel {
+public class MovieCreateBindingModel implements CustomMappable {
 
     private String title;
 
@@ -120,5 +127,19 @@ public class MovieCreateBindingModel {
 
     public void setGenreId(String genreId) {
         this.genreId = genreId;
+    }
+
+    @Override
+    public void configureMappings(ModelMapper modelMapper) {
+        Converter<String, Set<String>> castConverter = mappingContext ->
+            mappingContext.getSource() == null
+                    ? null
+                    : Arrays.stream(mappingContext.getSource().split(", ")).collect(Collectors.toSet());
+
+        modelMapper.createTypeMap(MovieCreateBindingModel.class, MovieServiceModel.class)
+                .addMappings(map -> map.using(castConverter).map(
+                        MovieCreateBindingModel::getCast,
+                        MovieServiceModel::setCast
+                ));
     }
 }
