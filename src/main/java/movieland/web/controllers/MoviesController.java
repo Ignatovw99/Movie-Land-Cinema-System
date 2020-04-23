@@ -3,7 +3,8 @@ package movieland.web.controllers;
 import movieland.domain.models.binding.movie.MovieCreateBindingModel;
 import movieland.domain.models.binding.movie.MovieUpdateBindingModel;
 import movieland.domain.models.service.MovieServiceModel;
-import movieland.domain.models.view.MovieViewModel;
+import movieland.domain.models.view.movie.MovieDeleteViewModel;
+import movieland.domain.models.view.movie.MovieViewModel;
 import movieland.services.interfaces.MoviesService;
 import movieland.validation.movie.MoviesCreateValidator;
 import movieland.validation.movie.MoviesUpdateValidator;
@@ -73,20 +74,18 @@ public class MoviesController extends BaseController {
         return redirect("/movies/all");
     }
 
-//    @GetMapping("/delete/{id}")
-//    public ModelAndView deleteGenre(@PathVariable String id) {
-//        //TODO: get movies count in GenreDeleteViewModel
-//        GenreServiceModel genreServiceModel = genresService.findById(id);
-//        GenreDeleteViewModel genreToDelete = modelMapper.map(genreServiceModel, GenreDeleteViewModel.class);
-//        return view("genre/genre-delete", genreToDelete);
-//    }
-//
-//    //TODO: add additional check logic if there are some movies assigned to the genre
-//    @PostMapping("/delete")
-//    public ModelAndView deleteGenreConfirm(@RequestParam String id) {
-//        GenreServiceModel deletedGenreServiceModel = genresService.delete(id);
-//        return redirect("/");
-//    }
+    @GetMapping("/delete/{id}")
+    public ModelAndView deleteMovie(@PathVariable String id) {
+        MovieServiceModel movieServiceModel = moviesService.findById(id);
+        MovieDeleteViewModel movieToDelete = modelMapper.map(movieServiceModel, MovieDeleteViewModel.class);
+        return view("movie/movie-delete", movieToDelete);
+    }
+
+    @PostMapping("/delete")
+    public ModelAndView deleteMovieConfirm(@RequestParam String id) {
+        MovieServiceModel deletedMovieServiceModel = moviesService.delete(id);
+        return redirect("/");
+    }
 
     @GetMapping("/all")
     public ModelAndView getAllMovies(ModelAndView modelAndView) {

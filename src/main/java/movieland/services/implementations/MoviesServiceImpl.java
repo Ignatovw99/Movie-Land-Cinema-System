@@ -14,9 +14,9 @@ import movieland.services.interfaces.MoviesService;
 import movieland.services.validation.MoviesValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -95,6 +95,7 @@ public class MoviesServiceImpl implements MoviesService {
     }
 
     @Override
+    @Transactional
     public MovieServiceModel delete(String id) {
         Movie movieToDelete = moviesRepository.findById(id)
                 .orElseThrow(() -> new MovieNotFoundException(MOVIE_WITH_SUCH_ID_NOT_FOUND));

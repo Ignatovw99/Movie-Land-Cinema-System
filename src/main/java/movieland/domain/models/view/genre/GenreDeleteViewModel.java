@@ -1,4 +1,6 @@
-package movieland.domain.models.view;
+package movieland.domain.models.view.genre;
+
+import movieland.domain.models.view.BaseViewModel;
 
 public class GenreDeleteViewModel extends BaseViewModel {
 

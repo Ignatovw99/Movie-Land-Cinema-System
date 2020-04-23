@@ -4,7 +4,7 @@ public class BaseViewModel {
 
     private String id;
 
-    BaseViewModel() {
+    protected BaseViewModel() {
     }
 
     public String getId() {

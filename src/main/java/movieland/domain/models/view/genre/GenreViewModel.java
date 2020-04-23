@@ -1,6 +1,7 @@
-package movieland.domain.models.view;
+package movieland.domain.models.view.genre;
 
 import movieland.domain.entities.enumerations.Classification;
+import movieland.domain.models.view.BaseViewModel;
 
 public class GenreViewModel extends BaseViewModel {
 

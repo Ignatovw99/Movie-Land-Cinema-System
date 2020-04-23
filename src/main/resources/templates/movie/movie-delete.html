@@ -1,15 +1,15 @@
 <div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
     <div class="container-fluid d-flex justify-content-center">
-        <h1 class="m-3">Delete Genre</h1>
+        <h1 class="m-3">Delete Movie</h1>
     </div>
 
-    <!--/*@thymesVar id="model" type="movieland.domain.models.view.genre.GenreDeleteViewModel"*/-->
+    <!--/*@thymesVar id="model" type="movieland.domain.models.view.movie.MovieDeleteViewModel"*/-->
     <div class="container-fluid d-flex justify-content-center">
         <th:block th:object="${model}">
-            <div th:if="*{moviesCount == 0}">
-                <h3 class="m-3">Do you really want to delete "<span th:text="*{name}"></span>" genre?</h3>
+            <div>
+                <h3 class="m-3">Do you really want to delete "<span th:text="*{title}"></span>" movie?</h3>
                 <div class="container-fluid d-flex justify-content-center">
-                    <form th:action="@{/genres/delete}" method="post">
+                    <form th:action="@{/movies/delete}" method="post">
                         <input hidden="hidden" id="id" name="id" th:field="*{id}">
                         <div class="d-flex justify-content-center">
                             <div class="m-3">
@@ -17,7 +17,7 @@
                             </div>
                         </div>
                     </form>
-                    <form th:action="@{/genres/all}" method="get">
+                    <form th:action="@{/movies/all}" method="get">
                         <div class="d-flex justify-content-center">
                             <div class="m-3">
                                 <button type="submit" class="btn btn-secondary">No</button>
@@ -25,16 +25,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
-            <div th:if="*{moviesCount > 0}">
-                <h4 class="m-3">You are not allowed to delete "<span th:text="*{name}"></span>" genre, because it has <span th:text="*{moviesCount}"></span> assigned movies.</h4>
-                <form th:action="@{/genres/all}" method="get">
-                    <div class="d-flex justify-content-center">
-                        <div class="m-3">
-                            <button type="submit" class="btn btn-secondary">Back</button>
-                        </div>
-                    </div>
-                </form>
             </div>
         </th:block>
     </div>
