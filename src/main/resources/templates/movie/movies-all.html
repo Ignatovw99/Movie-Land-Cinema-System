@@ -1,0 +1,37 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">All Movies</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="java.util.List<movieland.domain.models.view.MovieViewModel>"*/-->
+    <table class="table table-striped text-center">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col" class="w-20">Title</th>
+            <th scope="col" class="w-20">Running Time</th>
+            <th scope="col" class="w-15">Country</th>
+            <th scope="col" class="w-10">Year of Production</th>
+            <th scope="col" class="w-15">Release Date</th>
+            <th scope="col" class="w-15">Genre</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="movie : ${model}" th:object="${movie}">
+            <tr>
+                <td scope="col" th:text="${movieStat.index + 1}"></td>
+                <td scope="col" th:text="*{title}"></td>
+                <td scope="col" th:text="*{#strings.concat(runningTime, ' ', 'minutes')}"></td>
+                <td scope="col" th:text="*{country == null or country.length() == 0} ? 'None' : *{country}"></td>
+                <td scope="col" th:text="*{yearOfProduction}"></td>
+                <td scope="col" th:text="*{#temporals.format(releaseDate, 'dd-MM-yyyy')}"></td>
+                <td scope="col" th:text="*{genreName}"></td>
+                <td scope="col"><a class="btn btn-info" th:href="@{/movies/update/{id}(id=*{id})}" th:text="Update"></a></td>
+                <td scope="col"><a class="btn btn-danger" th:href="@{/movies/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>

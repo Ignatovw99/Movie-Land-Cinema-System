@@ -357,6 +357,31 @@ public class MoviesServiceTest extends TestBase {
     }
 
     @Test
+    public void update_WhenUpdatedGenreDoesNotRequireAgeRestriction_ShouldSetAgeRestrictionToNull() {
+        Genre updatedGenre = GenresServiceTest.initializeEntity();
+        String genreIdUpdated = UUID.randomUUID().toString();
+        updatedGenre.setId(genreIdUpdated);
+        updatedGenre.setIsAgeRestrictionRequired(false);
+        movieServiceModel.getGenre().setId(genreIdUpdated);
+        when(genresRepository.findById(any(String.class)))
+                .thenReturn(Optional.of(updatedGenre));
+        when(moviesRepository.save(any(Movie.class)))
+                .then(invocation -> {
+                    Movie movieArg = invocation.getArgument(0);
+                    movieArg.setAgeRestriction(null);
+                    return movieArg;
+                });
+
+        assertNotEquals(updatedGenre.getId(), movie.getGenre().getId());
+
+        MovieServiceModel updatedMovie = moviesService.update(DEFAULT_ID, movieServiceModel);
+
+        assertEquals(updatedGenre.getId(), updatedMovie.getGenre().getId());
+        assertNotNull(movieServiceModel.getAgeRestriction());
+        assertNull(updatedMovie.getAgeRestriction());
+    }
+
+    @Test
     public void update_WhenOnlyTitleAndDescriptionAreUpdatedAndOtherFieldsAreNull_ShouldNotMapAnotherNullValues() {
         MovieServiceModel movieToUpdate = new MovieServiceModel();
         movieToUpdate.setId(DEFAULT_ID);

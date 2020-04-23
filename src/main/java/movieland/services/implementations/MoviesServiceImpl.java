@@ -83,6 +83,10 @@ public class MoviesServiceImpl implements MoviesService {
             Genre newMovieGenre = genresRepository.findById(movieServiceModel.getGenre().getId())
                     .orElseThrow(() -> new GenreNotFoundException(GenreConstants.GENRE_NOT_FOUND));
             movieToUpdate.setGenre(newMovieGenre);
+            if (!newMovieGenre.getIsAgeRestrictionRequired()) {
+                movieServiceModel.setAgeRestriction(null);
+                movieToUpdate.setAgeRestriction(null);
+            }
         }
 
         modelMapper.map(movieServiceModel, movieToUpdate);
@@ -102,12 +106,15 @@ public class MoviesServiceImpl implements MoviesService {
 
     @Override
     public MovieServiceModel findById(String id) {
-        return null;
+        return modelMapper.map(moviesRepository.findById(id).get(), MovieServiceModel.class);
     }
 
     @Override
     public List<MovieServiceModel> findAll() {
-        return null;
+        return moviesRepository.findAll()
+                .stream()
+                .map(movie -> modelMapper.map(movie, MovieServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

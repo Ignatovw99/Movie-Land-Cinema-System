@@ -1,10 +1,11 @@
 <div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
     <div class="container-fluid d-flex justify-content-center">
-        <h1 class="m-3">Add a new Movie</h1>
+        <h1 class="m-3">Update a Movie</h1>
     </div>
 
-    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.movie.MovieCreateBindingModel"*/-->
-    <form th:action="@{/movies/create}" method="POST" th:object="${model}">
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.movie.MovieUpdateBindingModel"*/-->
+    <form th:action="@{/movies/update}" method="POST" th:object="${model}">
+        <input type="hidden" id="id" name="id" th:field="*{id}">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" class="form-control" id="title" placeholder="Title..." name="title" th:field="*{title}"
@@ -98,7 +99,7 @@
         </div>
         <div class="d-flex justify-content-end">
             <div class="m-3">
-                <button type="submit" class="btn btn-secondary">Add</button>
+                <button type="submit" class="btn btn-secondary">Update</button>
             </div>
         </div>
     </form>
@@ -167,7 +168,7 @@
                 }
             },
             error: function (e) {
-                $('#ageRestrictionBlock').attr({'hidden': 'hidden'})
+                console.log(e);
             }
         })
     })

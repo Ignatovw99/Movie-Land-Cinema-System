@@ -13,7 +13,9 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MovieCreateBindingModel implements CustomMappable {
+public class MovieUpdateBindingModel implements CustomMappable {
+
+    private String id;
 
     private String title;
 
@@ -37,7 +39,15 @@ public class MovieCreateBindingModel implements CustomMappable {
 
     private String genreId;
 
-    public MovieCreateBindingModel() {
+    public MovieUpdateBindingModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -131,14 +141,25 @@ public class MovieCreateBindingModel implements CustomMappable {
 
     @Override
     public void configureMappings(ModelMapper modelMapper) {
-        Converter<String, Set<String>> castConverter = mappingContext ->
-            mappingContext.getSource() == null
-                    ? null
-                    : Arrays.stream(mappingContext.getSource().split(",")).map(String::trim).collect(Collectors.toSet());
+        Converter<Set<String>, String> castForUpdateBindingModelConverter = mappingContext ->
+                mappingContext.getSource() == null
+                        ? null
+                        : String.join(", ", mappingContext.getSource());
 
-        modelMapper.createTypeMap(MovieCreateBindingModel.class, MovieServiceModel.class)
-                .addMappings(map -> map.using(castConverter).map(
-                        MovieCreateBindingModel::getCast,
+        Converter<String, Set<String>> castForServiceModelConverter = mappingContext ->
+                mappingContext.getSource() == null
+                        ? null
+                        : Arrays.stream(mappingContext.getSource().split(",")).map(String::trim).collect(Collectors.toSet());
+
+        modelMapper.createTypeMap(MovieServiceModel.class, MovieUpdateBindingModel.class)
+                .addMappings(map -> map.using(castForUpdateBindingModelConverter).map(
+                        MovieServiceModel::getCast,
+                        MovieUpdateBindingModel::setCast
+                ));
+
+        modelMapper.createTypeMap(MovieUpdateBindingModel.class, MovieServiceModel.class)
+                .addMappings(map -> map.using(castForServiceModelConverter).map(
+                        MovieUpdateBindingModel::getCast,
                         MovieServiceModel::setCast
                 ));
     }

@@ -120,6 +120,18 @@ main > * {
     background-color: #f7f9fb
 }
 
+.w-10 {
+    width: 10%;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+.w-20 {
+    width: 20%;
+}
+
 .w-70 {
     width: 70%;
 }
