@@ -26,13 +26,13 @@ public class HallsApiController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/cinemaId={id}")
-    public Set<HallIdAndNameResponseModel> getHallsNamesByCinemaId(@PathVariable("id") String cinemaId) {
-        return cinemasService.getCinemaById(cinemaId)
-                .getHalls()
-                .stream()
-                .map(hallServiceModel -> modelMapper.map(hallServiceModel, HallIdAndNameResponseModel.class))
-                .collect(Collectors.toUnmodifiableSet());
-
-    }
+//    @GetMapping("/cinemaId={id}")
+//    public Set<HallIdAndNameResponseModel> getHallsNamesByCinemaId(@PathVariable("id") String cinemaId) {
+//        return cinemasService.getCinemaById(cinemaId)
+//                .getHalls()
+//                .stream()
+//                .map(hallServiceModel -> modelMapper.map(hallServiceModel, HallIdAndNameResponseModel.class))
+//                .collect(Collectors.toUnmodifiableSet());
+//
+//    }
 }

@@ -27,7 +27,7 @@ public class MoviesApiController {
 
     @GetMapping("/titles")
     public Set<MovieIdAndTitleResponseModel> allMoviesTitles() {
-        return moviesService.getAll()
+        return moviesService.findAll()
                 .stream()
                 .map(genreServiceModel -> modelMapper.map(genreServiceModel, MovieIdAndTitleResponseModel.class))
                 .collect(Collectors.toUnmodifiableSet());
