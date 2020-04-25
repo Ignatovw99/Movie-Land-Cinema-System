@@ -2,10 +2,11 @@ package movieland.domain.entities;
 
 import movieland.domain.entities.base.BaseEntity;
 import movieland.domain.entities.interfaces.Nameable;
+import movieland.validation.annotations.email.Email;
+import movieland.validation.annotations.phonenumber.PhoneNumber;
 
 import javax.persistence.*;
 import java.time.LocalTime;
-import java.util.Set;
 
 @Entity
 @Table(name = "cinemas")
@@ -49,6 +50,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "phone_number", nullable = false)
+    @PhoneNumber
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -58,6 +60,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "email", nullable = false)
+    @Email
     public String getEmail() {
         return email;
     }
