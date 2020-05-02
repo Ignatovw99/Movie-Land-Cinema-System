@@ -4,9 +4,13 @@ import movieland.domain.entities.base.BaseEntity;
 import movieland.domain.entities.interfaces.Nameable;
 import movieland.validation.annotations.email.Email;
 import movieland.validation.annotations.phonenumber.PhoneNumber;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
+
+import static movieland.constants.entities.CinemaConstants.*;
 
 @Entity
 @Table(name = "cinemas")
@@ -30,6 +34,8 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "name", nullable = false, unique = true)
+    @NotNull(message = NAME_NOT_EMPTY)
+    @Length(min = NAME_LENGTH_MIN_VALUE, message = NAME_CHARACTERS_LENGTH)
     @Override
     public String getName() {
         return name;
@@ -41,6 +47,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "address", nullable = false)
+    @NotNull
     public String getAddress() {
         return address;
     }
@@ -50,6 +57,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "phone_number", nullable = false)
+    @NotNull
     @PhoneNumber
     public String getPhoneNumber() {
         return phoneNumber;
@@ -60,6 +68,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "email", nullable = false)
+    @NotNull
     @Email
     public String getEmail() {
         return email;
@@ -70,6 +79,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "opening_time", nullable = false)
+    @NotNull
     public LocalTime getOpeningTime() {
         return openingTime;
     }
@@ -79,6 +89,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "closing_time", nullable = false)
+    @NotNull
     public LocalTime getClosingTime() {
         return closingTime;
     }

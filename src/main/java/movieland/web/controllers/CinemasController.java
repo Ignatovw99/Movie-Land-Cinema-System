@@ -1,9 +1,15 @@
 package movieland.web.controllers;
 
+import movieland.domain.models.binding.cinema.CinemaCreateBindingModel;
+import movieland.domain.models.service.CinemaServiceModel;
 import movieland.services.interfaces.CinemasService;
+import movieland.validation.cinema.CinemasCreateValidator;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/cinemas")
@@ -11,30 +17,34 @@ public class CinemasController extends BaseController {
 
     private final CinemasService cinemasService;
 
+    private final CinemasCreateValidator cinemasCreateValidator;
+
     private final ModelMapper modelMapper;
 
-    public CinemasController(CinemasService cinemasService, ModelMapper modelMapper) {
+    @Autowired
+    public CinemasController(CinemasService cinemasService, CinemasCreateValidator cinemasCreateValidator, ModelMapper modelMapper) {
         this.cinemasService = cinemasService;
+        this.cinemasCreateValidator = cinemasCreateValidator;
         this.modelMapper = modelMapper;
     }
 
-//    @GetMapping("/add")
-//    public ModelAndView addCinema(CinemaAddBindingModel cinemaAddBindingModel) {
-//        return view(cinemaAddBindingModel);
-//    }
-//
-//    @PostMapping("/add")
-//    public ModelAndView addCinemaConfirm(@ModelAttribute CinemaAddBindingModel cinemaAddBindingModel, BindingResult bindingResult, ModelAndView modelAndView) {
-//        if (bindingResult.hasErrors()) {
-//            return view("cinemas-add");
-//        }
-//
-//        CinemaServiceModel cinemaServiceModel = this.modelMapper.map(cinemaAddBindingModel, CinemaServiceModel.class);
-//        //TODO: WHEN ADDING EXCEPTION HANDLING, CHECK IF THE APPROPRIATE ERROR PAGE IS RETURNED
-//        this.cinemasService.createCinema(cinemaServiceModel);
-//
-//        return redirect("/");
-//    }
+    @GetMapping("/create")
+    public ModelAndView createCinema(CinemaCreateBindingModel cinemaCreateBindingModel) {
+        return view("cinema/cinema-create", cinemaCreateBindingModel);
+    }
+
+    @PostMapping("/create")
+    public ModelAndView createCinemaConfirm(@ModelAttribute(name = "model") CinemaCreateBindingModel cinemaCreateBindingModel, BindingResult bindingResult) {
+        cinemasCreateValidator.validate(cinemaCreateBindingModel, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return view("cinema/cinema-create");
+        }
+
+        CinemaServiceModel cinemaServiceModel = modelMapper.map(cinemaCreateBindingModel, CinemaServiceModel.class);
+        cinemasService.create(cinemaServiceModel);
+
+        return redirect("/");
+    }
 //
 //    @GetMapping("/id={cinemaId}")
 //    public ModelAndView detailsCinemaById(@PathVariable String cinemaId) {

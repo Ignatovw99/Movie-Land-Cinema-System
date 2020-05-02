@@ -1,5 +1,6 @@
 package movieland.validation.annotations.phonenumber;
 
+import movieland.constants.entities.CinemaConstants;
 import movieland.validation.annotations.ValidationStatements;
 
 import javax.validation.Constraint;
@@ -18,7 +19,7 @@ public @interface PhoneNumber {
 
     boolean nullable() default false;
 
-    String pattern() default "^\\+[0-9]{11}$";
+    String pattern() default CinemaConstants.PHONE_NUMBER_PATTERN;
 
     Class<?>[] groups() default {};
 

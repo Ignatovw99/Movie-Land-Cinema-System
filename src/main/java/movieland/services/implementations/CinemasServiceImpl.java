@@ -4,6 +4,7 @@ import movieland.domain.entities.Cinema;
 import movieland.domain.models.service.CinemaServiceModel;
 import movieland.errors.duplicate.CinemaAlreadyExistsException;
 import movieland.errors.invalid.InvalidCinemaException;
+import movieland.errors.notfound.CinemaNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.services.interfaces.CinemasService;
 import movieland.services.validation.CinemasValidationService;
@@ -48,8 +49,23 @@ public class CinemasServiceImpl implements CinemasService {
     }
 
     @Override
-    public CinemaServiceModel update(String id, CinemaServiceModel serviceModel) {
-        return null;
+    public CinemaServiceModel update(String id, CinemaServiceModel cinemaServiceModel) {
+        if (!cinemasValidationService.isValid(cinemaServiceModel)) {
+            throw new InvalidCinemaException(INVALID_CINEMA_MODEL);
+        }
+
+        Cinema cinemaToUpdate = cinemasRepository.findById(cinemaServiceModel.getId())
+                .orElseThrow(() -> new CinemaNotFoundException(CINEMA_NOT_FOUND));
+
+        if (!cinemaToUpdate.getName().equals(cinemaServiceModel.getName())) {
+            if (cinemasRepository.existsByName(cinemaServiceModel.getName())) {
+                throw new CinemaAlreadyExistsException(CINEMA_ALREADY_EXISTS);
+            }
+        }
+
+        cinemaToUpdate = modelMapper.map(cinemaServiceModel, Cinema.class);
+        Cinema updatedCinema = cinemasRepository.save(cinemaToUpdate);
+        return modelMapper.map(updatedCinema, CinemaServiceModel.class);
     }
 
     @Override

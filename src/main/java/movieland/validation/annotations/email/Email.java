@@ -1,5 +1,6 @@
 package movieland.validation.annotations.email;
 
+import movieland.constants.entities.CinemaConstants;
 import movieland.validation.annotations.ValidationStatements;
 
 import javax.validation.Constraint;
@@ -18,7 +19,7 @@ public @interface Email {
 
     boolean nullable() default false;
 
-    String pattern() default "^[a-zA-Z0-9._-]+@[a-zA-Z]+\\.[a-z]{2,4}$";
+    String pattern() default CinemaConstants.EMAIL_PATTERN;
 
     Class<?>[] groups() default {};
 
