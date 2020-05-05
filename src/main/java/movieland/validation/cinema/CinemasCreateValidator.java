@@ -49,7 +49,7 @@ public class CinemasCreateValidator implements Validator {
             errors.rejectValue(ADDRESS_FIELD, NULL_ERROR_VALUE, ADDRESS_NOT_NULL);
         }
 
-        if (cinemaCreateBindingModel.getPhoneNumber() == null || cinemaCreateBindingModel.getAddress().trim().length() == 0) {
+        if (cinemaCreateBindingModel.getPhoneNumber() == null || cinemaCreateBindingModel.getPhoneNumber().trim().length() == 0) {
             errors.rejectValue(PHONE_NUMBER_FIELD, NULL_ERROR_VALUE, PHONE_NUMBER_NOT_NULL);
         } else if (!PHONE_NUMBER_PATTERN.matcher(cinemaCreateBindingModel.getPhoneNumber()).matches()) {
             errors.rejectValue(PHONE_NUMBER_FIELD, INVALID_VALUE, PHONE_NUMBER_INVALID_VALUE);

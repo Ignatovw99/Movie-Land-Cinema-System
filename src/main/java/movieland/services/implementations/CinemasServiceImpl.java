@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static movieland.constants.entities.CinemaConstants.*;
 
@@ -70,17 +71,27 @@ public class CinemasServiceImpl implements CinemasService {
 
     @Override
     public CinemaServiceModel delete(String id) {
-        return null;
+        Cinema cinemaToDelete = cinemasRepository.findById(id)
+                .orElseThrow(() -> new CinemaNotFoundException(CINEMA_NOT_FOUND));
+
+        cinemasRepository.delete(cinemaToDelete);
+        return modelMapper.map(cinemaToDelete, CinemaServiceModel.class);
     }
 
     @Override
     public CinemaServiceModel findById(String id) {
-        return null;
+        Cinema foundCinema = cinemasRepository.findById(id)
+                .orElseThrow(() -> new CinemaNotFoundException(CINEMA_NOT_FOUND));
+
+        return modelMapper.map(foundCinema, CinemaServiceModel.class);
     }
 
     @Override
     public List<CinemaServiceModel> findAll() {
-        return null;
+        return cinemasRepository.findAll()
+                .stream()
+                .map(cinema -> modelMapper.map(cinema, CinemaServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

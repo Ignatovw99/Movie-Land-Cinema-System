@@ -90,7 +90,7 @@ public class GenresController extends BaseController {
     }
 
     @GetMapping("/all")
-    public ModelAndView getAllGenres(ModelAndView modelAndView) {
+    public ModelAndView getAllGenres() {
         List<GenreViewModel> allGenres = genresService.findAll()
                 .stream()
                 .map(genreServiceModel -> modelMapper.map(genreServiceModel, GenreViewModel.class))

@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -241,5 +243,90 @@ public class CinemasServiceTest extends TestBase {
         assertEquals(cinemaServiceModel.getName(), updatedCinema.getName());
         assertEquals(cinemaServiceModel.getClosingTime(), updatedCinema.getClosingTime());
         assertEquals(cinemaServiceModel.getEmail(), updatedCinema.getEmail());
+    }
+
+    @Test
+    public void delete_WhenCinemaWithGivenIdDoesNotExist_ShouldThrowException() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CinemaNotFoundException.class,
+                () -> cinemasService.delete(cinemaServiceModel.getId())
+        );
+    }
+
+    @Test
+    public void delete_WhenCinemaExists_ShouldDeleteCorrectly() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.of(cinema));
+
+        assertDoesNotThrow(() -> {
+            CinemaServiceModel deletedCinema = cinemasService.delete(cinemaServiceModel.getId());
+            assertEquals(cinema.getId(), deletedCinema.getId());
+        });
+    }
+
+    @Test
+    public void findById_WhenCinemaWithGivenIdDoesNotExist_ShouldThrowException() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CinemaNotFoundException.class,
+                () -> cinemasService.findById(cinemaServiceModel.getId())
+        );
+    }
+
+    @Test
+    public void findById_WhenCinemaWithGivenIdExists_ShouldReturnTheCorrectEntry() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.of(cinema));
+
+        CinemaServiceModel foundCinema = cinemasService.findById(cinemaServiceModel.getId());
+
+        verify(cinemasRepository).findById(anyString());
+        assertEquals(cinema.getId(), foundCinema.getId());
+        assertEquals(cinema.getName(), foundCinema.getName());
+    }
+
+    @Test
+    public void findAll_WhenThereAreNoCinemasInDatabase_ShouldReturnEmptyCollection() {
+        when(cinemasRepository.findAll())
+                .thenReturn(new ArrayList<>());
+
+        List<CinemaServiceModel> emptyResult = cinemasService.findAll();
+
+        verify(cinemasRepository).findAll();
+        assertNotNull(emptyResult);
+        assertTrue(emptyResult.isEmpty());
+    }
+
+    @Test
+    public void findAll_WhenThereAreMoreThanOneEntriesInDatabase_ShouldReturnAllOfThem() {
+        when(cinemasRepository.findAll())
+                .thenReturn(List.of(cinema, cinema, cinema, cinema));
+
+        List<CinemaServiceModel> allCinemas = cinemasService.findAll();
+
+        verify(cinemasRepository).findAll();
+        assertEquals(4, allCinemas.size());
+    }
+
+    @Test
+    public void findAll_WhenResultIsReturned_ShouldNotBeModifiable() {
+        when(cinemasRepository.findAll())
+                .thenReturn(List.of(cinema, cinema, cinema, cinema));
+
+        List<CinemaServiceModel> allCinemas = cinemasService.findAll();
+
+        assertEquals(4, allCinemas.size());
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> allCinemas.add(new CinemaServiceModel())
+        );
+
+        assertEquals(4, allCinemas.size());
     }
 }
