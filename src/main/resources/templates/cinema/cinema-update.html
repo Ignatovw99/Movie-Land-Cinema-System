@@ -1,0 +1,69 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">Update a Cinema</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.cinema.CinemaUpdateBindingModel"*/-->
+    <form th:action="@{/cinemas/update}" method="POST" th:object="${model}">
+        <input type="hidden" id="id" name="id" th:field="*{id}">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Name..." name="name" th:field="*{name}"
+                   th:styleappend="${#fields.hasErrors('name')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('name')}" >
+                <small class="field-error" th:errors="*{name}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" placeholder="Address..." name="address" th:field="*{address}"
+                   th:styleappend="${#fields.hasErrors('address')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('address')}" >
+                <small class="field-error" th:errors="*{address}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" class="form-control" id="phoneNumber" placeholder="Phone number..." name="phoneNumber" th:field="*{phoneNumber}"
+                   th:styleappend="${#fields.hasErrors('phoneNumber')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('phoneNumber')}" >
+                <small class="field-error" th:errors="*{phoneNumber}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Email..." name="email" th:field="*{email}"
+                   th:styleappend="${#fields.hasErrors('email')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('email')}" >
+                <small class="field-error" th:errors="*{email}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="openingTime">Opening Time</label>
+            <input type="time" class="form-control" id="openingTime" placeholder="Opening time..." name="openingTime" th:field="*{openingTime}"
+                   th:styleappend="${#fields.hasErrors('openingTime')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('openingTime')}" >
+                <small class="field-error" th:errors="*{openingTime}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="closingTime">Closing Time</label>
+            <input type="time" class="form-control" id="closingTime" placeholder="Closing time..." name="closingTime" th:field="*{closingTime}"
+                   th:styleappend="${#fields.hasErrors('closingTime')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('closingTime')}" >
+                <small class="field-error" th:errors="*{closingTime}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
