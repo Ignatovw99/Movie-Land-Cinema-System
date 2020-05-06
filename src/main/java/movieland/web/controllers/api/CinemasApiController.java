@@ -25,7 +25,7 @@ public class CinemasApiController {
 
     @GetMapping("/names")
     public Set<CinemaIdAndNameResponseModel> allCinemaNames() {
-        return this.cinemasService.getAll()
+        return this.cinemasService.findAll()
                 .stream()
                 .map(cinemaServiceModel -> this.modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class))
                 .collect(Collectors.toUnmodifiableSet());

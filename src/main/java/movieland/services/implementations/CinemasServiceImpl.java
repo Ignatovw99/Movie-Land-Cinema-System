@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static movieland.constants.entities.CinemaConstants.*;
@@ -92,20 +91,5 @@ public class CinemasServiceImpl implements CinemasService {
                 .stream()
                 .map(cinema -> modelMapper.map(cinema, CinemaServiceModel.class))
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public boolean createCinema(CinemaServiceModel cinemaServiceModel) {
-        return false;
-    }
-
-    @Override
-    public Set<CinemaServiceModel> getAll() {
-        return null;
-    }
-
-    @Override
-    public CinemaServiceModel getCinemaById(String id) {
-        return null;
     }
 }

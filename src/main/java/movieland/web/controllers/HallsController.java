@@ -32,7 +32,7 @@ public class HallsController extends BaseController {
 
     @PostMapping("/add")
     public ModelAndView addHallConfirm(@ModelAttribute HallAddBindingModel hallAddBindingModel, ModelAndView modelAndView) {
-        this.hallsService.createHall(
+        this.hallsService.create(
                 this.modelMapper.map(hallAddBindingModel, HallServiceModel.class)
         );
         return redirect("/");

@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
+import java.util.Set;
 
 import static movieland.constants.entities.CinemaConstants.*;
 
@@ -28,7 +29,7 @@ public class Cinema extends BaseEntity implements Nameable {
 
     private LocalTime closingTime;
 
-//    private Set<Hall> halls;
+    private Set<Hall> halls;
 
     public Cinema() {
     }
@@ -47,7 +48,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "address", nullable = false)
-    @NotNull
+    @NotNull(message = ADDRESS_NOT_NULL)
     public String getAddress() {
         return address;
     }
@@ -57,7 +58,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "phone_number", nullable = false)
-    @NotNull
+    @NotNull(message = PHONE_NUMBER_NOT_NULL)
     @PhoneNumber
     public String getPhoneNumber() {
         return phoneNumber;
@@ -68,7 +69,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "email", nullable = false)
-    @NotNull
+    @NotNull(message = EMAIL_NOT_NULL)
     @Email
     public String getEmail() {
         return email;
@@ -79,7 +80,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "opening_time", nullable = false)
-    @NotNull
+    @NotNull(message = OPENING_TIME_NOT_NULL)
     public LocalTime getOpeningTime() {
         return openingTime;
     }
@@ -89,7 +90,7 @@ public class Cinema extends BaseEntity implements Nameable {
     }
 
     @Column(name = "closing_time", nullable = false)
-    @NotNull
+    @NotNull(message = CLOSING_TIME_NOT_NULL)
     public LocalTime getClosingTime() {
         return closingTime;
     }
@@ -98,12 +99,12 @@ public class Cinema extends BaseEntity implements Nameable {
         this.closingTime = closingTime;
     }
 
-//    @OneToMany(targetEntity = Hall.class, mappedBy = "cinema", cascade = CascadeType.ALL)
-//    public Set<Hall> getHalls() {
-//        return halls;
-//    }
-//
-//    public void setHalls(Set<Hall> halls) {
-//        this.halls = halls;
-//    }
+    @OneToMany(targetEntity = Hall.class, mappedBy = "cinema", cascade = CascadeType.ALL)
+    public Set<Hall> getHalls() {
+        return halls;
+    }
+
+    public void setHalls(Set<Hall> halls) {
+        this.halls = halls;
+    }
 }
