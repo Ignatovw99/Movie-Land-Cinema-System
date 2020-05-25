@@ -4,11 +4,12 @@ import movieland.domain.models.rest.MovieIdAndTitleResponseModel;
 import movieland.services.interfaces.MoviesService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,10 +27,11 @@ public class MoviesApiController {
     }
 
     @GetMapping("/titles")
-    public Set<MovieIdAndTitleResponseModel> allMoviesTitles() {
-        return moviesService.findAll()
+    public ResponseEntity<List<MovieIdAndTitleResponseModel>> allMoviesTitles() {
+        List<MovieIdAndTitleResponseModel> moviesResult = moviesService.findAll()
                 .stream()
                 .map(genreServiceModel -> modelMapper.map(genreServiceModel, MovieIdAndTitleResponseModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toUnmodifiableList());
+        return ResponseEntity.ok(moviesResult);
     }
 }

@@ -373,11 +373,11 @@ public class MoviesServiceTest extends TestBase {
                 });
 
         assertNotEquals(updatedGenre.getId(), movie.getGenre().getId());
+        assertNotNull(movieServiceModel.getAgeRestriction());
 
         MovieServiceModel updatedMovie = moviesService.update(DEFAULT_ID, movieServiceModel);
 
         assertEquals(updatedGenre.getId(), updatedMovie.getGenre().getId());
-        assertNotNull(movieServiceModel.getAgeRestriction());
         assertNull(updatedMovie.getAgeRestriction());
     }
 

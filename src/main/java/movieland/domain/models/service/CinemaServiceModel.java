@@ -1,6 +1,7 @@
 package movieland.domain.models.service;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 public class CinemaServiceModel extends BaseServiceModel {
 
@@ -16,7 +17,7 @@ public class CinemaServiceModel extends BaseServiceModel {
 
     private LocalTime closingTime;
 
-//    private Set<HallServiceModel> halls;
+    private Set<HallServiceModel> halls;
 
     public CinemaServiceModel() {
     }
@@ -69,11 +70,11 @@ public class CinemaServiceModel extends BaseServiceModel {
         this.closingTime = closingTime;
     }
 
-//    public Set<HallServiceModel> getHalls() {
-//        return halls;
-//    }
-//
-//    public void setHalls(Set<HallServiceModel> halls) {
-//        this.halls = halls;
-//    }
+    public Set<HallServiceModel> getHalls() {
+        return halls;
+    }
+
+    public void setHalls(Set<HallServiceModel> halls) {
+        this.halls = halls;
+    }
 }

@@ -2,7 +2,9 @@ package movieland.services.implementations;
 
 import movieland.TestBase;
 import movieland.domain.entities.Cinema;
+import movieland.domain.entities.Hall;
 import movieland.domain.models.service.CinemaServiceModel;
+import movieland.domain.models.service.HallServiceModel;
 import movieland.errors.duplicate.CinemaAlreadyExistsException;
 import movieland.errors.invalid.InvalidCinemaException;
 import movieland.errors.notfound.CinemaNotFoundException;
@@ -14,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -328,5 +327,72 @@ public class CinemasServiceTest extends TestBase {
         );
 
         assertEquals(4, allCinemas.size());
+    }
+
+    @Test
+    public void findAllCinemasWithoutGivenHallName_WhenHallWithGivenNameDoesNotExist_ShouldReturnAllCinemas() {
+        Cinema first = new Cinema();
+        Hall firstHall = new Hall();
+        firstHall.setName("First");
+        first.setHalls(new HashSet<>(List.of(firstHall)));
+
+        Cinema second = new Cinema();
+        Hall secondHall = new Hall();
+        secondHall.setName("Second");
+        second.setHalls(new HashSet<>(List.of(secondHall)));
+
+        Cinema third = new Cinema();
+        Hall thirdHall = new Hall();
+        thirdHall.setName("Third");
+        third.setHalls(new HashSet<>(List.of(thirdHall)));
+
+        when(cinemasRepository.findAllCinemasWithoutGivenHallName(anyString()))
+                .thenReturn(List.of(first, second, third));
+
+        String givenHallName = "Another";
+
+        List<CinemaServiceModel> availableCinemas = cinemasService.findAllCinemasWithoutGivenHallName(givenHallName);
+
+        for (CinemaServiceModel availableCinema : availableCinemas) {
+            for (HallServiceModel hall : availableCinema.getHalls()) {
+                assertNotEquals(givenHallName, hall.getName());
+            }
+        }
+    }
+
+    @Test
+    public void findAllCinemasWithoutGivenHallName_WhenHallWithGivenNameExistsAndIsAssignedToACinema_ShouldReturnAllCinemasExceptAssignedCinema() {
+        Cinema first = new Cinema();
+        first.setName("First Cinema");
+        Hall firstHall = new Hall();
+        firstHall.setName("First");
+        first.setHalls(new HashSet<>(List.of(firstHall)));
+
+        Cinema second = new Cinema();
+        second.setName("Second Cinema");
+        Hall secondHall = new Hall();
+        secondHall.setName("Second");
+        second.setHalls(new HashSet<>(List.of(secondHall)));
+
+        String givenHallName = "Given hall name";
+        Cinema third = new Cinema();
+        third.setName("Third Cinema");
+        Hall thirdHall = new Hall();
+        thirdHall.setName(givenHallName);
+        third.setHalls(new HashSet<>(List.of(thirdHall)));
+
+        when(cinemasRepository.findAllCinemasWithoutGivenHallName(anyString()))
+                .thenReturn(List.of(first, second));
+
+        List<CinemaServiceModel> availableCinemas = cinemasService.findAllCinemasWithoutGivenHallName(givenHallName);
+
+        assertEquals(2, availableCinemas.size());
+
+        for (CinemaServiceModel availableCinema : availableCinemas) {
+            assertNotEquals(third.getName(), availableCinema.getName());
+            for (HallServiceModel hall : availableCinema.getHalls()) {
+                assertNotEquals(givenHallName, hall.getName());
+            }
+        }
     }
 }

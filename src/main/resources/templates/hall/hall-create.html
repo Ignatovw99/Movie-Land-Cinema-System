@@ -1,0 +1,134 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">Create a new Hall</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.HallCreateBindingModel"*/-->
+    <form th:action="@{/halls/create}" method="POST" th:object="${model}">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Name..." name="name" th:field="*{name}"
+                   th:styleappend="${#fields.hasErrors('name')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('name')}" >
+                <small class="text-danger" th:errors="*{name}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="cinemaId">Cinema</label>
+            <select class="form-control" id="cinemaId" name="cinemaId">
+                <option value="" selected disabled hidden>Choose here</option>
+            </select>
+            <th:block th:if="${#fields.hasErrors('cinemaId')}" >
+                <small class="text-danger" th:errors="*{cinemaId}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="rows">Rows</label>
+            <input type="number" class="form-control" id="rows" placeholder="Rows..." name="rows" th:field="*{rows}"
+                   th:styleappend="${#fields.hasErrors('rows')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('rows')}" >
+                <small class="text-danger" th:errors="*{rows}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="columns">Columns</label>
+            <input type="number" class="form-control" id="columns" placeholder="Columns..." name="columns" th:field="*{columns}"
+                   th:styleappend="${#fields.hasErrors('columns')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('columns')}" >
+                <small class="text-danger" th:errors="*{columns}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="filmTechnology">Film Technology</label>
+            <input type="text" class="form-control" id="filmTechnology" placeholder="Film technology..." name="filmTechnology" th:field="*{filmTechnology}"
+                   th:styleappend="${#fields.hasErrors('filmTechnology')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('filmTechnology')}" >
+                <small class="text-danger" th:errors="*{filmTechnology}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="soundSystem">Sound System</label>
+            <input type="text" class="form-control" id="soundSystem" placeholder="Sound system..." name="soundSystem" th:field="*{soundSystem}"
+                   th:styleappend="${#fields.hasErrors('soundSystem')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('soundSystem')}" >
+                <small class="text-danger" th:errors="*{soundSystem}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/cinemas/all',
+            success: function (cinemas) {
+                /*<![CDATA[*/
+                let cinemaId = '[[${model.cinemaId}]]';
+                /*]]>*/
+                for (let cinema of cinemas) {
+                    let optionValue = $('<option/>')
+                        .attr({'value': cinema.id})
+                        .text(cinema.name);
+
+                    if (cinema.id === cinemaId) {
+                        optionValue.prop("selected", true);
+                    }
+
+                    $('#cinemaId')
+                        .append(optionValue);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    });
+    $('#name').change(function () {
+        let hallName = $('#name').val();
+        $.ajax({
+            type: 'GET',
+            url: '/api/cinemas/available?hallName=' + hallName,
+            success: function (cinemas) {
+                /*<![CDATA[*/
+                let cinemaId = '[[${model.cinemaId}]]';
+                /*]]>*/
+
+                let selectedOption = $("#cinemaId option:selected");
+
+                $('#cinemaId')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="" selected disabled hidden>Choose here</option>');
+
+                for (let cinema of cinemas) {
+                    let optionValue = $('<option/>')
+                        .attr({'value': cinema.id})
+                        .text(cinema.name);
+
+                    if (cinema.id === cinemaId || selectedOption.val() === cinema.id) {
+                        optionValue.prop("selected", true);
+                    }
+
+                    $('#cinemaId')
+                        .append(optionValue);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    });
+</script>

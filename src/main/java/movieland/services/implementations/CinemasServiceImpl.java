@@ -92,4 +92,12 @@ public class CinemasServiceImpl implements CinemasService {
                 .map(cinema -> modelMapper.map(cinema, CinemaServiceModel.class))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public List<CinemaServiceModel> findAllCinemasWithoutGivenHallName(String hallName) {
+        return cinemasRepository.findAllCinemasWithoutGivenHallName(hallName)
+                .stream()
+                .map(cinema-> modelMapper.map(cinema, CinemaServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
+    }
 }

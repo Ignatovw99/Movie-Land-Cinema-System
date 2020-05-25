@@ -3,11 +3,13 @@ package movieland.web.controllers.api;
 import movieland.domain.models.rest.CinemaIdAndNameResponseModel;
 import movieland.services.interfaces.CinemasService;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,11 +25,23 @@ public class CinemasApiController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/names")
-    public Set<CinemaIdAndNameResponseModel> allCinemaNames() {
-        return this.cinemasService.findAll()
+    @GetMapping("/all")
+    public ResponseEntity<List<CinemaIdAndNameResponseModel>> getAllCinemas() {
+        List<CinemaIdAndNameResponseModel> cinemasResult = cinemasService.findAll()
                 .stream()
-                .map(cinemaServiceModel -> this.modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class))
-                .collect(Collectors.toUnmodifiableSet());
+                .map(cinemaServiceModel -> modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class))
+                .collect(Collectors.toUnmodifiableList());
+
+        return ResponseEntity.ok(cinemasResult);
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<CinemaIdAndNameResponseModel>> getAllAvailableCinemas(@RequestParam String hallName) {
+        List<CinemaIdAndNameResponseModel> cinemasResult = cinemasService.findAllCinemasWithoutGivenHallName(hallName)
+                .stream()
+                .map(cinemaServiceModel -> modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class))
+                .collect(Collectors.toUnmodifiableList());
+
+        return ResponseEntity.ok(cinemasResult);
     }
 }
