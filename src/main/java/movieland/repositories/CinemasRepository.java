@@ -17,6 +17,4 @@ public interface CinemasRepository extends JpaRepository<Cinema, String> {
 
     @Query("SELECT cinema FROM Cinema cinema WHERE cinema NOT IN (SELECT c FROM Cinema c JOIN c.halls h WHERE h.name = :hallName)")
     List<Cinema> findAllCinemasWithoutGivenHallName(@Param("hallName") String hallName);
-
-    boolean existsByIdAndHallsNameEquals(String cinemaId, String hallName);
 }

@@ -6,8 +6,10 @@ import movieland.domain.entities.Hall;
 import movieland.domain.models.service.CinemaServiceModel;
 import movieland.domain.models.service.HallServiceModel;
 import movieland.errors.duplicate.HallAlreadyExistsException;
+import movieland.errors.invalid.HallCinemaNotChangeableException;
 import movieland.errors.invalid.InvalidHallException;
 import movieland.errors.notfound.CinemaNotFoundException;
+import movieland.errors.notfound.HallNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.repositories.HallsRepository;
 import movieland.services.interfaces.HallsService;
@@ -54,6 +56,8 @@ public class HallsServiceTest extends TestBase {
 
     private static Cinema DEFAULT_CINEMA = CinemasServiceTest.initializeEntity();
 
+    private static CinemaServiceModel DEFAULT_CINEMA_SERVICE_MODEL = CinemasServiceTest.initializeServiceModel();
+
     public static Hall initializeEntity() {
         Hall hall = new Hall();
         hall.setId(DEFAULT_ID);
@@ -74,7 +78,7 @@ public class HallsServiceTest extends TestBase {
         hallServiceModel.setColumns(DEFAULT_COLUMNS);
         hallServiceModel.setFilmTechnology(DEFAULT_FILM_TECHNOLOGY);
         hallServiceModel.setSoundSystem(DEFAULT_SOUND_SYSTEM);
-        hallServiceModel.setCinema(new CinemaServiceModel());
+        hallServiceModel.setCinema(DEFAULT_CINEMA_SERVICE_MODEL);
         return hallServiceModel;
     }
 
@@ -93,12 +97,19 @@ public class HallsServiceTest extends TestBase {
                 .thenReturn(false);
         when(hallsRepository.save(any(Hall.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
-        hallServiceModel.getCinema().setId(UUID.randomUUID().toString());
+    }
+
+    private void setupUpdateMethod() {
+        when(hallsValidationService.isValid(any(HallServiceModel.class)))
+                .thenReturn(true);
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.of(hall));
     }
 
     @Override
     protected void setupMockBeansActions() {
         setupCreateMethod();
+        setupUpdateMethod();
     }
 
     @Test
@@ -173,5 +184,102 @@ public class HallsServiceTest extends TestBase {
         assertEquals(hall.getId(), createdHall.getId());
         assertEquals(hall.getName(), createdHall.getName());
         assertNotNull(createdHall.getCinema());
+    }
+
+    @Test
+    public void update_WhenHallIsNotValid_ShouldThrowException() {
+        when(hallsValidationService.isValid(any(HallServiceModel.class)))
+                .thenReturn(false);
+
+        assertThrows(
+                InvalidHallException.class,
+                () -> hallsService.update(hallServiceModel.getId(), hallServiceModel)
+        );
+
+        verify(hallsValidationService).isValid(any(HallServiceModel.class));
+    }
+
+    @Test
+    public void update_WhenHallIsValid_ShouldNotThrowException() {
+        when(hallsValidationService.isValid(any(HallServiceModel.class)))
+                .thenReturn(true);
+
+        assertDoesNotThrow(() -> hallsService.update(hallServiceModel.getId(), hallServiceModel));
+
+        verify(hallsValidationService).isValid(any(HallServiceModel.class));
+    }
+
+    @Test
+    public void update_WhenHallWithGivenIdDoesNotExist_ShouldThrowException() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                HallNotFoundException.class,
+                () -> hallsService.update(hallServiceModel.getId(), hallServiceModel)
+        );
+
+        verify(hallsRepository).findById(anyString());
+    }
+
+    @Test
+    public void update_WhenHallWithGivenIdExists_ShouldNotThrowException() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.of(hall));
+
+        assertDoesNotThrow(() -> hallsService.update(hallServiceModel.getId(), hallServiceModel));
+
+        verify(hallsRepository).findById(anyString());
+    }
+
+    @Test
+    public void update_WhenHallCinemaIsChanged_ShouldThrowException() {
+        CinemaServiceModel newAssignedCinemaModel = new CinemaServiceModel();
+        newAssignedCinemaModel.setId("New Cinema Id");
+        hallServiceModel.setCinema(newAssignedCinemaModel);
+
+        assertThrows(
+                HallCinemaNotChangeableException.class,
+                () -> hallsService.update(hallServiceModel.getId(), hallServiceModel)
+        );
+    }
+
+    @Test
+    public void update_WhenHallNameIsChangedAndAlreadyThereIsSuchHallNameInTheGivenCinema_ShouldThrowException() {
+        hallServiceModel.setName("Changed Hall Name");
+        when(cinemasRepository.existsByIdAndHallsName(anyString(), anyString()))
+                .thenReturn(true);
+
+        assertThrows(
+                HallAlreadyExistsException.class,
+                () -> hallsService.update(hallServiceModel.getId(), hallServiceModel)
+        );
+
+        verify(cinemasRepository).existsByIdAndHallsName(anyString(), anyString());
+    }
+
+    @Test
+    public void update_WhenHallNameIsNotChanged_ShouldNotInvokeSearchInTheGivenCinema() {
+        assertDoesNotThrow(() -> hallsService.update(hallServiceModel.getId(), hallServiceModel));
+        verify(cinemasRepository, never()).existsByIdAndHallsName(anyString(), anyString());
+    }
+
+    @Test
+    public void update_WhenHallIsUpdated_ShouldItBePersistedCorrectly() {
+        hallServiceModel.setName("Hall name");
+        hallServiceModel.setRows(12);
+        hallServiceModel.setSoundSystem("Beats by Dre");
+
+        assertEquals(DEFAULT_NAME, hall.getName());
+        assertEquals(DEFAULT_ROWS, hall.getRows());
+        assertEquals(DEFAULT_SOUND_SYSTEM, hall.getSoundSystem());
+
+        HallServiceModel updatedHallServiceModel = hallsService.update(hallServiceModel.getId(), hallServiceModel);
+
+        assertEquals(hall.getName(), updatedHallServiceModel.getName());
+        assertEquals(hall.getRows(), updatedHallServiceModel.getRows());
+        assertEquals(hall.getSoundSystem(), updatedHallServiceModel.getSoundSystem());
+        assertEquals(hall.getCinema().getId(), updatedHallServiceModel.getCinema().getId());
+        assertEquals(hall.getColumns(), updatedHallServiceModel.getColumns());
     }
 }

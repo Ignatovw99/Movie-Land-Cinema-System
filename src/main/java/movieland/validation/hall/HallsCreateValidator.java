@@ -55,5 +55,9 @@ public class HallsCreateValidator implements Validator {
         if (hallCreateBindingModel.getSoundSystem() == null) {
             errors.rejectValue(SOUND_SYSTEM_FIELD, NULL_ERROR_VALUE, SOUND_SYSTEM_NOT_NULL);
         }
+
+        if (hallCreateBindingModel.getCinemaId() == null) {
+            errors.rejectValue(CINEMA_ID_FIELD, NULL_ERROR_VALUE, CINEMA_NOT_NULL);
+        }
     }
 }

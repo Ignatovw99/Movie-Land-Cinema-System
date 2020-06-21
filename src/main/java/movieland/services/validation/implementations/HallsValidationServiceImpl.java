@@ -1,6 +1,7 @@
 package movieland.services.validation.implementations;
 
 import movieland.constants.entities.HallConstants;
+import movieland.domain.models.service.CinemaServiceModel;
 import movieland.domain.models.service.HallServiceModel;
 import movieland.services.validation.HallsValidationService;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,17 @@ public class HallsValidationServiceImpl implements HallsValidationService {
         return soundSystem != null;
     }
 
+    private boolean isCinemaValid(CinemaServiceModel cinema) {
+        return cinema != null;
+    }
+
     @Override
     public boolean isValid(HallServiceModel hallServiceModel) {
         return isNameValid(hallServiceModel.getName())
                 && isNumberOfRowsValid(hallServiceModel.getRows())
                 &&  isNumberOfColumnsValid(hallServiceModel.getColumns())
                 && isFilmTechnologyValid(hallServiceModel.getFilmTechnology())
-                && isSoundSystemValid(hallServiceModel.getSoundSystem());
+                && isSoundSystemValid(hallServiceModel.getSoundSystem())
+                && isCinemaValid(hallServiceModel.getCinema());
     }
 }

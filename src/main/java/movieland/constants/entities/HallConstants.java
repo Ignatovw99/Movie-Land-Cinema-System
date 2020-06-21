@@ -8,6 +8,7 @@ public class HallConstants {
     public static final String COLUMNS_FIELD = "columns";
     public static final String FILM_TECHNOLOGY_FIELD = "filmTechnology";
     public static final String SOUND_SYSTEM_FIELD = "soundSystem";
+    public static final String CINEMA_ID_FIELD = "cinemaId";
 
     // Validation constants
     public static final String NAME_NOT_EMPTY = "Name should not be empty";
@@ -34,4 +35,6 @@ public class HallConstants {
 
     // Error handling constants
     public static final String HALL_ALREADY_EXISTS_IN_THE_GIVEN_CINEMA = "Hall with such name already exists in the given cinema";
+    public static final String HALL_NOT_FOUND = "Hall was not found";
+    public static final String HALL_CAN_NOT_CHANGE_ITS_CINEMA = "The cinema of the hall can not be changed";
 }

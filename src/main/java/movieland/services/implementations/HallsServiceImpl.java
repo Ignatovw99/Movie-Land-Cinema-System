@@ -5,8 +5,10 @@ import movieland.domain.entities.Cinema;
 import movieland.domain.entities.Hall;
 import movieland.domain.models.service.HallServiceModel;
 import movieland.errors.duplicate.HallAlreadyExistsException;
+import movieland.errors.invalid.HallCinemaNotChangeableException;
 import movieland.errors.invalid.InvalidHallException;
 import movieland.errors.notfound.CinemaNotFoundException;
+import movieland.errors.notfound.HallNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.repositories.HallsRepository;
 import movieland.services.interfaces.HallsService;
@@ -17,8 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static movieland.constants.entities.HallConstants.HALL_ALREADY_EXISTS_IN_THE_GIVEN_CINEMA;
-import static movieland.constants.entities.HallConstants.INVALID_HALL_MODEL;
+import static movieland.constants.entities.HallConstants.*;
 
 @Service
 public class HallsServiceImpl implements HallsService {
@@ -39,8 +40,16 @@ public class HallsServiceImpl implements HallsService {
         this.modelMapper = modelMapper;
     }
 
-    private boolean checkIfHallAlreadyExistsInCinema(String hallName, Cinema cinema) {
+    private boolean hasCinemaAlreadyTheGivenHall(String hallName, Cinema cinema) {
         return cinemasRepository.existsByIdAndHallsName(cinema.getId(), hallName);
+    }
+
+    private boolean isCinemaChanged(Cinema cinema, String newAssignedCinemaId) {
+        return !cinema.getId().equals(newAssignedCinemaId);
+    }
+
+    private boolean isHallNameChanged(String oldHallName, String newHallName) {
+        return !oldHallName.equals(newHallName);
     }
 
     @Override
@@ -52,7 +61,7 @@ public class HallsServiceImpl implements HallsService {
         Cinema hallCinema = cinemasRepository.findById(hallServiceModel.getCinema().getId())
                 .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
 
-        if (checkIfHallAlreadyExistsInCinema(hallServiceModel.getName(), hallCinema)) {
+        if (hasCinemaAlreadyTheGivenHall(hallServiceModel.getName(), hallCinema)) {
             throw new HallAlreadyExistsException(HALL_ALREADY_EXISTS_IN_THE_GIVEN_CINEMA);
         }
 
@@ -65,7 +74,24 @@ public class HallsServiceImpl implements HallsService {
 
     @Override
     public HallServiceModel update(String id, HallServiceModel hallServiceModel) {
-        return null;
+        if (!hallsValidationService.isValid(hallServiceModel)) {
+            throw new InvalidHallException(INVALID_HALL_MODEL);
+        }
+
+        Hall hallToUpdate = hallsRepository.findById(id)
+                .orElseThrow(() -> new HallNotFoundException(HALL_NOT_FOUND));
+
+        if (isCinemaChanged(hallToUpdate.getCinema(), hallServiceModel.getCinema().getId())) {
+            throw new HallCinemaNotChangeableException(HALL_CAN_NOT_CHANGE_ITS_CINEMA);
+        }
+
+        if (isHallNameChanged(hallToUpdate.getName(), hallServiceModel.getName()) && hasCinemaAlreadyTheGivenHall(hallServiceModel.getName(), hallToUpdate.getCinema())) {
+            throw new HallAlreadyExistsException(HALL_ALREADY_EXISTS_IN_THE_GIVEN_CINEMA);
+        }
+
+        modelMapper.map(hallServiceModel, hallToUpdate);
+        Hall updatedHall = hallsRepository.save(hallToUpdate);
+        return modelMapper.map(updatedHall, HallServiceModel.class);
     }
 
     @Override

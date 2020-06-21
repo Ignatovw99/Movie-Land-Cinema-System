@@ -41,7 +41,6 @@ public class GenresApiController {
     @GetMapping("/is-age-restriction-required/{id}")
     public ResponseEntity<Boolean> checkIfGenreRequiresAgeRestriction(@PathVariable String id) {
         Boolean isAgeRestrictionRequired;
-        //TODO: add controller local exception handling
         try {
             isAgeRestrictionRequired = genresService.findById(id).getIsAgeRestrictionRequired();
         } catch (GenreNotFoundException ex) {
