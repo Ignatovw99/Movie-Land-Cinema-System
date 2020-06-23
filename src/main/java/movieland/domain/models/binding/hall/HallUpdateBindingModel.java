@@ -1,6 +1,8 @@
-package movieland.domain.models.binding;
+package movieland.domain.models.binding.hall;
 
-public class HallCreateBindingModel {
+public class HallUpdateBindingModel {
+
+    private String id;
 
     private String name;
 
@@ -14,7 +16,15 @@ public class HallCreateBindingModel {
 
     private String cinemaId;
 
-    public HallCreateBindingModel() {
+    public HallUpdateBindingModel() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

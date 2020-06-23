@@ -395,4 +395,24 @@ public class CinemasServiceTest extends TestBase {
             }
         }
     }
+
+    @Test
+    public void findCinemaByHallId_WhenThereIsNotHallWithGivenHallIdAssignedToAnyCinema_ShouldThrowException() {
+        when(cinemasRepository.findByHallsId(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CinemaNotFoundException.class,
+                () -> cinemasService.findCinemaByHallId(UUID.randomUUID().toString())
+        );
+    }
+
+    @Test
+    public void findCinemaByHallId_WhenHallWithGivenIdExists_ShouldReturnTheCorrectCinema() {
+        when(cinemasRepository.findByHallsId(anyString()))
+                .thenReturn(Optional.of(cinema));
+
+        CinemaServiceModel cinemaServiceModel = cinemasService.findCinemaByHallId(UUID.randomUUID().toString());
+        assertNotNull(cinemaServiceModel);
+    }
 }

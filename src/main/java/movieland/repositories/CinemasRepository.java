@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CinemasRepository extends JpaRepository<Cinema, String> {
@@ -17,4 +18,6 @@ public interface CinemasRepository extends JpaRepository<Cinema, String> {
 
     @Query("SELECT cinema FROM Cinema cinema WHERE cinema NOT IN (SELECT c FROM Cinema c JOIN c.halls h WHERE h.name = :hallName)")
     List<Cinema> findAllCinemasWithoutGivenHallName(@Param("hallName") String hallName);
+
+    Optional<Cinema> findByHallsId(String hallId);
 }

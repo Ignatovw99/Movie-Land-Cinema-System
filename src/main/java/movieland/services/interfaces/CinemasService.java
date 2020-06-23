@@ -8,4 +8,6 @@ import java.util.List;
 public interface CinemasService extends CrudService<CinemaServiceModel, String> {
 
     List<CinemaServiceModel> findAllCinemasWithoutGivenHallName(String hallName);
+
+    CinemaServiceModel findCinemaByHallId(String hallId);
 }

@@ -1,13 +1,11 @@
 package movieland.web.controllers.api;
 
 import movieland.domain.models.rest.CinemaIdAndNameResponseModel;
+import movieland.domain.models.service.CinemaServiceModel;
 import movieland.services.interfaces.CinemasService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +33,13 @@ public class CinemasApiController {
         return ResponseEntity.ok(cinemasResult);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CinemaIdAndNameResponseModel> getCinemaById(@PathVariable String id) {
+        CinemaServiceModel cinemaServiceModel = cinemasService.findById(id);
+        CinemaIdAndNameResponseModel cinemaResult = modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class);
+        return ResponseEntity.ok(cinemaResult);
+    }
+
     @GetMapping("/available")
     public ResponseEntity<List<CinemaIdAndNameResponseModel>> getAllAvailableCinemas(@RequestParam String hallName) {
         List<CinemaIdAndNameResponseModel> cinemasResult = cinemasService.findAllCinemasWithoutGivenHallName(hallName)
@@ -43,5 +48,12 @@ public class CinemasApiController {
                 .collect(Collectors.toUnmodifiableList());
 
         return ResponseEntity.ok(cinemasResult);
+    }
+
+    @GetMapping("/by-hall/{hallId}")
+    public ResponseEntity<CinemaIdAndNameResponseModel> getCinemaByHallId(@PathVariable String hallId) {
+        CinemaServiceModel cinemaServiceModel = cinemasService.findCinemaByHallId(hallId);
+        CinemaIdAndNameResponseModel cinemaResult = modelMapper.map(cinemaServiceModel, CinemaIdAndNameResponseModel.class);
+        return ResponseEntity.ok(cinemaResult);
     }
 }

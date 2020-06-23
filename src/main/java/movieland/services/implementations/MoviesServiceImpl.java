@@ -131,7 +131,7 @@ public class MoviesServiceImpl implements MoviesService {
         Optional<Movie> movieCandidate =  moviesRepository.findById(movieId);
 
         if (movieCandidate.isEmpty()) {
-            return Optional.empty();
+            throw new MovieNotFoundException(MOVIE_NOT_FOUND);
         }
         return Optional.of(modelMapper.map(movieCandidate.get(), MovieServiceModel.class));
     }

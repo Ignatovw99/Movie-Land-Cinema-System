@@ -1,6 +1,6 @@
 package movieland.validation.hall;
 
-import movieland.domain.models.binding.HallCreateBindingModel;
+import movieland.domain.models.binding.hall.HallCreateBindingModel;
 import movieland.repositories.CinemasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;

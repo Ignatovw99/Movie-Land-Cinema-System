@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static movieland.constants.entities.HallConstants.*;
 
@@ -96,16 +97,27 @@ public class HallsServiceImpl implements HallsService {
 
     @Override
     public HallServiceModel delete(String id) {
-        return null;
+        Hall hallToDelete = hallsRepository.findById(id)
+                .orElseThrow(() -> new HallNotFoundException(HALL_NOT_FOUND));
+
+        hallsRepository.delete(hallToDelete);
+
+        return modelMapper.map(hallToDelete, HallServiceModel.class);
     }
 
     @Override
     public HallServiceModel findById(String id) {
-        return null;
+        Hall hall = hallsRepository.findById(id)
+                .orElseThrow(() -> new HallNotFoundException(HALL_NOT_FOUND));
+
+        return modelMapper.map(hall, HallServiceModel.class);
     }
 
     @Override
     public List<HallServiceModel> findAll() {
-        return null;
+        return hallsRepository.findAll()
+                .stream()
+                .map(hall -> modelMapper.map(hall, HallServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
     }
 }

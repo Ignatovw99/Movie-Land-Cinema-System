@@ -100,4 +100,12 @@ public class CinemasServiceImpl implements CinemasService {
                 .map(cinema-> modelMapper.map(cinema, CinemaServiceModel.class))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public CinemaServiceModel findCinemaByHallId(String hallId) {
+        Cinema cinema = cinemasRepository.findByHallsId(hallId)
+                .orElseThrow(() -> new CinemaNotFoundException(CINEMA_NOT_FOUND));
+
+        return modelMapper.map(cinema, CinemaServiceModel.class);
+    }
 }

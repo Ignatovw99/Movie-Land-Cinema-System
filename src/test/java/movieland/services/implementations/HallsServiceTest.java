@@ -282,4 +282,55 @@ public class HallsServiceTest extends TestBase {
         assertEquals(hall.getCinema().getId(), updatedHallServiceModel.getCinema().getId());
         assertEquals(hall.getColumns(), updatedHallServiceModel.getColumns());
     }
+
+    @Test
+    public void delete_WhenHallWithTheGivenIdDoesNotExist_ShouldThrowException() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                HallNotFoundException.class,
+                () -> hallsService.delete(hallServiceModel.getId())
+        );
+
+        verify(hallsRepository).findById(anyString());
+    }
+
+    @Test
+    public void delete_WhenHallWithGivenIdExists_ShouldDeleteIt() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.of(hall));
+
+        HallServiceModel deletedHall = hallsService.delete(hallServiceModel.getId());
+
+        verify(hallsRepository).delete(any(Hall.class));
+
+        assertEquals(hall.getId(), deletedHall.getId());
+        assertEquals(hall.getName(), deletedHall.getName());
+    }
+
+    @Test
+    public void findById_WhenThereIsNotHallWithGivenId_ShouldThrowException() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                HallNotFoundException.class,
+                () -> hallsService.findById(hallServiceModel.getId())
+        );
+
+        verify(hallsRepository).findById(anyString());
+    }
+
+    @Test
+    public void findById_WhenThereIsHallWithGivenId_ShouldReturnTheCorrectHall() {
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.of(hall));
+
+        HallServiceModel actualHall = hallsService.findById(hallServiceModel.getId());
+
+        verify(hallsRepository).findById(anyString());
+        assertEquals(hall.getId(), actualHall.getId());
+        assertEquals(hall.getName(), actualHall.getName());
+    }
 }
