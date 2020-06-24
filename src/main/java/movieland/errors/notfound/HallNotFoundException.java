@@ -1,7 +1,6 @@
 package movieland.errors.notfound;
 
 import movieland.constants.entities.HallConstants;
-import movieland.errors.BaseHttpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

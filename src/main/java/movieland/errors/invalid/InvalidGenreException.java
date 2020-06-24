@@ -1,7 +1,6 @@
 package movieland.errors.invalid;
 
 import movieland.constants.entities.GenreConstants;
-import movieland.errors.BaseHttpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

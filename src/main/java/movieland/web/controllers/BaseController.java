@@ -3,7 +3,6 @@ package movieland.web.controllers;
 import movieland.errors.BaseHttpException;
 import movieland.providers.ViewNameProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 public class BaseController {
