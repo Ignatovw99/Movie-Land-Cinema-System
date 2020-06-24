@@ -1,7 +1,9 @@
 package movieland.web.controllers;
 
+import movieland.errors.BaseHttpException;
 import movieland.providers.ViewNameProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 public class BaseController {
@@ -56,5 +58,13 @@ public class BaseController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:" + route);
         return modelAndView;
+    }
+
+    ModelAndView viewHttpException(BaseHttpException httpException) {
+        ModelAndView andView = new ModelAndView("fragments/layout");
+        andView.addObject("view", "error/error");
+        andView.addObject("error", httpException);
+        andView.setStatus(httpException.getHttpStatus());
+        return andView;
     }
 }

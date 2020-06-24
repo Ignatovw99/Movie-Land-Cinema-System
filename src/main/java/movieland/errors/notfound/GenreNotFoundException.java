@@ -5,10 +5,10 @@ import movieland.errors.BaseHttpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = GenreConstants.GENRE_NOT_FOUND)
-public class GenreNotFoundException extends BaseHttpException {
+@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = GenreConstants.GENRE_NOT_FOUND)
+public class GenreNotFoundException extends NotFoundException {
 
     public GenreNotFoundException(String message) {
-        super(HttpStatus.BAD_REQUEST.value(), message);
+        super(message);
     }
 }

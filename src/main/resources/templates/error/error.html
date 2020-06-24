@@ -1,0 +1,18 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org" th:object="${error}">
+
+    <!--/*@thymesVar id="error" type="movieland.errors.BaseHttpException"*/-->
+    <div class="container-fluid d-flex justify-content-center mb-5">
+        <h1 class="m-3" th:text="*{httpStatus.value()} + '-' + *{httpStatus.getReasonPhrase()}"></h1>
+    </div>
+
+    <div class="container-fluid d-flex justify-content-center mb-5">
+        <div class="text-center">
+            <h2 class="text-danger" th:text="*{getMessage()}"></h2>
+        </div>
+    </div>
+    <div class="container-fluid d-flex justify-content-center">
+        <div class="text-center mb-5">
+            <img id="http-status-image" th:src="@{'https://http.cat/' + *{httpStatus.value()}}" alt="statusCode">
+        </div>
+    </div>
+</div>

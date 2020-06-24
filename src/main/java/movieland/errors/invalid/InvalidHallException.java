@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = HallConstants.INVALID_HALL_MODEL)
-public class InvalidHallException extends BaseHttpException {
+public class InvalidHallException extends BadRequestException {
 
     public InvalidHallException(String message) {
-        super(HttpStatus.BAD_REQUEST.value(), message);
+        super(message);
     }
 }

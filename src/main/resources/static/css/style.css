@@ -166,3 +166,9 @@ footer svg.svg-inline--fa {
 footer svg.svg-inline--fa:hover {
     color: #ffd146!important;
 }
+
+#http-status-image {
+    height: 300px;
+    width: 70%;
+    background-color: powderblue;
+}

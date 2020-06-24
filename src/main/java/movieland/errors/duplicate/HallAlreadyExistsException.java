@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.CONFLICT, reason = HallConstants.HALL_ALREADY_EXISTS_IN_THE_GIVEN_CINEMA)
-public class HallAlreadyExistsException extends BaseHttpException {
+public class HallAlreadyExistsException extends ConflictException {
 
     public HallAlreadyExistsException(String message) {
-        super(HttpStatus.CONFLICT.value(), message);
+        super(message);
     }
 }

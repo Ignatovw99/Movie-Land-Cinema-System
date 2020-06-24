@@ -1,15 +1,17 @@
 package movieland.errors;
 
+import org.springframework.http.HttpStatus;
+
 public class BaseHttpException extends RuntimeException {
 
-    private final int httpStatus;
+    private final HttpStatus httpStatus;
 
-    protected BaseHttpException(int httpStatus, String message) {
+    protected BaseHttpException(HttpStatus httpStatus, String message) {
         super(message);
         this.httpStatus = httpStatus;
     }
 
-    public int getHttpStatus() {
+    public HttpStatus getHttpStatus() {
         return httpStatus;
     }
 }

@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.CONFLICT, reason = MovieConstants.MOVIE_ALREADY_EXISTS)
-public class MovieAlreadyExistsException extends BaseHttpException {
+public class MovieAlreadyExistsException extends ConflictException {
 
     public MovieAlreadyExistsException(String message) {
-        super(HttpStatus.CONFLICT.value(), message);
+        super(message);
     }
 }
