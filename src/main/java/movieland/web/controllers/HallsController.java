@@ -3,6 +3,7 @@ package movieland.web.controllers;
 import movieland.domain.models.binding.hall.HallCreateBindingModel;
 import movieland.domain.models.binding.hall.HallUpdateBindingModel;
 import movieland.domain.models.service.HallServiceModel;
+import movieland.domain.models.view.hall.HallDeleteViewModel;
 import movieland.domain.models.view.hall.HallViewModel;
 import movieland.services.interfaces.HallsService;
 import movieland.validation.hall.HallsCreateValidator;
@@ -74,7 +75,18 @@ public class HallsController extends BaseController {
         return redirect("/");
     }
 
-    //TODO: add delete endpoint
+    @GetMapping("/delete/{id}")
+    public ModelAndView deleteHall(@PathVariable String id) {
+        HallServiceModel hallServiceModel = hallsService.findById(id);
+        HallDeleteViewModel hallToDeleteViewModel = modelMapper.map(hallServiceModel, HallDeleteViewModel.class);
+        return view("hall/hall-delete", hallToDeleteViewModel);
+    }
+
+    @PostMapping("/delete")
+    public ModelAndView deleteHallConfirm(@RequestParam String id) {
+        hallsService.delete(id);
+        return redirect("/");
+    }
 
     @GetMapping("/all")
     public ModelAndView getAllHalls() {
