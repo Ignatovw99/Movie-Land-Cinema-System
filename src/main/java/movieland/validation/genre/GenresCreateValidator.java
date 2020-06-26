@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import static movieland.constants.entities.GenreConstants.*;
 import static movieland.constants.ValidationErrorCodes.*;
+import static movieland.constants.entities.GenreConstants.*;
 
 @movieland.validation.Validator
 public class GenresCreateValidator implements Validator {

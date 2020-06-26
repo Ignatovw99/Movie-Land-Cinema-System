@@ -8,6 +8,7 @@ import movieland.domain.models.view.cinema.CinemaViewModel;
 import movieland.services.interfaces.CinemasService;
 import movieland.validation.cinema.CinemasCreateValidator;
 import movieland.validation.cinema.CinemasUpdateValidator;
+import movieland.web.annotations.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static movieland.constants.GlobalConstants.MODEL_NAME;
 
 @Controller
 @RequestMapping("/cinemas")
@@ -39,12 +42,13 @@ public class CinemasController extends BaseController {
     }
 
     @GetMapping("/create")
+    @Page(title = "Create Cinema", name = "cinema/cinema-create")
     public ModelAndView createCinema(CinemaCreateBindingModel cinemaCreateBindingModel) {
-        return view("cinema/cinema-create", cinemaCreateBindingModel);
+        return view(cinemaCreateBindingModel);
     }
 
     @PostMapping("/create")
-    public ModelAndView createCinemaConfirm(@ModelAttribute(name = "model") CinemaCreateBindingModel cinemaCreateBindingModel, BindingResult bindingResult) {
+    public ModelAndView createCinemaConfirm(@ModelAttribute(name = MODEL_NAME) CinemaCreateBindingModel cinemaCreateBindingModel, BindingResult bindingResult) {
         cinemasCreateValidator.validate(cinemaCreateBindingModel, bindingResult);
         if (bindingResult.hasErrors()) {
             return view("cinema/cinema-create");
@@ -57,14 +61,15 @@ public class CinemasController extends BaseController {
     }
 
     @GetMapping("/update/{id}")
+    @Page(title = "Update Cinema", name = "cinema/cinema-update")
     public ModelAndView updateCinema(@PathVariable String id) {
         CinemaServiceModel cinemaServiceModel = cinemasService.findById(id);
         CinemaUpdateBindingModel cinemaToUpdate = modelMapper.map(cinemaServiceModel, CinemaUpdateBindingModel.class);
-        return view("cinema/cinema-update", cinemaToUpdate);
+        return view(cinemaToUpdate);
     }
 
     @PostMapping("/update")
-    public ModelAndView updateCinemaConfirm(@ModelAttribute(name = "model") CinemaUpdateBindingModel cinemaUpdateBindingModel, BindingResult bindingResult) {
+    public ModelAndView updateCinemaConfirm(@ModelAttribute(name = MODEL_NAME) CinemaUpdateBindingModel cinemaUpdateBindingModel, BindingResult bindingResult) {
         cinemasUpdateValidator.validate(cinemaUpdateBindingModel, bindingResult);
         if (bindingResult.hasErrors()) {
             return view("cinema/cinema-update");
@@ -76,10 +81,11 @@ public class CinemasController extends BaseController {
     }
 
     @GetMapping("/delete/{id}")
+    @Page(title = "Delete Cinema", name = "cinema/cinema-delete")
     public ModelAndView deleteCinema(@PathVariable String id) {
         CinemaServiceModel cinemaServiceModel = cinemasService.findById(id);
         CinemaDeleteViewModel cinemaToDelete = modelMapper.map(cinemaServiceModel, CinemaDeleteViewModel.class);
-        return view("cinema/cinema-delete", cinemaToDelete);
+        return view(cinemaToDelete);
     }
 
     @PostMapping("/delete")
@@ -89,12 +95,13 @@ public class CinemasController extends BaseController {
     }
 
     @GetMapping("/all")
+    @Page(title = "All Cinemas", name = "cinema/cinemas-all")
     public ModelAndView getAllCinemas() {
         List<CinemaViewModel> allCinemas = cinemasService.findAll()
                 .stream()
                 .map(cinemaServiceModel -> modelMapper.map(cinemaServiceModel, CinemaViewModel.class))
                 .collect(Collectors.toUnmodifiableList());
 
-        return view("cinema/cinemas-all", allCinemas);
+        return view(allCinemas);
     }
 }

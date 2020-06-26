@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import static movieland.constants.ValidationErrorCodes.*;
 import static movieland.constants.entities.CinemaConstants.*;
-import static movieland.constants.entities.CinemaConstants.TIME_12_HOUR_FORMAT_PATTERN;
 
 @movieland.validation.Validator
 public class CinemasUpdateValidator implements Validator {

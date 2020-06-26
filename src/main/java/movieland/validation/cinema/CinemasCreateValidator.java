@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 import static movieland.constants.ValidationErrorCodes.*;
-import static movieland.constants.ValidationErrorCodes.NULL_ERROR_VALUE;
 import static movieland.constants.entities.CinemaConstants.*;
 
 @movieland.validation.Validator

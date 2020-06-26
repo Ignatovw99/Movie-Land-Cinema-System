@@ -8,6 +8,7 @@ import movieland.domain.models.view.genre.GenreViewModel;
 import movieland.services.interfaces.GenresService;
 import movieland.validation.genre.GenresCreateValidator;
 import movieland.validation.genre.GenresUpdateValidator;
+import movieland.web.annotations.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static movieland.constants.GlobalConstants.MODEL_NAME;
 
 @Controller
 @RequestMapping("/genres")
@@ -39,12 +42,13 @@ public class GenresController extends BaseController {
     }
 
     @GetMapping("/create")
+    @Page(title = "Create Genre", name = "genre/genre-create")
     public ModelAndView createGenre(GenreCreateBindingModel genreCreateBindingModel) {
-        return view("genre/genre-create", genreCreateBindingModel);
+        return view(genreCreateBindingModel);
     }
 
     @PostMapping("/create")
-    public ModelAndView createGenreConfirm(@ModelAttribute(name = "model") GenreCreateBindingModel genreCreateBindingModel, BindingResult bindingResult) {
+    public ModelAndView createGenreConfirm(@ModelAttribute(name = MODEL_NAME) GenreCreateBindingModel genreCreateBindingModel, BindingResult bindingResult) {
         genresCreateValidator.validate(genreCreateBindingModel, bindingResult);
         if (bindingResult.hasErrors()) {
             return view("genre/genre-create");
@@ -57,14 +61,15 @@ public class GenresController extends BaseController {
     }
 
     @GetMapping("/update/{id}")
+    @Page(title = "Update Genre", name = "genre/genre-update")
     public ModelAndView updateGenre(@PathVariable String id) {
         GenreServiceModel genreServiceModel = genresService.findById(id);
         GenreUpdateBindingModel genreToUpdate = modelMapper.map(genreServiceModel, GenreUpdateBindingModel.class);
-        return view("genre/genre-update", genreToUpdate);
+        return view(genreToUpdate);
     }
 
     @PostMapping("/update")
-    public ModelAndView updateGenreConfirm(@ModelAttribute("model") GenreUpdateBindingModel genreToUpdate, BindingResult bindingResult) {
+    public ModelAndView updateGenreConfirm(@ModelAttribute(MODEL_NAME) GenreUpdateBindingModel genreToUpdate, BindingResult bindingResult) {
         genresUpdateValidator.validate(genreToUpdate, bindingResult);
         if (bindingResult.hasErrors()) {
             return view("genre/genre-update");
@@ -75,11 +80,12 @@ public class GenresController extends BaseController {
     }
 
     @GetMapping("/delete/{id}")
+    @Page(title = "Delete Genre", name = "genre/genre-delete")
     public ModelAndView deleteGenre(@PathVariable String id) {
         //TODO: get movies count in GenreDeleteViewModel
         GenreServiceModel genreServiceModel = genresService.findById(id);
         GenreDeleteViewModel genreToDelete = modelMapper.map(genreServiceModel, GenreDeleteViewModel.class);
-        return view("genre/genre-delete", genreToDelete);
+        return view(genreToDelete);
     }
 
     //TODO: add additional check logic if there are some movies assigned to the genre
@@ -90,12 +96,13 @@ public class GenresController extends BaseController {
     }
 
     @GetMapping("/all")
+    @Page(title = "All Genres", name = "genre/genres-all")
     public ModelAndView getAllGenres() {
         List<GenreViewModel> allGenres = genresService.findAll()
                 .stream()
                 .map(genreServiceModel -> modelMapper.map(genreServiceModel, GenreViewModel.class))
                 .collect(Collectors.toUnmodifiableList());
 
-        return view("genre/genres-all", allGenres);
+        return view(allGenres);
     }
 }

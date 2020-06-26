@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static movieland.constants.ValidationErrorCodes.*;
 import static movieland.constants.entities.MovieConstants.*;
-import static movieland.constants.entities.MovieConstants.AGE_RESTRICTION_RANGE;
 
 @movieland.validation.Validator
 public class MoviesUpdateValidator implements Validator {

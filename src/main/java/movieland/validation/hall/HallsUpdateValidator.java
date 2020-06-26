@@ -11,7 +11,6 @@ import org.springframework.validation.Validator;
 import java.util.Optional;
 
 import static movieland.constants.ValidationErrorCodes.*;
-import static movieland.constants.ValidationErrorCodes.NULL_ERROR_VALUE;
 import static movieland.constants.entities.HallConstants.*;
 
 @movieland.validation.Validator
