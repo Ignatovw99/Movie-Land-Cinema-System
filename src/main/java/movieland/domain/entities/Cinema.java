@@ -31,6 +31,8 @@ public class Cinema extends BaseEntity implements Nameable {
 
     private Set<Hall> halls;
 
+    private Set<Programme> programmes;
+
     public Cinema() {
     }
 
@@ -106,5 +108,14 @@ public class Cinema extends BaseEntity implements Nameable {
 
     public void setHalls(Set<Hall> halls) {
         this.halls = halls;
+    }
+
+    @OneToMany(targetEntity = Programme.class, mappedBy = "cinema", cascade = CascadeType.ALL)
+    public Set<Programme> getProgrammes() {
+        return programmes;
+    }
+
+    public void setProgrammes(Set<Programme> programmes) {
+        this.programmes = programmes;
     }
 }

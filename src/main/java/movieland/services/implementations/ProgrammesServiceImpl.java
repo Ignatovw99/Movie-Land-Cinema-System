@@ -1,6 +1,7 @@
 package movieland.services.implementations;
 
 import movieland.constants.entities.CinemaConstants;
+import movieland.domain.entities.Cinema;
 import movieland.domain.entities.Programme;
 import movieland.domain.models.service.ProgrammeServiceModel;
 import movieland.errors.invalid.InvalidProgrammeException;
@@ -11,8 +12,10 @@ import movieland.services.interfaces.ProgrammesService;
 import movieland.services.validation.ProgrammesValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
@@ -54,6 +57,27 @@ public class ProgrammesServiceImpl implements ProgrammesService {
         return isTheNextDay(LocalDate.now(clock), startDate);
     }
 
+    private boolean hasCinemaActiveProgramme(String cinemaId) {
+        Optional<Programme> activeProgrammeCandidate = programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(cinemaId);
+        if (activeProgrammeCandidate.isEmpty()) {
+            return false;
+        }
+        return isProgrammeActive(activeProgrammeCandidate.get());
+    }
+
+    private ProgrammeServiceModel createActiveWeeklyProgrammeFor(String cinemaId) {
+        Cinema cinema = cinemasRepository.findById(cinemaId)
+                .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
+
+        Programme programme = new Programme();
+        programme.setStartDate(LocalDate.now(clock));
+        programme.setEndDate(LocalDate.now(clock).plusDays(7));
+        programme.setCinema(cinema);
+        programme = programmesRepository.save(programme);
+
+        return modelMapper.map(programme, ProgrammeServiceModel.class);
+    }
+
     @Override
     public ProgrammeServiceModel createNext(ProgrammeServiceModel programmeServiceModel) {
         if (!programmesValidationService.isValid(programmeServiceModel)) {
@@ -85,6 +109,28 @@ public class ProgrammesServiceImpl implements ProgrammesService {
     @Override
     public boolean isProgrammeActive(Programme programme) {
         LocalDate today = LocalDate.now(clock);
-        return programme.getStartDate().isBefore(today) && programme.getEndDate().isAfter(today);
+        LocalDate startDate = programme.getStartDate();
+        LocalDate endDate = programme.getEndDate();
+        return (startDate.isEqual(today) || startDate.isBefore(today)) && (endDate.isEqual(today) || endDate.isAfter(today));
+    }
+
+    //This is scheduled task, which has to be executed every day at midnight (12am)
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Override
+    public void createAnActiveProgrammeForAllCinemasWithInactiveOnes() {
+        cinemasRepository.findAll()
+                .forEach(cinema -> {
+                    if (!hasCinemaActiveProgramme(cinema.getId())) {
+                        createActiveWeeklyProgrammeFor(cinema.getId());
+                    }
+                });
+    }
+
+    @Scheduled(cron = "0 0 12 * * SUN")
+    @Transactional
+    @Override
+    public void deleteInactiveProgrammesOlderThanOneYear() {
+        LocalDate lastYearDate = LocalDate.now(clock).minusYears(1);
+        programmesRepository.deleteByEndDateBefore(lastYearDate);
     }
 }
