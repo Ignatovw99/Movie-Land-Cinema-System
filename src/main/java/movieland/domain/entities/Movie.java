@@ -39,8 +39,6 @@ public class Movie extends BaseEntity {
 
     private Genre genre;
 
-//    private Set<Projection> projections;
-
     public Movie() {
     }
 
@@ -158,14 +156,4 @@ public class Movie extends BaseEntity {
     public void setGenre(Genre genre) {
         this.genre = genre;
     }
-
-//    @OneToMany(targetEntity = Projection.class, mappedBy = "movie", cascade = CascadeType.ALL)
-//    public Set<Projection> getProjections() {
-//        return projections;
-//    }
-//
-//    public void setProjections(Set<Projection> projections) {
-//        this.projections = projections;
-//    }
-
 }

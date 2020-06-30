@@ -14,7 +14,6 @@ import movieland.repositories.MoviesRepository;
 import movieland.services.interfaces.MoviesService;
 import movieland.services.validation.MoviesValidationService;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
