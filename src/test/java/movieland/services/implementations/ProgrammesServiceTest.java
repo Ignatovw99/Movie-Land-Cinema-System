@@ -211,5 +211,35 @@ public class ProgrammesServiceTest extends TestBase {
         assertTrue(programmesService.isProgrammeActive(programme));
     }
 
+    @Test
+    public void getFirstPossibleStartDateForCinema_WhenTheActiveProgrammeEndsAfterToday_ShouldReturnTheDayAfterEndDay() {
+        when(programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(anyString()))
+                .thenReturn(Optional.of(programme));
 
+        assertTrue(programme.getEndDate().isAfter(MOCK_TODAY));
+        LocalDate firstPossibleStartDateForCinema = programmesService.getFirstPossibleStartDateForCinema(programme.getCinema().getId());
+        assertEquals(1, Period.between(programme.getEndDate(), firstPossibleStartDateForCinema).getDays());
+    }
+
+    @Test
+    public void getFirstPossibleStartDateForCinema_WhenTheActiveProgrammeEndsBeforeToday_ShouldReturnTheTomorrowDate() {
+        programme.setEndDate(MOCK_TODAY.minusDays(1));
+        when(programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(anyString()))
+                .thenReturn(Optional.of(programme));
+
+        assertTrue(programme.getEndDate().isBefore(MOCK_TODAY));
+        LocalDate firstPossibleStartDateForCinema = programmesService.getFirstPossibleStartDateForCinema(programme.getCinema().getId());
+        assertEquals(1, Period.between(MOCK_TODAY, firstPossibleStartDateForCinema).getDays());
+    }
+
+    @Test
+    public void getFirstPossibleStartDateForCinema_WhenTheActiveProgrammeEndsToday_ShouldReturnTheTomorrowDate() {
+        programme.setEndDate(MOCK_TODAY);
+        when(programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(anyString()))
+                .thenReturn(Optional.of(programme));
+
+        assertTrue(programme.getEndDate().isEqual(MOCK_TODAY));
+        LocalDate firstPossibleStartDateForCinema = programmesService.getFirstPossibleStartDateForCinema(programme.getCinema().getId());
+        assertEquals(1, Period.between(MOCK_TODAY, firstPossibleStartDateForCinema).getDays());
+    }
 }

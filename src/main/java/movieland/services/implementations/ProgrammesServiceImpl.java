@@ -94,8 +94,13 @@ public class ProgrammesServiceImpl implements ProgrammesService {
 
         if (activeProgrammeCandidate.isEmpty() && !isStartDateTomorrow(programmeServiceModel.getStartDate())) {
             throw new InvalidProgrammeException(START_DATE_SHOULD_BE_TOMORROW_WHEN_NO_ACTIVE_PROGRAMME);
-        } else if (activeProgrammeCandidate.isPresent() && !isProgrammeActive(activeProgrammeCandidate.get()) && !isStartDateTomorrow(programmeServiceModel.getStartDate())) {
-            throw new InvalidProgrammeException(START_DATE_SHOULD_BE_TOMORROW_WHEN_NO_ACTIVE_PROGRAMME);
+        } else if (activeProgrammeCandidate.isPresent() && !isProgrammeActive(activeProgrammeCandidate.get())) {
+            Programme lastActiveProgramme = activeProgrammeCandidate.get();
+            if (isProgrammeOver(lastActiveProgramme) && isStartDateTomorrow(lastActiveProgramme.getStartDate())) {
+                throw new InvalidProgrammeException(START_DATE_SHOULD_BE_TOMORROW_WHEN_NO_ACTIVE_PROGRAMME);
+            } else if (!isStartDateNextDayAfterTheActiveProgramme(lastActiveProgramme, programmeServiceModel.getStartDate())){
+                throw new InvalidProgrammeException(START_DATE_SHOULD_BE_THE_NEXT_DAY_AFTER_CURRENT_ACTIVE_PROGRAMME);
+            }
         } else if (activeProgrammeCandidate.isPresent() && isProgrammeActive(activeProgrammeCandidate.get()) && !isStartDateNextDayAfterTheActiveProgramme(activeProgrammeCandidate.get(), programmeServiceModel.getStartDate())) {
             throw new InvalidProgrammeException(START_DATE_SHOULD_BE_THE_NEXT_DAY_AFTER_CURRENT_ACTIVE_PROGRAMME);
         }
@@ -104,6 +109,10 @@ public class ProgrammesServiceImpl implements ProgrammesService {
         programme = programmesRepository.save(programme);
 
         return modelMapper.map(programme, ProgrammeServiceModel.class);
+    }
+
+    private boolean isProgrammeOver(Programme lastActiveProgramme) {
+        return LocalDate.now(clock).isAfter(lastActiveProgramme.getEndDate());
     }
 
     @Override
@@ -132,5 +141,26 @@ public class ProgrammesServiceImpl implements ProgrammesService {
     public void deleteInactiveProgrammesOlderThanOneYear() {
         LocalDate lastYearDate = LocalDate.now(clock).minusYears(1);
         programmesRepository.deleteByEndDateBefore(lastYearDate);
+    }
+
+    @Override
+    public LocalDate getFirstPossibleStartDateForCinema(String cinemaId) {
+        Optional<Programme> lastCinemaProgrammeCandidate = programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(cinemaId);
+
+        LocalDate possibleStartDate;
+        LocalDate todayDate = LocalDate.now(clock);
+
+        if (lastCinemaProgrammeCandidate.isEmpty()) {
+            possibleStartDate = todayDate.plusDays(1);
+        } else {
+            LocalDate endDateOfLastCinemaProgramme = lastCinemaProgrammeCandidate.get().getEndDate();
+            if (endDateOfLastCinemaProgramme.isAfter(todayDate)) {
+                possibleStartDate = endDateOfLastCinemaProgramme.plusDays(1);
+            } else {
+                possibleStartDate = todayDate.plusDays(1);
+            }
+        }
+
+        return possibleStartDate;
     }
 }

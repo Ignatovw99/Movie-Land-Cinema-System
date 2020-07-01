@@ -24,8 +24,9 @@ public class ProgrammesValidationServiceImpl implements ProgrammesValidationServ
         return cinema != null;
     }
 
-    private boolean isProgrammeAtLeastOneWeekLong(LocalDate startDate, LocalDate endDate) {
-        return Period.between(startDate, endDate).getDays() >= 7;
+    private boolean isProgrammeBetweenOneAndTwoWeeksLong(LocalDate startDate, LocalDate endDate) {
+        int programmeDays = Period.between(startDate, endDate).getDays();
+        return programmeDays >= 7 && programmeDays <= 14;
     }
 
     private boolean isStartDateAfterToday(LocalDate startDate) {
@@ -35,7 +36,7 @@ public class ProgrammesValidationServiceImpl implements ProgrammesValidationServ
     @Override
     public boolean isValid(ProgrammeServiceModel programmeServiceModel) {
         return isStartDateAfterToday(programmeServiceModel.getStartDate())
-                && isProgrammeAtLeastOneWeekLong(programmeServiceModel.getStartDate(), programmeServiceModel.getEndDate())
+                && isProgrammeBetweenOneAndTwoWeeksLong(programmeServiceModel.getStartDate(), programmeServiceModel.getEndDate())
                 && isCinemaValid(programmeServiceModel.getCinema());
     }
 }

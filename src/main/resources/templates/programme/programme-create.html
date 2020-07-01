@@ -1,0 +1,86 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">Add a new Programme</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.programme.ProgrammeCreateBindingModel"*/-->
+    <form th:action="@{/programmes/create}" method="POST" th:object="${model}">
+        <div class="form-group">
+            <label for="cinemaId">Cinema</label>
+            <select class="form-control" id="cinemaId" name="cinemaId">
+                <option value="" selected disabled hidden>Choose here</option>
+            </select>
+            <th:block th:if="${#fields.hasErrors('cinemaId')}" >
+                <small class="text-danger" th:errors="*{cinemaId}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input readonly type="date" class="form-control" id="startDate" placeholder="Start Date..." name="startDate" th:field="*{startDate}"
+                   th:styleappend="${#fields.hasErrors('startDate')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('startDate')}" >
+                <small class="text-danger" th:errors="*{startDate}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" class="form-control" id="endDate" placeholder="End Date..." name="endDate" th:field="*{endDate}"
+                   th:styleappend="${#fields.hasErrors('endDate')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('endDate')}" >
+                <small class="text-danger" th:errors="*{endDate}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Add</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/cinemas/all',
+            success: function (cinemas) {
+                /*<![CDATA[*/
+                let cinemaId = '[[${model.cinemaId}]]';
+                /*]]>*/
+                for (let cinema of cinemas) {
+                    let optionValue = $('<option/>')
+                        .attr({'value': cinema.id})
+                        .text(cinema.name);
+
+                    if (cinema.id === cinemaId) {
+                        optionValue.prop("selected", true);
+                    }
+
+                    $('#cinemaId')
+                        .append(optionValue);
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    })
+</script>
+
+<script>
+    $('#cinemaId').change(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/api/programmes/start-date/cinema/' + $('#cinemaId').val(),
+            success: function (startDate) {
+                $('#startDate').val(startDate);
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        })
+    })
+</script>
