@@ -1,7 +1,7 @@
 package movieland.web.controllers;
 
-import movieland.domain.models.binding.ProjectionAddBindingModel;
-import movieland.domain.models.service.ProjectionAddServiceModel;
+import movieland.domain.models.binding.projection.ProjectionCreateBindingModel;
+import movieland.domain.models.service.ProjectionServiceModel;
 import movieland.services.interfaces.ProjectionsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +30,19 @@ public class ProjectionsController extends BaseController {
     }
 
     @GetMapping("/add")
-    public ModelAndView addProjection(ProjectionAddBindingModel projectionAddBindingModel) {
-        return view(projectionAddBindingModel);
+    public ModelAndView addProjection(ProjectionCreateBindingModel projectionCreateBindingModel) {
+        return view(projectionCreateBindingModel);
     }
 
     @PostMapping("/add")
-    public ModelAndView addProjectionConfirm(@Valid @ModelAttribute ProjectionAddBindingModel projectionAddBindingModel, BindingResult bindingResult) {
+    public ModelAndView addProjectionConfirm(@Valid @ModelAttribute ProjectionCreateBindingModel projectionCreateBindingModel, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return view("movies-add");
         }
 
-        ProjectionAddServiceModel projectionAddServiceModel = modelMapper.map(projectionAddBindingModel, ProjectionAddServiceModel.class);
+        ProjectionServiceModel projectionServiceModel = modelMapper.map(projectionCreateBindingModel, ProjectionServiceModel.class);
 
-        projectionsService.addProjection(projectionAddServiceModel);
+        projectionsService.create(projectionServiceModel);
 
         return redirect("/");
     }
