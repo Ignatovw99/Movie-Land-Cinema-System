@@ -5,6 +5,7 @@ import movieland.domain.entities.base.BaseEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Set;
 
 import static movieland.constants.entities.ProgrammeConstants.*;
 
@@ -17,6 +18,8 @@ public class Programme extends BaseEntity {
     private LocalDate endDate;
 
     private Cinema cinema;
+
+    private Set<Projection> projections;
 
     public Programme() {
     }
@@ -50,5 +53,14 @@ public class Programme extends BaseEntity {
 
     public void setCinema(Cinema cinema) {
         this.cinema = cinema;
+    }
+
+    @OneToMany(targetEntity = Projection.class, mappedBy = "programme")
+    public Set<Projection> getProjections() {
+        return projections;
+    }
+
+    public void setProjections(Set<Projection> projections) {
+        this.projections = projections;
     }
 }

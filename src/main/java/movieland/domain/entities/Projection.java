@@ -17,6 +17,8 @@ public class Projection extends BaseEntity {
 
     private LocalDateTime startingTime;
 
+    private LocalDateTime endingTime;
+
     private boolean isStateOfEmergency;
 
 //    private Set<Seat> seats;
@@ -61,6 +63,15 @@ public class Projection extends BaseEntity {
 
     public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
+    }
+
+    @Column(name = "ending_time", nullable = false)
+    public LocalDateTime getEndingTime() {
+        return endingTime;
+    }
+
+    public void setEndingTime(LocalDateTime endingTime) {
+        this.endingTime = endingTime;
     }
 
     @Column(name = "is_state_of_emergency")
