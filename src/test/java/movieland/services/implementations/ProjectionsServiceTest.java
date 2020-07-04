@@ -8,10 +8,7 @@ import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.invalid.InvalidProjectionException;
 import movieland.errors.notfound.HallNotFoundException;
 import movieland.errors.notfound.MovieNotFoundException;
-import movieland.repositories.HallsRepository;
-import movieland.repositories.MoviesRepository;
-import movieland.repositories.ProgrammesRepository;
-import movieland.repositories.ProjectionsRepository;
+import movieland.repositories.*;
 import movieland.services.interfaces.ProjectionsService;
 import movieland.services.validation.ProjectionsValidationService;
 import org.junit.jupiter.api.Test;
@@ -45,6 +42,9 @@ public class ProjectionsServiceTest extends TestBase {
 
     @MockBean
     private ProgrammesRepository programmesRepository;
+
+    @MockBean
+    private SeatsRepository seatsRepository;
 
     @MockBean
     private Clock clock;
@@ -120,6 +120,8 @@ public class ProjectionsServiceTest extends TestBase {
         Integer movieRunningTime = DEFAULT_MOVIE.getRunningTime();
         projectionServiceModel.setStartingTime(DEFAULT_STARTING_TIME.plusMinutes(movieRunningTime + 1));
 
+        when(projectionsRepository.save(any(Projection.class)))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
     }
 
     @Test
@@ -275,6 +277,8 @@ public class ProjectionsServiceTest extends TestBase {
         hall.setId("NEW ID");
         when(hallsRepository.findById(anyString()))
                 .thenReturn(Optional.of(hall));
+        when(seatsRepository.existsByProjectionAndIsFree(any(Projection.class), anyBoolean()))
+                .thenReturn(true);
 
         projectionServiceModel.setStartingTime(projection.getStartingTime());
 
@@ -308,5 +312,24 @@ public class ProjectionsServiceTest extends TestBase {
         projectionServiceModel.setStartingTime(projection.getStartingTime().plusMinutes(ProjectionConstants.MAX_MINUTES_DIFFERENCE + 5));
 
         assertDoesNotThrow(() -> projectionsService.create(projectionServiceModel));
+    }
+
+    @Test
+    public void create_WhenThereIsAlreadySuchMovieProjectionInTheCinemaAtTheGivenTimeAndTheProjectionIsBookedOut_ShouldCreateAnotherOne() {
+        Hall hall = HallsServiceTest.initializeEntity();
+        hall.setId("NEW ID");
+        when(hallsRepository.findById(anyString()))
+                .thenReturn(Optional.of(hall));
+
+        when(seatsRepository.existsByProjectionAndIsFree(any(Projection.class), anyBoolean()))
+                .thenReturn(false);
+
+        projectionServiceModel.setStartingTime(DEFAULT_STARTING_TIME);
+
+        assertDoesNotThrow(() -> {
+            ProjectionServiceModel createdProjection = projectionsService.create(this.projectionServiceModel);
+
+            assertEquals(projection.getMovie().getTitle(), createdProjection.getMovie().getTitle());
+        });
     }
 }

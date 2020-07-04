@@ -4,6 +4,7 @@ import movieland.domain.entities.base.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "projections")
@@ -21,7 +22,7 @@ public class Projection extends BaseEntity {
 
     private boolean isStateOfEmergency;
 
-//    private Set<Seat> seats;
+    private Set<Seat> seats;
 
     public Projection() {
     }
@@ -83,12 +84,12 @@ public class Projection extends BaseEntity {
         isStateOfEmergency = stateOfEmergency;
     }
 
-    //    @OneToMany(targetEntity = Seat.class, mappedBy = "projection", cascade = CascadeType.ALL)
-//    public Set<Seat> getSeats() {
-//        return seats;
-//    }
-//
-//    public void setSeats(Set<Seat> seats) {
-//        this.seats = seats;
-//    }
+    @OneToMany(targetEntity = Seat.class, mappedBy = "projection", cascade = CascadeType.ALL)
+    public Set<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
+    }
 }

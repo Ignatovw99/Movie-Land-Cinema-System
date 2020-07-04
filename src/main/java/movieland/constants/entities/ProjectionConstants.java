@@ -15,6 +15,7 @@ public class ProjectionConstants {
 
     // Error handling constants
     public static final String PROJECTION_MODEL_NOT_VALID = "Projection model is not valid";
+    public static final String PROJECTION_NOT_FOUND = "Projection was not found";
     public static final String PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE = "Projection should start in cinema's working hours range";
     public static final String HALL_IS_NOT_FREE_IN_THE_GIVEN_PERIOD = "The hall is not free during the given period of time, try another hours... ;(";
     public static final String SUCH_MOVIE_PROJECTION_ALREADY_EXISTS = "In the given cinema there is already such movie projection at the given time";

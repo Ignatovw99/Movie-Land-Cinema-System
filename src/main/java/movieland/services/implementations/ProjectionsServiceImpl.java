@@ -11,6 +11,7 @@ import movieland.errors.notfound.HallNotFoundException;
 import movieland.errors.notfound.MovieNotFoundException;
 import movieland.repositories.*;
 import movieland.services.interfaces.ProjectionsService;
+//import movieland.services.interfaces.SeatsService;
 import movieland.services.validation.ProjectionsValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,19 +35,23 @@ public class ProjectionsServiceImpl implements ProjectionsService {
 
     private final ProgrammesRepository programmesRepository;
 
-//    private final SeatsRepository seatsRepository;
+    private final SeatsRepository seatsRepository;
+
+//    private final SeatsService seatsService;
 
     private final ModelMapper modelMapper;
 
     private final Clock clock;
 
     @Autowired
-    public ProjectionsServiceImpl(ProjectionsRepository projectionsRepository, ProjectionsValidationService projectionsValidationService, MoviesRepository moviesRepository, HallsRepository hallsRepository, ProgrammesRepository programmesRepository, ModelMapper modelMapper, Clock clock) {
+    public ProjectionsServiceImpl(ProjectionsRepository projectionsRepository, ProjectionsValidationService projectionsValidationService, MoviesRepository moviesRepository, HallsRepository hallsRepository, ProgrammesRepository programmesRepository, SeatsRepository seatsRepository, ModelMapper modelMapper, Clock clock) {
         this.projectionsRepository = projectionsRepository;
         this.projectionsValidationService = projectionsValidationService;
         this.moviesRepository = moviesRepository;
         this.hallsRepository = hallsRepository;
         this.programmesRepository = programmesRepository;
+        this.seatsRepository = seatsRepository;
+//        this.seatsService = seatsService;
         this.modelMapper = modelMapper;
         this.clock = clock;
     }
@@ -79,15 +84,23 @@ public class ProjectionsServiceImpl implements ProjectionsService {
             throw new InvalidProjectionException(HALL_IS_NOT_FREE_IN_THE_GIVEN_PERIOD);
         }
 
-        boolean[] areAllMovieProjectionsBookedOut = { false };
+        boolean[] areAllMovieProjectionsBookedOut = { true };
+        boolean isMovieAlreadyProjected = isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, cinemaCurrentActiveProgramme, projectionServiceModel.getStartingTime(), areAllMovieProjectionsBookedOut);
 
-        if (isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, cinemaCurrentActiveProgramme, projectionServiceModel.getStartingTime(), areAllMovieProjectionsBookedOut)){
+        if (isMovieAlreadyProjected && !areAllMovieProjectionsBookedOut[0]){
             throw new InvalidProjectionException(SUCH_MOVIE_PROJECTION_ALREADY_EXISTS);
         }
-        // TODO: -------------> It is also possible the same projections(with same movie) to start at the same time but in diff halls if only the first projection is sold out and there is free hall;
 
-        //TODO: when generating seats think of the is emergency state??
-        return null;
+        Projection projection = modelMapper.map(projectionServiceModel, Projection.class);
+        projection.setEndingTime(projectionEndingTime);
+        projection = projectionsRepository.save(projection);
+
+        ProjectionServiceModel createdProjection = modelMapper.map(projection, ProjectionServiceModel.class);
+
+        // Asynchronous seats generation
+//        seatsService.generateProjectionSeats(createdProjection);
+
+        return createdProjection;
     }
 
     @Override
@@ -139,9 +152,11 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         boolean isAlreadyProjected = false;
         for (Projection projection : programme.getProjections()) {
             if (projection.getMovie().equals(movie) && areDatesEqual(projection.getStartingTime(), projectionStartingTime) && isMinutesDeviationAdmissible(projection.getStartingTime(), projectionStartingTime)) {
-                // TODO check if all seats are sold out
-                areAllMovieProjectionsBookedOut[0] = true;
                 isAlreadyProjected = true;
+                if (seatsRepository.existsByProjectionAndIsFree(projection, true)) {
+                    areAllMovieProjectionsBookedOut[0] = false;
+                    break;
+                }
             }
         }
         return isAlreadyProjected;

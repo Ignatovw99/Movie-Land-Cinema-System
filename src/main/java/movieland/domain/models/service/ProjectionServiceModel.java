@@ -17,7 +17,7 @@ public class ProjectionServiceModel extends BaseServiceModel {
 
     private boolean isStateOfEmergency;
 
-//    private Set<Seat> seats;
+    private Set<Seat> seats;
 
     public ProjectionServiceModel() {
     }
@@ -62,11 +62,11 @@ public class ProjectionServiceModel extends BaseServiceModel {
         isStateOfEmergency = stateOfEmergency;
     }
 
-    //    public Set<Seat> getSeats() {
-//        return seats;
-//    }
-//
-//    public void setSeats(Set<Seat> seats) {
-//        this.seats = seats;
-//    }
+    public Set<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
+    }
 }
