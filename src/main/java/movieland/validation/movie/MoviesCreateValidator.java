@@ -1,6 +1,5 @@
 package movieland.validation.movie;
 
-import movieland.constants.entities.GenreConstants;
 import movieland.domain.entities.Genre;
 import movieland.domain.models.binding.movie.MovieCreateBindingModel;
 import movieland.repositories.GenresRepository;
@@ -10,7 +9,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static movieland.constants.ValidationErrorCodes.*;
 import static movieland.constants.entities.MovieConstants.*;
@@ -81,18 +79,6 @@ public class MoviesCreateValidator implements Validator {
             errors.rejectValue(YEAR_OF_PRODUCTION_FIELD, NULL_ERROR_VALUE, YEAR_OF_PRODUCTION_NOT_NULL);
         } else if (movieCreateBindingModel.getYearOfProduction().compareTo(currentYear) > 0) {
             errors.rejectValue(YEAR_OF_PRODUCTION_FIELD, INVALID_VALUE, String.format(YEAR_OF_PRODUCTION_MAX_VALUE, currentYear));
-        }
-
-        if (movieCreateBindingModel.getReleaseDate() == null) {
-            errors.rejectValue(RELEASE_DATE_FIELD, NULL_ERROR_VALUE, RELEASE_DATE_NOT_NULL);
-        } else if (movieCreateBindingModel.getReleaseDate().compareTo(todayDate) <= 0) {
-            errors.rejectValue(RELEASE_DATE_FIELD, INVALID_VALUE, String.format(RELEASE_DATE_INVALID_VALUE, todayDate.plusDays(1).format(DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT))));
-        }
-
-        if (movieCreateBindingModel.getGenreId() == null) {
-            errors.rejectValue(GENRE_CREATE_BINDING_MODEL_FIELD, NULL_ERROR_VALUE, GENRE_NOT_NULL);
-        } else if (genreToAssign == null) {
-            errors.rejectValue(GENRE_CREATE_BINDING_MODEL_FIELD, NOT_FOUND_ERROR, GenreConstants.GENRE_NOT_FOUND);
         }
 
         if (genreToAssign != null && genreToAssign.getIsAgeRestrictionRequired() && movieCreateBindingModel.getAgeRestriction() == null) {

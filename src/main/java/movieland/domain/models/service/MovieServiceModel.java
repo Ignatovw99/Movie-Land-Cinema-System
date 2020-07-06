@@ -1,7 +1,6 @@
 package movieland.domain.models.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Set;
 
 public class MovieServiceModel extends BaseServiceModel {
@@ -19,8 +18,6 @@ public class MovieServiceModel extends BaseServiceModel {
     private String country;
 
     private Integer yearOfProduction;
-
-    private LocalDate releaseDate;
 
     private BigDecimal budget;
 
@@ -85,14 +82,6 @@ public class MovieServiceModel extends BaseServiceModel {
 
     public void setYearOfProduction(Integer yearOfProduction) {
         this.yearOfProduction = yearOfProduction;
-    }
-
-    public LocalDate getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     public BigDecimal getBudget() {

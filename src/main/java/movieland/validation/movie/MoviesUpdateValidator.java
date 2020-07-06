@@ -11,7 +11,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static movieland.constants.ValidationErrorCodes.*;
@@ -88,12 +87,6 @@ public class MoviesUpdateValidator implements Validator {
             errors.rejectValue(YEAR_OF_PRODUCTION_FIELD, NULL_ERROR_VALUE, YEAR_OF_PRODUCTION_NOT_NULL);
         } else if (movieUpdateBindingModel.getYearOfProduction().compareTo(currentYear) > 0) {
             errors.rejectValue(YEAR_OF_PRODUCTION_FIELD, INVALID_VALUE, String.format(YEAR_OF_PRODUCTION_MAX_VALUE, currentYear));
-        }
-
-        if (movieUpdateBindingModel.getReleaseDate() == null) {
-            errors.rejectValue(RELEASE_DATE_FIELD, NULL_ERROR_VALUE, RELEASE_DATE_NOT_NULL);
-        } else if (movieUpdateBindingModel.getReleaseDate().compareTo(todayDate) <= 0) {
-            errors.rejectValue(RELEASE_DATE_FIELD, INVALID_VALUE, String.format(RELEASE_DATE_INVALID_VALUE, todayDate.plusDays(1).format(DateTimeFormatter.ofPattern(RELEASE_DATE_FORMAT))));
         }
 
         if (movieUpdateBindingModel.getGenreId() == null) {

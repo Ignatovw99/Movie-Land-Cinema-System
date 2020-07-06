@@ -49,11 +49,6 @@ public class MoviesValidationServiceImpl implements MoviesValidationService {
                 && yearOfProduction.compareTo(LocalDate.now().getYear()) <= 0;
     }
 
-    private boolean isReleaseDateValid(LocalDate releaseDate) {
-        return releaseDate != null
-                && releaseDate.compareTo(LocalDate.now()) > 0;
-    }
-
     private boolean isGenreValid(GenreServiceModel genreServiceModel) {
         return genreServiceModel != null;
     }
@@ -80,7 +75,6 @@ public class MoviesValidationServiceImpl implements MoviesValidationService {
                 && isCastValid(movieServiceModel.getCast())
                 && isRunningTimeValid(movieServiceModel.getRunningTime())
                 && isYearOfProductionValid(movieServiceModel.getYearOfProduction())
-                && isReleaseDateValid(movieServiceModel.getReleaseDate())
                 && isGenreValid(movieServiceModel.getGenre())
                 && isAgeRestrictionValid(movieServiceModel.getGenre().getIsAgeRestrictionRequired(), movieServiceModel.getAgeRestriction());
     }

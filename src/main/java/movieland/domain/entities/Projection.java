@@ -76,12 +76,12 @@ public class Projection extends BaseEntity {
     }
 
     @Column(name = "is_state_of_emergency")
-    public boolean isStateOfEmergency() {
+    public boolean getIsStateOfEmergency() {
         return isStateOfEmergency;
     }
 
-    public void setStateOfEmergency(boolean stateOfEmergency) {
-        isStateOfEmergency = stateOfEmergency;
+    public void setIsStateOfEmergency(boolean isStateOfEmergency) {
+        this.isStateOfEmergency = isStateOfEmergency;
     }
 
     @OneToMany(targetEntity = Seat.class, mappedBy = "projection", cascade = CascadeType.ALL)

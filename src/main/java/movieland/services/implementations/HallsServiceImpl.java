@@ -120,4 +120,12 @@ public class HallsServiceImpl implements HallsService {
                 .map(hall -> modelMapper.map(hall, HallServiceModel.class))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public List<HallServiceModel> findAllByCinema(String cinemaId) {
+        return hallsRepository.findAllByCinemaId(cinemaId)
+                .stream()
+                .map(hall -> modelMapper.map(hall, HallServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
+    }
 }

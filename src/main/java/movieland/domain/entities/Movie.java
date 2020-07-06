@@ -8,7 +8,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Set;
 
 import static movieland.constants.entities.MovieConstants.*;
@@ -30,8 +29,6 @@ public class Movie extends BaseEntity {
     private String country;
 
     private Integer yearOfProduction;
-
-    private LocalDate releaseDate;
 
     private BigDecimal budget;
 
@@ -114,16 +111,6 @@ public class Movie extends BaseEntity {
 
     public void setYearOfProduction(Integer yearOfProduction) {
         this.yearOfProduction = yearOfProduction;
-    }
-
-    @Column(name = "release_date", nullable = false)
-    @NotNull(message = RELEASE_DATE_NOT_NULL)
-    public LocalDate getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     @Column(name = "budget")

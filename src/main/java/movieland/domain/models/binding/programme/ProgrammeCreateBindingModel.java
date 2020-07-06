@@ -4,7 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-import static movieland.constants.entities.ProgrammeConstants.*;
+import static movieland.constants.entities.ProgrammeConstants.DATE_PATTERN;
 
 public class ProgrammeCreateBindingModel {
 

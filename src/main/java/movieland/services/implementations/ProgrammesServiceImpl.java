@@ -49,26 +49,23 @@ public class ProgrammesServiceImpl implements ProgrammesService {
         return Period.between(day, nextDayCandidate).getDays() == 1;
     }
 
-    private boolean isStartDateNextDayAfterTheActiveProgramme(Programme activeProgramme, LocalDate startDate) {
-        return isTheNextDay(activeProgramme.getEndDate(), startDate);
+    private boolean isStartDateNextDayAfterTheLastAvailableProgramme(Programme availableProgramme, LocalDate startDate) {
+        return isTheNextDay(availableProgramme.getEndDate(), startDate);
     }
 
     private boolean isStartDateTomorrow(LocalDate startDate) {
         return isTheNextDay(LocalDate.now(clock), startDate);
     }
 
-    private boolean hasCinemaActiveProgramme(String cinemaId) {
-        Optional<Programme> activeProgrammeCandidate = programmesRepository.findFirstByCinemaIdOrderByEndDateDesc(cinemaId);
+    private boolean hasCinemaActiveProgramme(Cinema cinema) {
+        Optional<Programme> activeProgrammeCandidate = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, LocalDate.now(clock));
         if (activeProgrammeCandidate.isEmpty()) {
             return false;
         }
         return isProgrammeActive(activeProgrammeCandidate.get());
     }
 
-    private ProgrammeServiceModel createActiveWeeklyProgrammeFor(String cinemaId) {
-        Cinema cinema = cinemasRepository.findById(cinemaId)
-                .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
-
+    private ProgrammeServiceModel createActiveWeeklyProgrammeFor(Cinema cinema) {
         Programme programme = new Programme();
         programme.setStartDate(LocalDate.now(clock));
         programme.setEndDate(LocalDate.now(clock).plusDays(7));
@@ -90,18 +87,18 @@ public class ProgrammesServiceImpl implements ProgrammesService {
             throw new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND);
         }
 
-        Optional<Programme> activeProgrammeCandidate = programmesRepository.findFirstByCinemaIdOrderByStartDateDesc(cinemaId);
+        Optional<Programme> lastAvailableProgrammeCandidate = programmesRepository.findFirstByCinemaIdOrderByStartDateDesc(cinemaId);
 
-        if (activeProgrammeCandidate.isEmpty() && !isStartDateTomorrow(programmeServiceModel.getStartDate())) {
+        if (lastAvailableProgrammeCandidate.isEmpty() && !isStartDateTomorrow(programmeServiceModel.getStartDate())) {
             throw new InvalidProgrammeException(START_DATE_SHOULD_BE_TOMORROW_WHEN_NO_ACTIVE_PROGRAMME);
-        } else if (activeProgrammeCandidate.isPresent() && !isProgrammeActive(activeProgrammeCandidate.get())) {
-            Programme lastActiveProgramme = activeProgrammeCandidate.get();
+        } else if (lastAvailableProgrammeCandidate.isPresent() && !isProgrammeActive(lastAvailableProgrammeCandidate.get())) {
+            Programme lastActiveProgramme = lastAvailableProgrammeCandidate.get();
             if (isProgrammeOver(lastActiveProgramme) && isStartDateTomorrow(lastActiveProgramme.getStartDate())) {
                 throw new InvalidProgrammeException(START_DATE_SHOULD_BE_TOMORROW_WHEN_NO_ACTIVE_PROGRAMME);
-            } else if (!isStartDateNextDayAfterTheActiveProgramme(lastActiveProgramme, programmeServiceModel.getStartDate())){
+            } else if (!isStartDateNextDayAfterTheLastAvailableProgramme(lastActiveProgramme, programmeServiceModel.getStartDate())){
                 throw new InvalidProgrammeException(START_DATE_SHOULD_BE_THE_NEXT_DAY_AFTER_CURRENT_ACTIVE_PROGRAMME);
             }
-        } else if (activeProgrammeCandidate.isPresent() && isProgrammeActive(activeProgrammeCandidate.get()) && !isStartDateNextDayAfterTheActiveProgramme(activeProgrammeCandidate.get(), programmeServiceModel.getStartDate())) {
+        } else if (lastAvailableProgrammeCandidate.isPresent() && isProgrammeActive(lastAvailableProgrammeCandidate.get()) && !isStartDateNextDayAfterTheLastAvailableProgramme(lastAvailableProgrammeCandidate.get(), programmeServiceModel.getStartDate())) {
             throw new InvalidProgrammeException(START_DATE_SHOULD_BE_THE_NEXT_DAY_AFTER_CURRENT_ACTIVE_PROGRAMME);
         }
 
@@ -129,8 +126,8 @@ public class ProgrammesServiceImpl implements ProgrammesService {
     public void createAnActiveProgrammeForAllCinemasWithInactiveOnes() {
         cinemasRepository.findAll()
                 .forEach(cinema -> {
-                    if (!hasCinemaActiveProgramme(cinema.getId())) {
-                        createActiveWeeklyProgrammeFor(cinema.getId());
+                    if (!hasCinemaActiveProgramme(cinema)) {
+                        createActiveWeeklyProgrammeFor(cinema);
                     }
                 });
     }

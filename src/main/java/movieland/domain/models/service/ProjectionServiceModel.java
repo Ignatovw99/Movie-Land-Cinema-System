@@ -54,12 +54,12 @@ public class ProjectionServiceModel extends BaseServiceModel {
         this.startingTime = startingTime;
     }
 
-    public boolean isStateOfEmergency() {
+    public boolean getIsStateOfEmergency() {
         return isStateOfEmergency;
     }
 
-    public void setStateOfEmergency(boolean stateOfEmergency) {
-        isStateOfEmergency = stateOfEmergency;
+    public void setIsStateOfEmergency(boolean isStateOfEmergency) {
+        this.isStateOfEmergency = isStateOfEmergency;
     }
 
     public Set<Seat> getSeats() {

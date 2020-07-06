@@ -65,17 +65,8 @@
             </th:block>
         </div>
         <div class="form-group">
-            <label for="releaseDate">Release Date</label>
-            <input type="date" class="form-control" id="releaseDate" placeholder="Release Date..." name="releaseDate" th:field="*{releaseDate}"
-                   th:styleappend="${#fields.hasErrors('releaseDate')} ? 'border-color: red'">
-            <th:block th:if="${#fields.hasErrors('releaseDate')}" >
-                <small class="text-danger" th:errors="*{releaseDate}"></small>
-                <br />
-            </th:block>
-        </div>
-        <div class="form-group">
             <label for="budget">Budget</label>
-            <input type="number" class="form-control" id="budget" placeholder="Budget ($)..." name="budget" th:field="*{budget}">
+            <input type="number" step="0.5" class="form-control" id="budget" placeholder="Budget ($)..." name="budget" th:field="*{budget}">
         </div>
         <div class="form-group">
             <label for="genreId">Genre</label>

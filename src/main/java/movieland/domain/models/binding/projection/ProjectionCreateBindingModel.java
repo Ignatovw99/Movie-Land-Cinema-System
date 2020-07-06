@@ -1,12 +1,18 @@
 package movieland.domain.models.binding.projection;
 
+import movieland.config.mappings.CustomMappable;
+import movieland.domain.models.service.ProjectionServiceModel;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-public class ProjectionCreateBindingModel {
+public class ProjectionCreateBindingModel implements CustomMappable {
 
     private String movieId;
+
+    private String cinemaId;
 
     private String hallId;
 
@@ -23,6 +29,14 @@ public class ProjectionCreateBindingModel {
 
     public void setMovieId(String movieId) {
         this.movieId = movieId;
+    }
+
+    public String getCinemaId() {
+        return cinemaId;
+    }
+
+    public void setCinemaId(String cinemaId) {
+        this.cinemaId = cinemaId;
     }
 
     public String getHallId() {
@@ -42,11 +56,20 @@ public class ProjectionCreateBindingModel {
         this.startingTime = startingTime;
     }
 
-    public boolean isStateOfEmergency() {
+    public boolean getIsStateOfEmergency() {
         return isStateOfEmergency;
     }
 
-    public void setStateOfEmergency(boolean stateOfEmergency) {
-        isStateOfEmergency = stateOfEmergency;
+    public void setIsStateOfEmergency(boolean isStateOfEmergency) {
+        this.isStateOfEmergency = isStateOfEmergency;
+    }
+
+    @Override
+    public void configureMappings(ModelMapper modelMapper) {
+        modelMapper.addMappings(new PropertyMap<ProjectionCreateBindingModel, ProjectionServiceModel>() {
+            protected void configure() {
+                skip().setId("");
+            }
+        });
     }
 }

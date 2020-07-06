@@ -26,12 +26,13 @@ public class MoviesApiController {
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/titles")
-    public ResponseEntity<List<MovieIdAndTitleResponseModel>> allMoviesTitles() {
+    @GetMapping
+    public ResponseEntity<List<MovieIdAndTitleResponseModel>> allMovies() {
         List<MovieIdAndTitleResponseModel> moviesResult = moviesService.findAll()
                 .stream()
-                .map(genreServiceModel -> modelMapper.map(genreServiceModel, MovieIdAndTitleResponseModel.class))
+                .map(movieServiceModel -> modelMapper.map(movieServiceModel, MovieIdAndTitleResponseModel.class))
                 .collect(Collectors.toUnmodifiableList());
+
         return ResponseEntity.ok(moviesResult);
     }
 }

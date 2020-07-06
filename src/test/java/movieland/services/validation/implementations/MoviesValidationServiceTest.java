@@ -238,34 +238,6 @@ public class MoviesValidationServiceTest extends TestBase {
     }
 
     @Test
-    public void isValid_WhenReleaseDayIsNull_ShouldReturnFalse() {
-        movieServiceModel.setReleaseDate(null);
-        boolean isValid = moviesValidationService.isValid(movieServiceModel);
-        assertFalse(isValid);
-    }
-
-    @Test
-    public void isValid_WhenReleaseDayIsTomorrow_ShouldReturnTrue() {
-        movieServiceModel.setReleaseDate(LocalDate.now().plusDays(1));
-        boolean isValid = moviesValidationService.isValid(movieServiceModel);
-        assertTrue(isValid);
-    }
-
-    @Test
-    public void isValid_WhenReleaseDayIsToday_ShouldReturnFalse() {
-        movieServiceModel.setReleaseDate(LocalDate.now());
-        boolean isValid = moviesValidationService.isValid(movieServiceModel);
-        assertFalse(isValid);
-    }
-
-    @Test
-    public void isValid_WhenReleaseDayIsInThePast_ShouldReturnFalse() {
-        movieServiceModel.setReleaseDate(LocalDate.now().minusDays(1));
-        boolean isValid = moviesValidationService.isValid(movieServiceModel);
-        assertFalse(isValid);
-    }
-
-    @Test
     public void isValid_WhenReleaseDayIsInTheFuture_ShouldReturnTrue() {
         boolean isValid = moviesValidationService.isValid(movieServiceModel);
         assertTrue(isValid);

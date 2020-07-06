@@ -7,6 +7,7 @@ import movieland.errors.invalid.InvalidCinemaException;
 import movieland.errors.notfound.CinemaNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.services.interfaces.CinemasService;
+import movieland.services.interfaces.ProgrammesService;
 import movieland.services.validation.CinemasValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,15 @@ public class CinemasServiceImpl implements CinemasService {
 
     private final CinemasValidationService cinemasValidationService;
 
+    private final ProgrammesService programmesService;
+
     private final ModelMapper modelMapper;
 
     @Autowired
-    public CinemasServiceImpl(CinemasRepository cinemasRepository, CinemasValidationService cinemasValidationService, ModelMapper modelMapper) {
+    public CinemasServiceImpl(CinemasRepository cinemasRepository, CinemasValidationService cinemasValidationService, ProgrammesService programmesService, ModelMapper modelMapper) {
         this.cinemasRepository = cinemasRepository;
         this.cinemasValidationService = cinemasValidationService;
+        this.programmesService = programmesService;
         this.modelMapper = modelMapper;
     }
 
@@ -45,6 +49,9 @@ public class CinemasServiceImpl implements CinemasService {
 
         Cinema cinema = modelMapper.map(cinemaServiceModel, Cinema.class);
         cinema = cinemasRepository.save(cinema);
+
+        programmesService.createAnActiveProgrammeForAllCinemasWithInactiveOnes();
+
         return modelMapper.map(cinema, CinemaServiceModel.class);
     }
 

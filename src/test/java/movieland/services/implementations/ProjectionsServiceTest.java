@@ -238,7 +238,8 @@ public class ProjectionsServiceTest extends TestBase {
 
     @Test
     public void create_WhenProjectionStartsInRangeOfWorkingHoursOfCinema_ShouldNotThrowException() {
-        projection.getHall().getCinema().setClosingTime(projectionServiceModel.getStartingTime().plusHours(1).toLocalTime());
+        Integer runningTime = projection.getMovie().getRunningTime();
+        projection.getHall().getCinema().setClosingTime(projectionServiceModel.getStartingTime().plusMinutes(runningTime + 1).toLocalTime());
 
         assertDoesNotThrow(() -> projectionsService.create(projectionServiceModel));
 

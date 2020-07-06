@@ -65,6 +65,11 @@ public class Seat extends BaseEntity {
         isFree = free;
     }
 
+    public Seat isFree(boolean isFree) {
+        this.isFree = isFree;
+        return this;
+    }
+
     @Column(name = "is_blocked")
     public boolean getIsBlocked() {
         return isBlocked;
@@ -72,6 +77,11 @@ public class Seat extends BaseEntity {
 
     public void setIsBlocked(boolean blocked) {
         isBlocked = blocked;
+    }
+
+    public Seat isBlocked(boolean isBlocked) {
+        this.isBlocked = isBlocked;
+        return this;
     }
 
     @Column(name = "price")
@@ -83,6 +93,11 @@ public class Seat extends BaseEntity {
         this.price = price;
     }
 
+    public Seat price(BigDecimal price) {
+        this.price = price;
+        return this;
+    }
+
     @ManyToOne(targetEntity = Projection.class)
     @JoinColumn(name = "projection_id", referencedColumnName = "id", nullable = false)
     public Projection getProjection() {
@@ -91,5 +106,10 @@ public class Seat extends BaseEntity {
 
     public void setProjection(Projection projection) {
         this.projection = projection;
+    }
+
+    public Seat projection(Projection projection) {
+        this.projection = projection;
+        return this;
     }
 }

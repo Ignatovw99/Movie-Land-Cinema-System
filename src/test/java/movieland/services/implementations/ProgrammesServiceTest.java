@@ -161,14 +161,14 @@ public class ProgrammesServiceTest extends TestBase {
         when(programmesRepository.findFirstByCinemaIdOrderByStartDateDesc(anyString()))
                 .thenReturn(Optional.of(programme));
 
-        programmeServiceModel.setStartDate(MOCK_TODAY.plusDays(1));
+        programmeServiceModel.setStartDate(programme.getEndDate().plusDays(1));
 
         ProgrammeServiceModel createdProgramme = programmesService.createNext(programmeServiceModel);
 
-        assertEquals(1, Period.between(MOCK_TODAY, createdProgramme.getStartDate()).getDays());
+        assertEquals(1, Period.between(programme.getEndDate(), createdProgramme.getStartDate()).getDays());
         assertEquals(programmeServiceModel.getStartDate(), createdProgramme.getStartDate());
 
-        programmeServiceModel.setStartDate(MOCK_TODAY.plusDays(3));
+        programmeServiceModel.setStartDate(programme.getEndDate().plusDays(3));
         assertThrows(
                 InvalidProgrammeException.class,
                 () -> programmesService.createNext(programmeServiceModel)

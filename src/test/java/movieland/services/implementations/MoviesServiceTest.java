@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,8 +54,6 @@ public class MoviesServiceTest extends TestBase {
 
     private static final Integer DEFAULT_YEAR_OF_PRODUCTION = 2020;
 
-    private static final LocalDate DEFAULT_RELEASE_DATE = LocalDate.now().plusYears(4);
-
     private static final Integer DEFAULT_AGE_RESTRICTION = 18;
 
     public static Movie initializeEntity() {
@@ -68,7 +65,6 @@ public class MoviesServiceTest extends TestBase {
         movie.setCast(new HashSet<>(DEFAULT_CAST));
         movie.setRunningTime(DEFAULT_RUNNING_TIME);
         movie.setYearOfProduction(DEFAULT_YEAR_OF_PRODUCTION);
-        movie.setReleaseDate(DEFAULT_RELEASE_DATE);
         movie.setAgeRestriction(DEFAULT_AGE_RESTRICTION);
         movie.setGenre(GenresServiceTest.initializeEntity());
         return movie;
@@ -83,7 +79,6 @@ public class MoviesServiceTest extends TestBase {
         movieServiceModel.setCast(new HashSet<>(DEFAULT_CAST));
         movieServiceModel.setRunningTime(DEFAULT_RUNNING_TIME);
         movieServiceModel.setYearOfProduction(DEFAULT_YEAR_OF_PRODUCTION);
-        movieServiceModel.setReleaseDate(DEFAULT_RELEASE_DATE);
         movieServiceModel.setAgeRestriction(DEFAULT_AGE_RESTRICTION);
         movieServiceModel.setGenre(GenresServiceTest.initializeServiceModel());
         return movieServiceModel;

@@ -1,14 +1,11 @@
 package movieland.domain.models.binding.movie;
 
 import movieland.config.mappings.CustomMappable;
-import movieland.constants.entities.MovieConstants;
 import movieland.domain.models.service.MovieServiceModel;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,8 +27,6 @@ public class MovieUpdateBindingModel implements CustomMappable {
     private String country;
 
     private Integer yearOfProduction;
-
-    private LocalDate releaseDate;
 
     private BigDecimal budget;
 
@@ -104,15 +99,6 @@ public class MovieUpdateBindingModel implements CustomMappable {
 
     public void setYearOfProduction(Integer yearOfProduction) {
         this.yearOfProduction = yearOfProduction;
-    }
-
-    @DateTimeFormat(pattern = MovieConstants.RELEASE_DATE_FORMAT, iso = DateTimeFormat.ISO.DATE)
-    public LocalDate getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     public BigDecimal getBudget() {
