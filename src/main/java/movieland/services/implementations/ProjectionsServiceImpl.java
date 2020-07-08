@@ -22,10 +22,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,15 +79,15 @@ public class ProjectionsServiceImpl implements ProjectionsService {
                 .orElseThrow(() -> new HallNotFoundException(HallConstants.HALL_NOT_FOUND));
 
         Cinema projectionCinema = hall.getCinema();
+        LocalDateTime projectionStartingTime = projectionServiceModel.getStartingTime();
 
-        if (!isStaringTimeInRangeOfWorkingHours(projectionCinema, projectionServiceModel.getStartingTime())) {
-            throw new InvalidProjectionException(PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE);
+        if (!LocalDate.now(clock).isBefore(projectionStartingTime.toLocalDate()) && !isStaringTimeInRangeOfWorkingHours(projectionCinema, projectionStartingTime)) {
+            throw new InvalidProjectionException(String.format(PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE, DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDate.now(clock))));
         }
 
-        Programme cinemaCurrentActiveProgramme = programmesRepository.findCurrentActiveProgrammeOfCinema(projectionCinema, projectionServiceModel.getStartingTime().toLocalDate())
+        Programme cinemaCurrentActiveProgramme = programmesRepository.findCurrentActiveProgrammeOfCinema(projectionCinema, projectionStartingTime.toLocalDate())
                 .orElseThrow(() -> new InvalidProgrammeException(ProgrammeConstants.CINEMA_DOES_NOT_HAVE_ACTIVE_PROGRAMMES));
 
-        LocalDateTime projectionStartingTime = projectionServiceModel.getStartingTime();
         LocalDateTime projectionEndingTime = projectionStartingTime.plusMinutes(movie.getRunningTime());
 
         if (!isHallFree(cinemaCurrentActiveProgramme, hall, projectionStartingTime, projectionEndingTime)) {
@@ -97,7 +95,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         }
 
         boolean[] areAllMovieProjectionsBookedOut = { true };
-        boolean isMovieAlreadyProjected = isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, cinemaCurrentActiveProgramme, projectionServiceModel.getStartingTime(), areAllMovieProjectionsBookedOut, null);
+        boolean isMovieAlreadyProjected = isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, cinemaCurrentActiveProgramme, projectionStartingTime, areAllMovieProjectionsBookedOut, null);
 
         if (isMovieAlreadyProjected && !areAllMovieProjectionsBookedOut[0]){
             throw new InvalidProjectionException(SUCH_MOVIE_PROJECTION_ALREADY_EXISTS);
@@ -133,7 +131,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         }
 
         if (!isStaringTimeInRangeOfWorkingHours(projectionHall.getCinema(), projectionServiceModel.getStartingTime())) {
-            throw new InvalidProjectionException(PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE);
+            throw new InvalidProjectionException(String.format(PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE, DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDate.now(clock))));
         }
 
         LocalDateTime projectionNewStartingTime = projectionServiceModel.getStartingTime();

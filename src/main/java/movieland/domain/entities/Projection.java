@@ -1,5 +1,7 @@
 package movieland.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import movieland.domain.entities.base.BaseEntity;
 
 import javax.persistence.*;
@@ -14,6 +16,7 @@ public class Projection extends BaseEntity {
 
     private Hall hall;
 
+    @JsonManagedReference
     private Programme programme;
 
     private LocalDateTime startingTime;
@@ -22,6 +25,7 @@ public class Projection extends BaseEntity {
 
     private boolean isStateOfEmergency;
 
+    @JsonBackReference
     private Set<Seat> seats;
 
     public Projection() {

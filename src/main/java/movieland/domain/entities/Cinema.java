@@ -1,5 +1,6 @@
 package movieland.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import movieland.domain.entities.base.BaseEntity;
 import movieland.domain.entities.interfaces.Nameable;
 import movieland.validation.annotations.email.Email;
@@ -29,8 +30,10 @@ public class Cinema extends BaseEntity implements Nameable {
 
     private LocalTime closingTime;
 
+    @JsonBackReference
     private Set<Hall> halls;
 
+    @JsonBackReference
     private Set<Programme> programmes;
 
     public Cinema() {

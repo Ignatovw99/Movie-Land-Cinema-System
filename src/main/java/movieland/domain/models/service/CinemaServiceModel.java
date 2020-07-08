@@ -1,5 +1,7 @@
 package movieland.domain.models.service;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -17,6 +19,7 @@ public class CinemaServiceModel extends BaseServiceModel {
 
     private LocalTime closingTime;
 
+    @JsonBackReference
     private Set<HallServiceModel> halls;
 
     public CinemaServiceModel() {

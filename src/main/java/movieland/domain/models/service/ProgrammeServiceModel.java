@@ -1,6 +1,9 @@
 package movieland.domain.models.service;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.time.LocalDate;
+import java.util.Set;
 
 public class ProgrammeServiceModel extends BaseServiceModel {
 
@@ -9,6 +12,9 @@ public class ProgrammeServiceModel extends BaseServiceModel {
     private LocalDate endDate;
 
     private CinemaServiceModel cinema;
+
+    @JsonBackReference
+    private Set<ProjectionServiceModel> projections;
 
     public ProgrammeServiceModel() {
     }
@@ -35,5 +41,13 @@ public class ProgrammeServiceModel extends BaseServiceModel {
 
     public void setCinema(CinemaServiceModel cinema) {
         this.cinema = cinema;
+    }
+
+    public Set<ProjectionServiceModel> getProjections() {
+        return projections;
+    }
+
+    public void setProjections(Set<ProjectionServiceModel> projections) {
+        this.projections = projections;
     }
 }

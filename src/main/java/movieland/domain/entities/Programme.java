@@ -1,5 +1,7 @@
 package movieland.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import movieland.domain.entities.base.BaseEntity;
 
 import javax.persistence.*;
@@ -17,8 +19,10 @@ public class Programme extends BaseEntity {
 
     private LocalDate endDate;
 
+    @JsonManagedReference
     private Cinema cinema;
 
+    @JsonBackReference
     private Set<Projection> projections;
 
     public Programme() {

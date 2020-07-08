@@ -26,4 +26,5 @@ public class ProgrammeConstants {
     public static final String START_DATE_SHOULD_BE_THE_NEXT_DAY_AFTER_CURRENT_ACTIVE_PROGRAMME = "Start date should be the next day after the current active programme";
     public static final String CINEMA_DOES_NOT_HAVE_PROGRAMMES = "The cinema does mot have any programmes";
     public static final String CINEMA_DOES_NOT_HAVE_ACTIVE_PROGRAMMES = "The cinema does not have an active programme";
+    public static final String PROGRAMME_NOT_FOUND = "Programme was not found.";
 }

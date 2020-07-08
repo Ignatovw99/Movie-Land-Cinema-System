@@ -1,5 +1,6 @@
 package movieland.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import movieland.domain.entities.base.BaseEntity;
 import movieland.domain.entities.interfaces.Nameable;
 import org.hibernate.validator.constraints.Length;
@@ -23,6 +24,7 @@ public class Hall extends BaseEntity implements Nameable {
 
     private String soundSystem;
 
+    @JsonManagedReference
     private Cinema cinema;
 
     public Hall() {

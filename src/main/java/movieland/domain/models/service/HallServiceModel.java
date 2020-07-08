@@ -1,5 +1,7 @@
 package movieland.domain.models.service;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 public class HallServiceModel extends BaseServiceModel {
 
     private String name;
@@ -12,6 +14,7 @@ public class HallServiceModel extends BaseServiceModel {
 
     private String soundSystem;
 
+    @JsonManagedReference
     private CinemaServiceModel cinema;
 
     public HallServiceModel() {

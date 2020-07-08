@@ -3,15 +3,20 @@ package movieland.services.implementations;
 import movieland.constants.entities.CinemaConstants;
 import movieland.domain.entities.Cinema;
 import movieland.domain.entities.Programme;
-import movieland.domain.models.service.ProgrammeServiceModel;
+import movieland.domain.models.service.*;
+import movieland.domain.models.view.movie.MovieViewModel;
+import movieland.domain.models.view.programme.CinemaProgrammeDateViewModel;
+import movieland.domain.models.view.projection.ProjectionViewModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.notfound.CinemaNotFoundException;
+import movieland.errors.notfound.ProgrammeNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.repositories.ProgrammesRepository;
 import movieland.services.interfaces.ProgrammesService;
 import movieland.services.validation.ProgrammesValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +24,7 @@ import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Optional;
+import java.util.*;
 
 import static movieland.constants.entities.ProgrammeConstants.*;
 
@@ -159,5 +164,31 @@ public class ProgrammesServiceImpl implements ProgrammesService {
         }
 
         return possibleStartDate;
+    }
+
+    @Cacheable(value = "programmes", key = "#cinemaId")
+    public Map<LocalDate, CinemaProgrammeDateViewModel> getCurrantActiveCinemaProgrammeWithItsProjections(String cinemaId) {
+        Cinema cinema = cinemasRepository.findById(cinemaId)
+                .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
+
+        LocalDate today = LocalDate.now(clock);
+
+        Programme currantActiveCinemaProgramme = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, today)
+                .orElseThrow(() -> new ProgrammeNotFoundException(PROGRAMME_NOT_FOUND));
+
+        Map<LocalDate, CinemaProgrammeDateViewModel> cinemaProgrammeProjectionsByDate = new HashMap<>();
+
+        currantActiveCinemaProgramme.getProjections()
+                .forEach(projection -> {
+                    ProjectionViewModel projectionViewModel = modelMapper.map(projection, ProjectionViewModel.class);
+                    MovieViewModel movieViewModel = modelMapper.map(projection.getMovie(), MovieViewModel.class);
+
+                    LocalDate projectionDate = projection.getStartingTime().toLocalDate();
+                    cinemaProgrammeProjectionsByDate.putIfAbsent(projectionDate, new CinemaProgrammeDateViewModel());
+                    cinemaProgrammeProjectionsByDate.get(projectionDate).setCinemaName(cinema.getName());
+                    cinemaProgrammeProjectionsByDate.get(projectionDate).addProjection(projectionViewModel, movieViewModel);
+                });
+
+        return cinemaProgrammeProjectionsByDate;
     }
 }

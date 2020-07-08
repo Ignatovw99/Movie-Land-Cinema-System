@@ -1,5 +1,6 @@
 package movieland.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import movieland.domain.entities.base.BaseEntity;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Seat extends BaseEntity {
 
     private BigDecimal price;
 
+    @JsonManagedReference
     private Projection projection;
 
     public Seat() {
