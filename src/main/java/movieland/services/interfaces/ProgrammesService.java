@@ -11,6 +11,8 @@ public interface ProgrammesService {
 
     ProgrammeServiceModel createNext(ProgrammeServiceModel programmeServiceModel);
 
+    ProgrammeServiceModel getProgrammeByCinemaIdAndDate(String cinemaId, LocalDate date);
+
     boolean isProgrammeActive(Programme programme);
 
     void createAnActiveProgrammeForAllCinemasWithInactiveOnes();

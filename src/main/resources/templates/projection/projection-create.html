@@ -171,7 +171,13 @@
 
 
 <script>
+    let today = new Date();
+
     $(document).ready(function () {
+
+        $(function () {
+            $('#startingTime').val(today.toISOString().substr(0, 19));
+        });
         /*<![CDATA[*/
         let cinemaId = '[[${model.cinemaId}]]';
         /*]]>*/

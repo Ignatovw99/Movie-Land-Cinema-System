@@ -1,6 +1,8 @@
 package movieland.web.controllers;
 
 import movieland.domain.models.binding.projection.ProjectionCreateBindingModel;
+import movieland.domain.models.service.CinemaServiceModel;
+import movieland.domain.models.service.ProgrammeServiceModel;
 import movieland.domain.models.service.ProjectionServiceModel;
 import movieland.services.interfaces.ProjectionsService;
 import movieland.validation.projection.ProjectionsCreateValidator;
@@ -48,6 +50,12 @@ public class ProjectionsController extends BaseController {
         }
 
         ProjectionServiceModel projectionServiceModel = modelMapper.map(projectionCreateBindingModel, ProjectionServiceModel.class);
+
+        CinemaServiceModel projectionCinemaServiceModel = new CinemaServiceModel();
+        projectionCinemaServiceModel.setId(projectionCreateBindingModel.getCinemaId());
+        projectionServiceModel.setProgramme(new ProgrammeServiceModel());
+        projectionServiceModel.getProgramme().setCinema(projectionCinemaServiceModel);
+
         projectionsService.create(projectionServiceModel);
 
         return redirect("/");

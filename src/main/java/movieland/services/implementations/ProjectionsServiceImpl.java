@@ -20,6 +20,7 @@ import movieland.services.interfaces.SeatsService;
 import movieland.services.validation.ProjectionsValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -66,6 +67,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         this.clock = clock;
     }
 
+    @CacheEvict(value = "programmes", key = "#projectionServiceModel.programme.cinema.id")
     @Override
     public ProjectionServiceModel create(ProjectionServiceModel projectionServiceModel) {
         if (!projectionsValidationService.isValid(projectionServiceModel)) {
@@ -85,7 +87,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
             throw new InvalidProjectionException(String.format(PROJECTION_SHOULD_START_IN_CINEMA_WORKING_HOURS_RANGE, DateTimeFormatter.ofPattern("dd-MM-yyyy").format(LocalDate.now(clock))));
         }
 
-        Programme cinemaCurrentActiveProgramme = programmesRepository.findCurrentActiveProgrammeOfCinema(projectionCinema, projectionStartingTime.toLocalDate())
+        Programme cinemaCurrentActiveProgramme = programmesRepository.findProgrammeOfCinemaInGivenPeriod(projectionCinema, projectionStartingTime.toLocalDate())
                 .orElseThrow(() -> new InvalidProgrammeException(ProgrammeConstants.CINEMA_DOES_NOT_HAVE_ACTIVE_PROGRAMMES));
 
         LocalDateTime projectionEndingTime = projectionStartingTime.plusMinutes(movie.getRunningTime());
@@ -114,6 +116,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         return createdProjection;
     }
 
+    @CacheEvict(value = "programmes", key = "#projectionServiceModel.programme.id")
     @Override
     public ProjectionServiceModel update(String id, ProjectionServiceModel projectionServiceModel) {
         if (!projectionsValidationService.isValid(projectionServiceModel)) {
@@ -194,7 +197,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         Hall hall = hallsRepository.findById(hallId)
                 .orElseThrow(() -> new HallNotFoundException(HallConstants.HALL_NOT_FOUND));
 
-        Programme programme = programmesRepository.findCurrentActiveProgrammeOfCinema(hall.getCinema(), projectionStartingTime.toLocalDate())
+        Programme programme = programmesRepository.findProgrammeOfCinemaInGivenPeriod(hall.getCinema(), projectionStartingTime.toLocalDate())
                 .orElseThrow(() -> new InvalidProgrammeException(ProgrammeConstants.CINEMA_DOES_NOT_HAVE_PROGRAMMES));
 
         Movie movie = moviesRepository.findById(movieId)
@@ -213,7 +216,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         Cinema cinema = cinemasRepository.findById(cinemaId)
                 .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
 
-        Programme programme = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, projectionStartingTime.toLocalDate())
+        Programme programme = programmesRepository.findProgrammeOfCinemaInGivenPeriod(cinema, projectionStartingTime.toLocalDate())
                 .orElseThrow(() -> new InvalidProgrammeException(ProgrammeConstants.CINEMA_DOES_NOT_HAVE_PROGRAMMES));
 
         boolean isMovieAlreadyProjected = isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, programme, projectionStartingTime, areAllMovieProjectionsBookedOut, null);

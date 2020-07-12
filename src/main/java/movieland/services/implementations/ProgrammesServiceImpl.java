@@ -63,7 +63,7 @@ public class ProgrammesServiceImpl implements ProgrammesService {
     }
 
     private boolean hasCinemaActiveProgramme(Cinema cinema) {
-        Optional<Programme> activeProgrammeCandidate = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, LocalDate.now(clock));
+        Optional<Programme> activeProgrammeCandidate = programmesRepository.findProgrammeOfCinemaInGivenPeriod(cinema, LocalDate.now(clock));
         if (activeProgrammeCandidate.isEmpty()) {
             return false;
         }
@@ -115,6 +115,17 @@ public class ProgrammesServiceImpl implements ProgrammesService {
 
     private boolean isProgrammeOver(Programme lastActiveProgramme) {
         return LocalDate.now(clock).isAfter(lastActiveProgramme.getEndDate());
+    }
+
+    @Override
+    public ProgrammeServiceModel getProgrammeByCinemaIdAndDate(String cinemaId, LocalDate date) {
+        Cinema cinema = cinemasRepository.findById(cinemaId)
+                .orElseThrow(() -> new CinemaNotFoundException(CinemaConstants.CINEMA_NOT_FOUND));
+
+        Programme programme = programmesRepository.findProgrammeOfCinemaInGivenPeriod(cinema, date)
+                .orElseThrow(() -> new ProgrammeNotFoundException(PROGRAMME_NOT_FOUND));
+
+        return modelMapper.map(programme, ProgrammeServiceModel.class);
     }
 
     @Override
@@ -173,7 +184,7 @@ public class ProgrammesServiceImpl implements ProgrammesService {
 
         LocalDate today = LocalDate.now(clock);
 
-        Programme currantActiveCinemaProgramme = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, today)
+        Programme currantActiveCinemaProgramme = programmesRepository.findProgrammeOfCinemaInGivenPeriod(cinema, today)
                 .orElseThrow(() -> new ProgrammeNotFoundException(PROGRAMME_NOT_FOUND));
 
         Map<LocalDate, CinemaProgrammeDateViewModel> cinemaProgrammeProjectionsByDate = new HashMap<>();

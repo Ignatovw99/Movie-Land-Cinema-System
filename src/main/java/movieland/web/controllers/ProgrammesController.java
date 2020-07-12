@@ -2,6 +2,7 @@ package movieland.web.controllers;
 
 import movieland.domain.models.binding.programme.ProgrammeCreateBindingModel;
 import movieland.domain.models.service.ProgrammeServiceModel;
+import movieland.domain.models.view.programme.ProgrammeViewModel;
 import movieland.services.interfaces.ProgrammesService;
 import movieland.validation.programme.ProgrammesCreateValidator;
 import movieland.web.annotations.Page;
@@ -9,11 +10,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.time.LocalDate;
 
 import static movieland.constants.GlobalConstants.MODEL_NAME;
 
@@ -51,5 +51,13 @@ public class ProgrammesController extends BaseController {
         programmesService.createNext(programmeServiceModel);
 
         return redirect("/");
+    }
+
+    @GetMapping("/cinema/{id}")
+    @Page(title = "Programme", name = "programme/programme-view")
+    public ModelAndView showProgramme(@PathVariable("id") String cinemaId) {
+        ProgrammeServiceModel programmeServiceModel = programmesService.getProgrammeByCinemaIdAndDate(cinemaId, LocalDate.now());
+        ProgrammeViewModel programmeViewModel = modelMapper.map(programmeServiceModel, ProgrammeViewModel.class);
+        return view(programmeViewModel);
     }
 }

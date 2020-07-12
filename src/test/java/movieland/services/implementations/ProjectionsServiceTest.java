@@ -112,7 +112,7 @@ public class ProjectionsServiceTest extends TestBase {
                 .thenReturn(Optional.of(DEFAULT_MOVIE));
         when(hallsRepository.findById(anyString()))
                 .thenReturn(Optional.of(DEFAULT_HALL));
-        when(programmesRepository.findCurrentActiveProgrammeOfCinema(any(Cinema.class), any(LocalDate.class)))
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(LocalDate.class)))
                 .thenReturn(Optional.of(DEFAULT_PROGRAMME));
 
         projection.getHall().setCinema(CinemasServiceTest.initializeEntity());
@@ -195,7 +195,7 @@ public class ProjectionsServiceTest extends TestBase {
 
     @Test
     public void create_WhenTheCinemaDoesNotHaveAnActiveProgramme_ShouldThrowException() {
-        when(programmesRepository.findCurrentActiveProgrammeOfCinema(any(Cinema.class), any(LocalDate.class)))
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(LocalDate.class)))
                 .thenReturn(Optional.empty());
 
         assertThrows(
@@ -203,17 +203,17 @@ public class ProjectionsServiceTest extends TestBase {
                 () -> projectionsService.create(projectionServiceModel)
         );
 
-        verify(programmesRepository).findCurrentActiveProgrammeOfCinema(any(Cinema.class), any(LocalDate.class));
+        verify(programmesRepository).findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(LocalDate.class));
     }
 
     @Test
     public void create_WhenTheCinemaHasAnActiveProgramme_ShouldNotThrowException() {
-        when(programmesRepository.findCurrentActiveProgrammeOfCinema(any(Cinema.class), any(LocalDate.class)))
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(LocalDate.class)))
                 .thenReturn(Optional.of(DEFAULT_PROGRAMME));
 
         assertDoesNotThrow(() -> projectionsService.create(projectionServiceModel));
 
-        verify(programmesRepository).findCurrentActiveProgrammeOfCinema(any(Cinema.class), any(LocalDate.class));
+        verify(programmesRepository).findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(LocalDate.class));
     }
 
     @Test

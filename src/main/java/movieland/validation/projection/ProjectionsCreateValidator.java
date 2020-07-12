@@ -90,7 +90,7 @@ public class ProjectionsCreateValidator implements Validator {
             return false;
         }
         Cinema cinema = cinemaCandidate.get();
-        Optional<Programme> programmeCandidate = programmesRepository.findCurrentActiveProgrammeOfCinema(cinema, startingTime.toLocalDate());
+        Optional<Programme> programmeCandidate = programmesRepository.findProgrammeOfCinemaInGivenPeriod(cinema, startingTime.toLocalDate());
 
         return programmeCandidate.isPresent();
     }

@@ -172,3 +172,24 @@ footer svg.svg-inline--fa:hover {
     width: 70%;
     background-color: powderblue;
 }
+
+.programme-movie-block {
+    background-color: rgb(37, 37, 37);
+    border-style: groove;
+    border-radius: 15px;
+}
+
+.movie-projections {
+    height: 185px;
+    border-radius: 25px;
+}
+
+.flex-projection {
+    display: flex;
+}
+
+.flex-projection img {
+    margin-right: 10px;
+    display: block;
+}
+

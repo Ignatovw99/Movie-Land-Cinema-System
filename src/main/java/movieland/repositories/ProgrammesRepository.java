@@ -20,5 +20,5 @@ public interface ProgrammesRepository extends JpaRepository<Programme, String> {
     void deleteByEndDateBefore(LocalDate endDate);
 
     @Query("SELECT programme FROM Programme programme WHERE programme.cinema = :cinema AND programme.startDate <= :currentDate AND programme.endDate >= :currentDate")
-    Optional<Programme> findCurrentActiveProgrammeOfCinema(@Param("cinema") Cinema cinema, @Param("currentDate") LocalDate currentDate);
+    Optional<Programme> findProgrammeOfCinemaInGivenPeriod(@Param("cinema") Cinema cinema, @Param("currentDate") LocalDate currentDate);
 }

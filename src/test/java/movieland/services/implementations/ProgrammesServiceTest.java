@@ -3,10 +3,13 @@ package movieland.services.implementations;
 import movieland.TestBase;
 import movieland.domain.entities.Cinema;
 import movieland.domain.entities.Programme;
+import movieland.domain.entities.Projection;
 import movieland.domain.models.service.CinemaServiceModel;
 import movieland.domain.models.service.ProgrammeServiceModel;
+import movieland.domain.models.view.programme.CinemaProgrammeDateViewModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.notfound.CinemaNotFoundException;
+import movieland.errors.notfound.ProgrammeNotFoundException;
 import movieland.repositories.CinemasRepository;
 import movieland.repositories.ProgrammesRepository;
 import movieland.services.interfaces.ProgrammesService;
@@ -15,12 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -104,6 +103,22 @@ public class ProgrammesServiceTest extends TestBase {
     @Override
     protected void setupMockBeansActions() {
         setupCreateNextMethod();
+        setupGetCurrantActiveCinemaProgrammeWithItsProjections();
+    }
+
+    private void setupGetCurrantActiveCinemaProgrammeWithItsProjections() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.of(DEFAULT_CINEMA));
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(MOCK_TODAY.getClass())))
+                .thenReturn(Optional.of(programme));
+
+        programme.setProjections(new LinkedHashSet<>());
+
+        for (int i = 0; i < 3; i++) {
+            Projection projection = ProjectionsServiceTest.initializeEntity();
+            projection.setId(UUID.randomUUID().toString());
+            programme.getProjections().add(projection);
+        }
     }
 
     @Test
@@ -242,4 +257,87 @@ public class ProgrammesServiceTest extends TestBase {
         LocalDate firstPossibleStartDateForCinema = programmesService.getFirstPossibleStartDateForCinema(programme.getCinema().getId());
         assertEquals(1, Period.between(MOCK_TODAY, firstPossibleStartDateForCinema).getDays());
     }
+
+    @Test
+    public void getCurrantActiveCinemaProgrammeWithItsProjections_WhenCinemaDoesNotExist_ShouldThrowException() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CinemaNotFoundException.class,
+                () -> programmesService.getCurrantActiveCinemaProgrammeWithItsProjections("")
+        );
+
+        verify(cinemasRepository).findById(any());
+    }
+
+    @Test
+    public void getCurrantActiveCinemaProgrammeWithItsProjections_WhenThereIsNotAnyActiveProgramme_ShouldThrowException() {
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(MOCK_TODAY.getClass())))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ProgrammeNotFoundException.class,
+                () -> programmesService.getCurrantActiveCinemaProgrammeWithItsProjections("id")
+        );
+
+        verify(programmesRepository).findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(MOCK_TODAY.getClass()));
+    }
+
+    @Test
+    public void getCurrantActiveCinemaProgrammeWithItsProjections_WhenGetMoviesByDate_ShouldReturnOnlyProjectionsOnTheGivenDate() {
+        LocalTime startingTime = ProjectionsServiceTest.initializeEntity().getStartingTime().toLocalTime();
+        LocalTime endingTime = ProjectionsServiceTest.initializeEntity().getEndingTime().toLocalTime();
+
+        LocalDate firstProjectionStartingTime = MOCK_TODAY.plusDays(1);
+        LocalDate secondProjectionStartingTime = MOCK_TODAY.minusDays(1);
+        LocalDate thirdProjectionStartingTime = MOCK_TODAY;
+
+        LocalDate[] projectionsDates = { firstProjectionStartingTime, secondProjectionStartingTime, thirdProjectionStartingTime };
+
+        int i = 0;
+
+        for (Projection projection : programme.getProjections()) {
+            projection.setStartingTime(LocalDateTime.of(projectionsDates[i], startingTime));
+            projection.setEndingTime(LocalDateTime.of(projectionsDates[i++], endingTime));
+        }
+
+        Map<LocalDate, CinemaProgrammeDateViewModel> moviesWithTheirProjectionsByDate = programmesService.getCurrantActiveCinemaProgrammeWithItsProjections(DEFAULT_CINEMA.getId());
+        CinemaProgrammeDateViewModel cinemaProgrammeDateViewModel = moviesWithTheirProjectionsByDate.get(firstProjectionStartingTime);
+
+        assertEquals(DEFAULT_CINEMA.getName(), cinemaProgrammeDateViewModel.getCinemaName());
+        assertEquals(firstProjectionStartingTime, cinemaProgrammeDateViewModel.getDate());
+
+        cinemaProgrammeDateViewModel = moviesWithTheirProjectionsByDate.get(secondProjectionStartingTime);
+
+        assertEquals(DEFAULT_CINEMA.getName(), cinemaProgrammeDateViewModel.getCinemaName());
+        assertEquals(secondProjectionStartingTime, cinemaProgrammeDateViewModel.getDate());
+    }
+
+    @Test
+    public void getCurrantActiveCinemaProgrammeWithItsProjections_WhenGetMoviesByDate_ShouldSortProjectionByStartingTimeAscending() {
+        LocalTime time = LocalTime.of(13, 45);
+        for (Projection projection : programme.getProjections()) {
+            projection.setStartingTime(LocalDateTime.of(MOCK_TODAY, time));
+            time = time.minusHours(1);
+        }
+
+        Map<LocalDate, CinemaProgrammeDateViewModel> moviesWithTheirProjectionsByDate = programmesService.getCurrantActiveCinemaProgrammeWithItsProjections(DEFAULT_CINEMA.getId());
+        CinemaProgrammeDateViewModel cinemaProgrammeDateViewModel = moviesWithTheirProjectionsByDate.get(MOCK_TODAY);
+
+        LocalDateTime expected = null;
+
+        //TODO: refactor
+//        for (ProjectionViewModel movieProjection : cinemaProgrammeDateViewModel.getMovieProjections().get()) {
+//            for (movieland.domain.models.view.projection.ProjectionViewModel projection : movieProjection.getProjections()) {
+//                if (expected == null) {
+//                    expected = projection.getStartingTime();
+//                } else {
+//                    assertTrue(expected.isBefore(projection.getStartingTime()));
+//                }
+//            }
+//        }
+    }
+
+    //TODO : test sorted by movie title
 }

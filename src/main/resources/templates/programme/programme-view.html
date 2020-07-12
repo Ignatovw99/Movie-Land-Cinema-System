@@ -1,0 +1,124 @@
+<div class="container-fluid w-70 bg-form mb-5" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="model" type="movieland.domain.models.view.programme.ProgrammeViewModel"*/-->
+    <div class="container-fluid d-flex justify-content-center mb-3">
+        <h1 class="m-3" th:text="'Programme of cinema' + ' \'' + ${model.cinemaName} + '\''"></h1>
+    </div>
+
+    <div class="container-fluid ml-5 mb-5">
+        <strong class="ml-3 mr-5">Start Date: <strong th:text="${#temporals.format(model.startDate, 'dd-MM-yyyy')}"></strong></strong>
+        <button class="btn-secondary mr-5" id="prev">Prev</button>
+        <input disabled type="text" class="text-center mr-5" id="field" />
+        <button class="btn-secondary mr-5" id="next">Next</button>
+        <strong>End Date: <strong th:text="${#temporals.format(model.endDate, 'dd-MM-yyyy')}"></strong></strong>
+    </div>
+
+    <div class="container-fluid mb-3 programme-movie-block" id="programme-block">
+    </div>
+</div>
+<script>
+    //Today
+    let date = new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate(), 3);
+
+    function renderMovieProjections(date) {
+        /*<![CDATA[*/
+        let cinemaId = '[[${model.cinemaId}]]';
+        /*]]>*/
+        let dateAsText = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+        $.ajax({
+            type: 'GET',
+            url: '/api/programmes/cinema/' + cinemaId + '/date/' + dateAsText,
+            success: function (dateProgramme) {
+                let programmeElement = $('#programme-block');
+                programmeElement.empty();
+                let movieProjections = dateProgramme.movieProjections;
+                for (let movieProjection of movieProjections) {
+                    let movie = movieProjection.key;
+                    let projections = movieProjection.value;
+
+                    let movieBlock = $('<div class="container-fluid mt-3 mb-3 bg-form movie-projections flex-projection">');
+                    programmeElement.append(movieBlock);
+
+                    let imageElement = $('<div class="mr-4">').append($('<img src="https://vignette.wikia.nocookie.net/money-heist/images/4/43/Money_Heist_Part_3_poster.jpg/revision/latest?cb=20200312172220" alt="" height="185" width="165">'));
+                    movieBlock.append(imageElement);
+
+                    let movieElement = $('<div class="mt-3 mr-5">')
+                        .append(
+                            $('<h2>' + movie.title + '</h2>')
+                        ).append(
+                            $('<p>' + movie.description + '</p>')
+                        ).append(
+                            $('<p>Running time: ' + movie.runningTime + '</p>')
+                        );
+                    movieBlock.append(movieElement);
+
+                    let projectionsMainElement = $('<div class="justify-content-end float-right mt-4">')
+                            .append('<h4 class="align-middle">Projections</h4>');
+
+                    let projectionsElement = $('<div class="flex-projection">');
+
+                    for (let projection of projections) {
+                        let projectionStartingDateTime = new Date(projection.startingTime);
+                        let projectionButton = $('<form action="/cinemas/all">\n' +
+                            '                        <button class="btn-info m-2">' + projectionStartingDateTime.getHours() + ':' + ('0' + (projectionStartingDateTime.getMinutes() + 1)).slice(-2) + '</button>\n' +
+                            '                    </form>');
+
+                        projectionsElement.append(projectionButton);
+                    }
+
+                    projectionsMainElement.append(projectionsElement);
+
+                    movieBlock
+                        .append(projectionsMainElement);
+                }
+            },
+            error: function (e) {
+                let programmeElement = $('#programme-block');
+                programmeElement.empty();
+                //TODO: THERE IS NO AVAILABLE MOVIES THOS DATE
+                console.log(e);
+            }
+        })
+    }
+
+    function ensureDate(date) {
+        /*<![CDATA[*/
+        let javaStartDate = '[[${model.startDate}]]';
+        /*]]>*/
+        /*<![CDATA[*/
+        let javaEndDate = '[[${model.endDate}]]';
+        /*]]>*/
+        let jsStartDate = new Date(javaStartDate);
+        let jsEndDate = new Date(javaEndDate);
+
+        if (date.getTime() === jsStartDate.getTime()) {
+            $('#prev').prop('disabled', true).addClass('btn-danger');
+        } else if (date.getTime() === jsEndDate.getTime()) {
+            $('#next').prop('disabled', true).addClass('btn-danger');
+        } else {
+            $('#prev').prop('disabled', false).removeClass('btn-danger');
+            $('#next').prop('disabled', false).removeClass('btn-danger');
+        }
+    }
+
+    $(function () {
+        $('#field').val(date.toLocaleDateString());
+        ensureDate(date);
+
+        $('#prev').click(function () {
+            date.setDate(date.getDate() - 1);
+            $('#field').val(date.toLocaleDateString());
+
+            renderMovieProjections(date);
+            ensureDate(date);
+        });
+        $('#next').click(function () {
+            date.setDate(date.getDate() + 1);
+            $('#field').val(date.toLocaleDateString());
+
+            renderMovieProjections(date);
+            ensureDate(date);
+        });
+    });
+
+    $(document).ready(renderMovieProjections(date));
+</script>

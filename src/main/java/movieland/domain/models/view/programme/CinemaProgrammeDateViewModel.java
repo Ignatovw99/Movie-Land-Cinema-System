@@ -1,18 +1,12 @@
 package movieland.domain.models.view.programme;
 
-import movieland.config.mappings.CustomMappable;
-import movieland.domain.entities.Projection;
-import movieland.domain.models.binding.movie.MovieCreateBindingModel;
-import movieland.domain.models.service.MovieServiceModel;
-import movieland.domain.models.service.ProjectionServiceModel;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import movieland.config.JacksonCustomMapSerializer;
 import movieland.domain.models.view.movie.MovieViewModel;
 import movieland.domain.models.view.projection.ProjectionViewModel;
-import org.modelmapper.Converter;
-import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CinemaProgrammeDateViewModel {
 
@@ -20,7 +14,8 @@ public class CinemaProgrammeDateViewModel {
 
     private LocalDate date;
 
-    private Set<MovieProjectionViewModel> movieProjections = new TreeSet<>(Comparator.comparing(movieProjections -> movieProjections.getMovie().getTitle()));
+    @JsonSerialize(using = JacksonCustomMapSerializer.class)
+    private Map<MovieViewModel, Set<ProjectionViewModel>> movieProjections = new TreeMap<>(Comparator.comparing(MovieViewModel::getTitle));
 
     public CinemaProgrammeDateViewModel() {
     }
@@ -41,21 +36,18 @@ public class CinemaProgrammeDateViewModel {
         this.date = date;
     }
 
-    public Set<MovieProjectionViewModel> getMovieProjections() {
+    public Map<MovieViewModel, Set<ProjectionViewModel>> getMovieProjections() {
         return movieProjections;
     }
 
-    public void setMovieProjections(Set<MovieProjectionViewModel> movieProjections) {
+    public void setMovieProjections(Map<MovieViewModel, Set<ProjectionViewModel>> movieProjections) {
         this.movieProjections = movieProjections;
     }
 
     public void addProjection(ProjectionViewModel projection, MovieViewModel movie) {
         date = projection.getStartingTime().toLocalDate();
 
-        MovieProjectionViewModel movieProjectionViewModel = new MovieProjectionViewModel();
-        movieProjectionViewModel.setMovie(movie);
-        movieProjectionViewModel.addProjection(projection);
-
-        movieProjections.add(movieProjectionViewModel);
+        movieProjections.putIfAbsent(movie, new TreeSet<>(Comparator.comparing(ProjectionViewModel::getStartingTime)));
+        movieProjections.get(movie).add(projection);
     }
 }
