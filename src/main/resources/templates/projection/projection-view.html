@@ -1,0 +1,144 @@
+<div class="container-fluid w-70 bg-form mb-5" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="model" type="movieland.domain.models.view.programme.ProgrammeViewModel"*/-->
+<!--    <div class="container-fluid d-flex justify-content-center mb-3">-->
+<!--        <h1 class="m-3" th:text="'Programme of cinema' + ' \'' + ${model.cinemaName} + '\''"></h1>-->
+<!--    </div>-->
+
+<!--    <div class="container-fluid ml-5 mb-5">-->
+<!--        <strong class="ml-3 mr-5">Start Date: <strong th:text="${#temporals.format(model.startDate, 'dd-MM-yyyy')}"></strong></strong>-->
+<!--        <button class="btn-secondary mr-5" id="prev">Prev</button>-->
+<!--        <input disabled type="text" class="text-center mr-5" id="field" />-->
+<!--        <button class="btn-secondary mr-5" id="next">Next</button>-->
+<!--        <strong>End Date: <strong th:text="${#temporals.format(model.endDate, 'dd-MM-yyyy')}"></strong></strong>-->
+<!--    </div>-->
+
+    <ul class="showcase">
+        <li>
+            <div class="seat"></div>
+            <small>Free</small>
+        </li>
+        <li>
+            <div class="seat selected"></div>
+            <small>Selected</small>
+        </li>
+        <li>
+            <div class="seat occupied"></div>
+            <small>Occupied</small>
+        </li>
+        <li>
+            <div class="seat blocked"></div>
+            <small>Blocked</small>
+        </li>
+    </ul>
+
+    <div class="container">
+        <p class="container-fluid justify-content-center text">Screen</p>
+        <div class="screen"></div>
+
+    </div>
+
+    <p class="container-fluid justify-content-center text">
+        You have selected <span id="count">0</span> seats for a price of $<span class="mr-5" id="price">0</span>
+    </p>
+    <div class="mb-4">
+        <p class="container-fluid justify-content-center text mt-4 mb-4">
+            <button class="btn btn-info mb-4">Book :)</button>
+        </p>
+    </div>
+</div>
+<script>
+    const container = document.querySelector('.container');
+    const seats = document.querySelectorAll('.row .seat:not(.occupied):not(.blocked)');
+    const count = document.getElementById('count');
+    const price = document.getElementById('price');
+
+    let rows = 9;
+    let cols = 13;
+
+    $(document).ready(function () {
+        for (let i =1; i <= rows; i++) {
+            let $div = document.createElement('div');
+            $div.classList.add('row');
+            container.appendChild($div);
+
+            for (let j = 1; j <= cols; j++) {
+                let seat = document.createElement('div');
+                seat.classList.add('seat');
+                // seat.classList.add('occupied');
+                //<input type="number" class="seat-price" value="32.43" hidden="">
+                //<input type="text" class="seat-id" value="dasdwqe" hidden="">
+                $div.appendChild(seat);
+            }
+            console.log($div);
+        }
+    });
+
+    // const movieSelect = document.getElementById('movie');
+    // let ticketPrice = +movieSelect.value;
+    //
+    // const populateUI = () => {
+    //     const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
+    //
+    //     if (selectedSeats !== null && selectedSeats.length > 0) {
+    //         seats.forEach((seat, index) => {
+    //             if (selectedSeats.indexOf(index) > -1) {
+    //                 seat.classList.add('selected');
+    //             }
+    //         });
+    //     }
+    //
+    //     const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
+    //     const selectedMoviePrice = localStorage.getItem('selectedMoviePrice');
+    //
+    //     if (selectedMovieIndex !== null) {
+    //         movieSelect.selectedIndex = selectedMovieIndex;
+    //     }
+    //
+    //     if (selectedMoviePrice !== null) {
+    //         count.innerText = selectedSeats.length;
+    //         price.innerText = selectedSeats.length * +selectedMoviePrice;
+    //     }
+    // };
+    //
+    // populateUI();
+
+    // selectedMovie = (movieIndex, moviePrice) => {
+    //     localStorage.setItem('selectedMovieIndex', movieIndex);
+    //     localStorage.setItem('selectedMoviePrice', moviePrice);
+    // };
+
+    const updateSelectedSeatsCount = () => {
+        const selectedSeats = document.querySelectorAll('.row .selected');
+
+        console.log(selectedSeats);
+
+        const seatsIndex = [...selectedSeats].map(seat => [...seats].indexOf(seat));
+
+        console.log(selectedSeats);
+
+        localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
+
+        const selectedSeatsCount = selectedSeats.length;
+
+        count.innerText = selectedSeatsCount;
+        // price.innerText = selectedSeatsCount * ticketPrice;
+    };
+
+    // Seat select event
+    container.addEventListener('click', e => {
+        if (e.target.classList.contains('seat') && !e.target.classList.contains('occupied') && !e.target.classList.contains('blocked')) {
+            e.target.classList.toggle('selected');
+
+            updateSelectedSeatsCount();
+        }
+    });
+
+    // Movie select event
+    // movieSelect.addEventListener('change', e => {
+    //     ticketPrice = +e.target.value;
+    //     selectedMovie(e.target.selectedIndex, e.target.value);
+    //
+    //     updateSelectedSeatsCount();
+    // });
+
+</script>
