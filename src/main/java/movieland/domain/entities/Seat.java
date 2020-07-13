@@ -6,10 +6,11 @@ import movieland.domain.entities.base.BaseEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 @Table(name = "seats")
-public class Seat extends BaseEntity {
+public class Seat extends BaseEntity implements Comparable<Seat> {
 
     private Integer row;
 
@@ -113,5 +114,29 @@ public class Seat extends BaseEntity {
     public Seat projection(Projection projection) {
         this.projection = projection;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Seat seat = (Seat) o;
+        return row.equals(seat.row) &&
+                column.equals(seat.column);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), row, column);
+    }
+
+    @Override
+    public int compareTo(Seat o) {
+        int compare = Integer.compare(row, o.row);
+        if (compare == 0) {
+            return Integer.compare(column, o.column);
+        }
+        return compare;
     }
 }

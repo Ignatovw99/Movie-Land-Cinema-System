@@ -8,6 +8,7 @@ import movieland.domain.entities.*;
 import movieland.domain.models.service.HallServiceModel;
 import movieland.domain.models.service.MovieServiceModel;
 import movieland.domain.models.service.ProjectionServiceModel;
+import movieland.domain.models.service.SeatServiceModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.invalid.InvalidProjectionException;
 import movieland.errors.notfound.CinemaNotFoundException;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static movieland.constants.entities.ProjectionConstants.*;
@@ -222,6 +225,21 @@ public class ProjectionsServiceImpl implements ProjectionsService {
         boolean isMovieAlreadyProjected = isMovieAlreadyProjectedInCinemaAtTheGivenTime(movie, programme, projectionStartingTime, areAllMovieProjectionsBookedOut, null);
 
         return isMovieAlreadyProjected && !areAllMovieProjectionsBookedOut[0];
+    }
+
+    @Override
+    public Set<SeatServiceModel> findAllSeatsByProjectionId(String projectionId) {
+        Projection projection = projectionsRepository.findById(projectionId)
+                .orElseThrow(() -> new ProjectionNotFoundException(PROJECTION_NOT_FOUND));
+
+        Set<SeatServiceModel> seatServiceModels = new TreeSet<>();
+
+        projection.getSeats()
+                .stream()
+                .map(seat -> modelMapper.map(seat, SeatServiceModel.class))
+                .forEach(seatServiceModels::add);
+
+        return seatServiceModels;
     }
 
     private boolean isStaringTimeInRangeOfWorkingHours(Cinema cinema, LocalDateTime projectionDateAndStartingTime) {

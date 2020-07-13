@@ -4,6 +4,7 @@ import movieland.domain.models.binding.projection.ProjectionCreateBindingModel;
 import movieland.domain.models.service.CinemaServiceModel;
 import movieland.domain.models.service.ProgrammeServiceModel;
 import movieland.domain.models.service.ProjectionServiceModel;
+import movieland.domain.models.view.projection.ProjectionViewModel;
 import movieland.services.interfaces.ProjectionsService;
 import movieland.validation.projection.ProjectionsCreateValidator;
 import movieland.web.annotations.Page;
@@ -11,10 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import static movieland.constants.GlobalConstants.MODEL_NAME;
@@ -59,5 +57,13 @@ public class ProjectionsController extends BaseController {
         projectionsService.create(projectionServiceModel);
 
         return redirect("/");
+    }
+
+    @GetMapping("/{id}")
+    @Page(title = "View Projection", name = "projection/projection-view")
+    public ModelAndView viewProjection(@PathVariable String id) {
+        ProjectionServiceModel projectionServiceModel = projectionsService.findById(id);
+        ProjectionViewModel projectionViewModel = modelMapper.map(projectionServiceModel, ProjectionViewModel.class);
+        return view(projectionViewModel);
     }
 }

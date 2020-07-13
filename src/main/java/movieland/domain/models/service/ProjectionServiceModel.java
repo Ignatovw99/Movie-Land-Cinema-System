@@ -17,9 +17,9 @@ public class ProjectionServiceModel extends BaseServiceModel {
 
     private LocalDateTime startingTime;
 
-    private boolean isStateOfEmergency;
+    private LocalDateTime endingTime;
 
-    private Set<Seat> seats;
+    private boolean isStateOfEmergency;
 
     public ProjectionServiceModel() {
     }
@@ -56,19 +56,19 @@ public class ProjectionServiceModel extends BaseServiceModel {
         this.startingTime = startingTime;
     }
 
+    public LocalDateTime getEndingTime() {
+        return endingTime;
+    }
+
+    public void setEndingTime(LocalDateTime endingTime) {
+        this.endingTime = endingTime;
+    }
+
     public boolean getIsStateOfEmergency() {
         return isStateOfEmergency;
     }
 
     public void setIsStateOfEmergency(boolean isStateOfEmergency) {
         this.isStateOfEmergency = isStateOfEmergency;
-    }
-
-    public Set<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(Set<Seat> seats) {
-        this.seats = seats;
     }
 }

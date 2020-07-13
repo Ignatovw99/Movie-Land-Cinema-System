@@ -1,16 +1,23 @@
-<div class="container-fluid w-70 bg-form mb-5" id="mainElement" xmlns:th="http://www.thymeleaf.org">
-    <!--/*@thymesVar id="model" type="movieland.domain.models.view.programme.ProgrammeViewModel"*/-->
-<!--    <div class="container-fluid d-flex justify-content-center mb-3">-->
-<!--        <h1 class="m-3" th:text="'Programme of cinema' + ' \'' + ${model.cinemaName} + '\''"></h1>-->
-<!--    </div>-->
+<div class="container-fluid w-70 bg-form mb-5" id="mainElement" xmlns:th="http://www.thymeleaf.org"
+     xmlns="http://www.w3.org/1999/html">
+<!--    /*@thymesVar id="model" type="movieland.domain.models.view.projection.ProjectionViewModel"*/-->
 
-<!--    <div class="container-fluid ml-5 mb-5">-->
-<!--        <strong class="ml-3 mr-5">Start Date: <strong th:text="${#temporals.format(model.startDate, 'dd-MM-yyyy')}"></strong></strong>-->
-<!--        <button class="btn-secondary mr-5" id="prev">Prev</button>-->
-<!--        <input disabled type="text" class="text-center mr-5" id="field" />-->
-<!--        <button class="btn-secondary mr-5" id="next">Next</button>-->
-<!--        <strong>End Date: <strong th:text="${#temporals.format(model.endDate, 'dd-MM-yyyy')}"></strong></strong>-->
-<!--    </div>-->
+    <div class="container-fluid d-flex justify-content-center mb-3">
+        <h1 class="m-3" th:text="'Projection of movie' + ' \'' + ${model.movieTitle} + '\''"></h1>
+    </div>
+
+    <div class="container-fluid d-flex justify-content-center mb-3">
+        <h3 th:text="'Cinema: ' + ${model.hallCinemaName}"></h3>
+        <h3 class="ml-5" th:text="'Hall: ' + ${model.hallName}"></h3>
+    </div>
+    <div class="container-fluid d-flex justify-content-center mb-3">
+        <h4 th:text="'Rows: ' + ${model.hallRows}"></h4>
+        <h4 class="ml-5" th:text="'Columns: ' + ${model.hallColumns}"></h4>
+    </div>
+    <div class="container-fluid d-flex justify-content-center ml-5 mb-5">
+        <h5 th:text="'Starting time: ' + ${#temporals.format(model.startingTime, 'dd-MM-yyyy hh:mm')}"></h5>
+        <h5 class="ml-5" th:text="'Ending time: ' + ${#temporals.format(model.endingTime, 'dd-MM-yyyy hh:mm')}"></h5>
+    </div>
 
     <ul class="showcase">
         <li>
@@ -25,7 +32,7 @@
             <div class="seat occupied"></div>
             <small>Occupied</small>
         </li>
-        <li>
+        <li th:if="${model.stateOfEmergency}">
             <div class="seat blocked"></div>
             <small>Blocked</small>
         </li>
@@ -52,25 +59,55 @@
     const count = document.getElementById('count');
     const price = document.getElementById('price');
 
-    let rows = 9;
-    let cols = 13;
-
     $(document).ready(function () {
-        for (let i =1; i <= rows; i++) {
-            let $div = document.createElement('div');
-            $div.classList.add('row');
-            container.appendChild($div);
+        /*<![CDATA[*/
+        let projectionId = '[[${model.id}]]';
+        let rows = '[[${model.hallRows}]]';
+        let columns = '[[${model.hallColumns}]]';
+        /*]]>*/
+        $.ajax({
+            type: 'GET',
+            url: '/api/projections/' + projectionId + '/seats',
+            success: function (seats) {
+                let seatsIterator = seats[Symbol.iterator]();
+                for (let i = 1; i <= rows; i++) {
+                    let rowElement = document.createElement('div');
+                    rowElement.classList.add('row');
+                    container.appendChild(rowElement);
 
-            for (let j = 1; j <= cols; j++) {
-                let seat = document.createElement('div');
-                seat.classList.add('seat');
-                // seat.classList.add('occupied');
-                //<input type="number" class="seat-price" value="32.43" hidden="">
-                //<input type="text" class="seat-id" value="dasdwqe" hidden="">
-                $div.appendChild(seat);
+                    for (let j = 1; j <= columns; j++) {
+                        let currentSeat = seatsIterator.next().value;
+
+                        let seatElement = document.createElement('div');
+                        seatElement.classList.add('seat');
+
+                        if (currentSeat.blocked) {
+                            seatElement.classList.add('blocked');
+                        } else if (!currentSeat.free) {
+                            seatElement.classList.add('occupied');
+                        }
+
+                        let priceElement = document.createElement('input');
+                        priceElement.setAttribute('type', 'number');
+                        priceElement.setAttribute('class', 'seat-price');
+                        priceElement.setAttribute('value', currentSeat.price);
+                        priceElement.setAttribute('hidden', '');
+
+                        seatElement.appendChild(priceElement);
+
+                        let idElement = document.createElement('input');
+                        idElement.setAttribute('type', 'text');
+                        idElement.setAttribute('class', 'seat-id');
+                        idElement.setAttribute('value', currentSeat.id);
+                        idElement.setAttribute('hidden', '');
+
+                        seatElement.appendChild(idElement);
+
+                        rowElement.appendChild(seatElement);
+                    }
+                    console.log(rowElement);
             }
-            console.log($div);
-        }
+        }});
     });
 
     // const movieSelect = document.getElementById('movie');
