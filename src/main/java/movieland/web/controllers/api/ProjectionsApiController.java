@@ -6,11 +6,9 @@ import movieland.services.interfaces.ProjectionsService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,5 +36,10 @@ public class ProjectionsApiController {
                 .collect(Collectors.toUnmodifiableList());
 
         return ResponseEntity.ok(seatViewModels);
+    }
+
+    @PostMapping("/seats/booking")
+    public ResponseEntity<List<SeatViewModel>> bookSeatsForProjection(/*@RequestBody*/) {
+        return ResponseEntity.ok(new ArrayList<>());
     }
 }

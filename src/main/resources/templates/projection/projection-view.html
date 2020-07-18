@@ -45,19 +45,19 @@
     </div>
 
     <p class="container-fluid justify-content-center text">
-        You have selected <span id="count">0</span> seats for a price of $<span class="mr-5" id="price">0</span>
+        You have selected '<span id="count">0</span>' seats for a price of $<span class="mr-5" id="price">0</span>
     </p>
     <div class="mb-4">
         <p class="container-fluid justify-content-center text mt-4 mb-4">
-            <button class="btn btn-info mb-4">Book :)</button>
+            <button class="book-button btn btn-info mb-4">Book :)</button>
         </p>
     </div>
 </div>
 <script>
     const container = document.querySelector('.container');
-    const seats = document.querySelectorAll('.row .seat:not(.occupied):not(.blocked)');
     const count = document.getElementById('count');
     const price = document.getElementById('price');
+    const bookButton = document.querySelector('.book-button');
 
     $(document).ready(function () {
         /*<![CDATA[*/
@@ -105,60 +105,20 @@
 
                         rowElement.appendChild(seatElement);
                     }
-                    console.log(rowElement);
             }
         }});
     });
 
-    // const movieSelect = document.getElementById('movie');
-    // let ticketPrice = +movieSelect.value;
-    //
-    // const populateUI = () => {
-    //     const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats'));
-    //
-    //     if (selectedSeats !== null && selectedSeats.length > 0) {
-    //         seats.forEach((seat, index) => {
-    //             if (selectedSeats.indexOf(index) > -1) {
-    //                 seat.classList.add('selected');
-    //             }
-    //         });
-    //     }
-    //
-    //     const selectedMovieIndex = localStorage.getItem('selectedMovieIndex');
-    //     const selectedMoviePrice = localStorage.getItem('selectedMoviePrice');
-    //
-    //     if (selectedMovieIndex !== null) {
-    //         movieSelect.selectedIndex = selectedMovieIndex;
-    //     }
-    //
-    //     if (selectedMoviePrice !== null) {
-    //         count.innerText = selectedSeats.length;
-    //         price.innerText = selectedSeats.length * +selectedMoviePrice;
-    //     }
-    // };
-    //
-    // populateUI();
-
-    // selectedMovie = (movieIndex, moviePrice) => {
-    //     localStorage.setItem('selectedMovieIndex', movieIndex);
-    //     localStorage.setItem('selectedMoviePrice', moviePrice);
-    // };
-
     const updateSelectedSeatsCount = () => {
         const selectedSeats = document.querySelectorAll('.row .selected');
+        price.innerText = '0';
 
-        console.log(selectedSeats);
+        for (let selectedSeat of selectedSeats) {
+            let seatPrice = selectedSeat.querySelector('.seat-price').value;
+            price.innerText = Number(price.innerText) + Number(seatPrice);
+        }
 
-        const seatsIndex = [...selectedSeats].map(seat => [...seats].indexOf(seat));
-
-        console.log(selectedSeats);
-
-        localStorage.setItem('selectedSeats', JSON.stringify(seatsIndex));
-
-        const selectedSeatsCount = selectedSeats.length;
-
-        count.innerText = selectedSeatsCount;
-        // price.innerText = selectedSeatsCount * ticketPrice;
+        count.innerText = selectedSeats.length;
     };
 
     // Seat select event
@@ -170,12 +130,25 @@
         }
     });
 
-    // Movie select event
-    // movieSelect.addEventListener('change', e => {
-    //     ticketPrice = +e.target.value;
-    //     selectedMovie(e.target.selectedIndex, e.target.value);
-    //
-    //     updateSelectedSeatsCount();
-    // });
+    // Seats booking event
+    bookButton.addEventListener('click', e => {
+        const selectedSeats = document.querySelectorAll('.row .selected');
 
+        let seatsIds = { seatIds: [] };
+        for (let selectedSeat of selectedSeats) {
+            let seatId = selectedSeat.querySelector('.seat-id').value;
+            seatsIds.seatIds.push(seatId)
+        }
+
+        $.ajax({
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(seatsIds),
+            url: '/api/projections/seats/booking',
+            success: function () {
+                //TODO: implement some frontend functionality for successful booking
+                window.location.href = "/";
+            }
+        });
+    });
 </script>

@@ -138,6 +138,7 @@ public class ProgrammesServiceImpl implements ProgrammesService {
 
     //This is scheduled task, which has to be executed every day at midnight (12am)
     @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
     @Override
     public void createAnActiveProgrammeForAllCinemasWithInactiveOnes() {
         cinemasRepository.findAll()
