@@ -2,11 +2,14 @@ package movieland.services.implementations;
 
 import movieland.TestBase;
 import movieland.domain.entities.Cinema;
+import movieland.domain.entities.Movie;
 import movieland.domain.entities.Programme;
 import movieland.domain.entities.Projection;
 import movieland.domain.models.service.CinemaServiceModel;
 import movieland.domain.models.service.ProgrammeServiceModel;
+import movieland.domain.models.view.movie.MovieViewModel;
 import movieland.domain.models.view.programme.CinemaProgrammeDateViewModel;
+import movieland.domain.models.view.projection.ProjectionViewModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.notfound.CinemaNotFoundException;
 import movieland.errors.notfound.ProgrammeNotFoundException;
@@ -14,9 +17,11 @@ import movieland.repositories.CinemasRepository;
 import movieland.repositories.ProgrammesRepository;
 import movieland.services.interfaces.ProgrammesService;
 import movieland.services.validation.ProgrammesValidationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
 
 import java.time.*;
 import java.util.*;
@@ -37,6 +42,9 @@ public class ProgrammesServiceTest extends TestBase {
 
     @MockBean
     private Clock clock;
+
+    @Autowired
+    private CacheManager cacheManager;
 
     @Autowired
     private ProgrammesService programmesService;
@@ -86,6 +94,12 @@ public class ProgrammesServiceTest extends TestBase {
         programmeServiceModel = ProgrammesServiceTest.initializeServiceModel();
     }
 
+    @BeforeEach
+    public void cacheEvict() {
+        cacheManager.getCacheNames()
+                .forEach(cacheName -> Objects.requireNonNull(cacheManager.getCache(cacheName)).clear());
+    }
+
     private void setupCreateNextMethod() {
         when(programmesValidationService.isValid(any(ProgrammeServiceModel.class)))
                 .thenReturn(true);
@@ -100,16 +114,10 @@ public class ProgrammesServiceTest extends TestBase {
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
     }
 
-    @Override
-    protected void setupMockBeansActions() {
-        setupCreateNextMethod();
-        setupGetCurrantActiveCinemaProgrammeWithItsProjections();
-    }
-
     private void setupGetCurrantActiveCinemaProgrammeWithItsProjections() {
         when(cinemasRepository.findById(anyString()))
                 .thenReturn(Optional.of(DEFAULT_CINEMA));
-        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), any(MOCK_TODAY.getClass())))
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), eq(MOCK_TODAY)))
                 .thenReturn(Optional.of(programme));
 
         programme.setProjections(new LinkedHashSet<>());
@@ -119,6 +127,12 @@ public class ProgrammesServiceTest extends TestBase {
             projection.setId(UUID.randomUUID().toString());
             programme.getProjections().add(projection);
         }
+    }
+
+    @Override
+    protected void setupMockBeansActions() {
+        setupCreateNextMethod();
+        setupGetCurrantActiveCinemaProgrammeWithItsProjections();
     }
 
     @Test
@@ -213,6 +227,51 @@ public class ProgrammesServiceTest extends TestBase {
                 InvalidProgrammeException.class,
                 () -> programmesService.createNext(programmeServiceModel)
         );
+    }
+
+    @Test
+    public void getProgrammeByCinemaIdAndDate_WhenCinemaDoesNotExist_ShouldThrowException() {
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                CinemaNotFoundException.class,
+                () -> programmesService.getProgrammeByCinemaIdAndDate(anyString(), MOCK_TODAY)
+        );
+
+        verify(cinemasRepository).findById(anyString());
+    }
+
+    @Test
+    public void getProgrammeByCinemaIdAndDate_WhenThereIsNotAnyProgrammeInTheGivenPeriod_ShouldThrowException() {
+        Cinema cinema = new Cinema();
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.of(cinema));
+
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), eq(MOCK_TODAY)))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ProgrammeNotFoundException.class,
+                () -> programmesService.getProgrammeByCinemaIdAndDate(anyString(), MOCK_TODAY)
+        );
+
+        verify(programmesRepository).findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), eq(MOCK_TODAY));
+    }
+
+    @Test
+    public void getProgrammeByCinemaIdAndDate_WhenThereIsProgrammeInTheGivenPeriod_ShouldBeReturned() {
+        Cinema cinema = new Cinema();
+        when(cinemasRepository.findById(anyString()))
+                .thenReturn(Optional.of(cinema));
+
+        when(programmesRepository.findProgrammeOfCinemaInGivenPeriod(any(Cinema.class), eq(MOCK_TODAY)))
+                .thenReturn(Optional.of(programme));
+
+        ProgrammeServiceModel actualProgrammeByCinemaIdAndDate = programmesService.getProgrammeByCinemaIdAndDate(anyString(), MOCK_TODAY);
+
+        assertNotNull(actualProgrammeByCinemaIdAndDate);
+        assertEquals(programme.getId(), actualProgrammeByCinemaIdAndDate.getId());
     }
 
     @Test
@@ -325,19 +384,46 @@ public class ProgrammesServiceTest extends TestBase {
         Map<LocalDate, CinemaProgrammeDateViewModel> moviesWithTheirProjectionsByDate = programmesService.getCurrantActiveCinemaProgrammeWithItsProjections(DEFAULT_CINEMA.getId());
         CinemaProgrammeDateViewModel cinemaProgrammeDateViewModel = moviesWithTheirProjectionsByDate.get(MOCK_TODAY);
 
-        LocalDateTime expected = null;
+        for (Map.Entry<MovieViewModel, Set<ProjectionViewModel>> movieProjection : cinemaProgrammeDateViewModel.getMovieProjections().entrySet()) {
 
-        //TODO: refactor
-//        for (ProjectionViewModel movieProjection : cinemaProgrammeDateViewModel.getMovieProjections().get()) {
-//            for (movieland.domain.models.view.projection.ProjectionViewModel projection : movieProjection.getProjections()) {
-//                if (expected == null) {
-//                    expected = projection.getStartingTime();
-//                } else {
-//                    assertTrue(expected.isBefore(projection.getStartingTime()));
-//                }
-//            }
-//        }
+            LocalDateTime expected = null;
+            for (ProjectionViewModel projection : movieProjection.getValue()) {
+                if (expected == null) {
+                    expected = projection.getStartingTime();
+                } else {
+                    assertTrue(expected.isBefore(projection.getStartingTime()));
+                }
+            }
+        }
     }
 
-    //TODO : test sorted by movie title
+    @Test
+    public void getCurrantActiveCinemaProgrammeWithItsProjections_MoviesShouldBeSortedByMovieTitleAscending() {
+        String[] unsortedTitles = { "F&F 9", "Best", "Alice" };
+
+        String[] sortedTitles = { "Alice", "Best", "F&F 9" };
+
+        Set<Projection> projections = new HashSet<>();
+        for (int i = 0; i < 3; i++) {
+            Projection projection = ProjectionsServiceTest.initializeEntity();
+            projection.setId(UUID.randomUUID().toString());
+            Movie movie = new Movie();
+            movie.setId(UUID.randomUUID().toString());
+            movie.setTitle(unsortedTitles[i]);
+            projection.setMovie(movie);
+            projection.setStartingTime(LocalDateTime.of(MOCK_TODAY, LocalTime.of(0, 0)));
+            projection.setEndingTime(LocalDateTime.of(MOCK_TODAY, LocalTime.of(3, 0)));
+            projections.add(projection);
+        }
+        programme.setProjections(projections);
+
+        Map<LocalDate, CinemaProgrammeDateViewModel> moviesWithTheirProjectionsByDate = programmesService.getCurrantActiveCinemaProgrammeWithItsProjections(DEFAULT_CINEMA.getId());
+        CinemaProgrammeDateViewModel cinemaProgrammeDateViewModel = moviesWithTheirProjectionsByDate.get(MOCK_TODAY);
+
+        int index = 0;
+        for (Map.Entry<MovieViewModel, Set<ProjectionViewModel>> movieProjection : cinemaProgrammeDateViewModel.getMovieProjections().entrySet()) {
+            String movieTitle = movieProjection.getKey().getTitle();
+            assertEquals(sortedTitles[index++], movieTitle);
+        }
+    }
 }
