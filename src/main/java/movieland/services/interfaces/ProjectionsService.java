@@ -16,4 +16,6 @@ public interface ProjectionsService extends CrudService<ProjectionServiceModel, 
     boolean isMovieAlreadyProjectedInCinemaAtTheGivenTime(String movieId, String cinemaId, LocalDateTime projectionStartingTime);
 
     Set<SeatServiceModel> findAllSeatsByProjectionId(String projectionId);
+
+    Set<SeatServiceModel> bookSeats(Set<String> seatIds);
 }

@@ -1,9 +1,6 @@
 package movieland.services.implementations;
 
-import movieland.constants.entities.CinemaConstants;
-import movieland.constants.entities.HallConstants;
-import movieland.constants.entities.MovieConstants;
-import movieland.constants.entities.ProgrammeConstants;
+import movieland.constants.entities.*;
 import movieland.domain.entities.*;
 import movieland.domain.models.service.HallServiceModel;
 import movieland.domain.models.service.MovieServiceModel;
@@ -11,6 +8,7 @@ import movieland.domain.models.service.ProjectionServiceModel;
 import movieland.domain.models.service.SeatServiceModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.invalid.InvalidProjectionException;
+import movieland.errors.invalid.SeatNotFreeException;
 import movieland.errors.notfound.CinemaNotFoundException;
 import movieland.errors.notfound.HallNotFoundException;
 import movieland.errors.notfound.MovieNotFoundException;
@@ -24,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -240,6 +240,26 @@ public class ProjectionsServiceImpl implements ProjectionsService {
                 .forEach(seatServiceModels::add);
 
         return seatServiceModels;
+    }
+
+    @Override
+    @Transactional(rollbackOn = SeatNotFreeException.class)
+    public Set<SeatServiceModel> bookSeats(Set<String> seatIds) {
+        List<Seat> selectedSeats = seatsRepository.findAllById(seatIds);
+
+        Set<SeatServiceModel> bookedSeats = new HashSet<>();
+
+        selectedSeats
+                .forEach(seat -> {
+                    if (!seat.getIsFree()) {
+                        throw new SeatNotFreeException(String.format(SEAT_IS_OCCUPIED, seat.getRow(), seat.getColumn()));
+                    }
+                    seat.setIsFree(false);
+                    seat = seatsRepository.saveAndFlush(seat);
+                    bookedSeats.add(modelMapper.map(seat, SeatServiceModel.class));
+                });
+
+        return bookedSeats;
     }
 
     private boolean isStaringTimeInRangeOfWorkingHours(Cinema cinema, LocalDateTime projectionDateAndStartingTime) {

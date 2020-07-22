@@ -47,9 +47,9 @@
     <p class="container-fluid justify-content-center text">
         You have selected '<span id="count">0</span>' seats for a price of $<span class="mr-5" id="price">0</span>
     </p>
-    <div class="mb-4">
-        <p class="container-fluid justify-content-center text mt-4 mb-4">
-            <button class="book-button btn btn-info mb-4">Book :)</button>
+    <div class="mb-2">
+        <p class="container-fluid justify-content-center text mt-4 mb-2">
+            <button class="book-button btn btn-info mb-2">Book :)</button>
         </p>
     </div>
 </div>
@@ -132,23 +132,36 @@
 
     // Seats booking event
     bookButton.addEventListener('click', e => {
+        let mainElement = document.getElementById('mainElement');
+        mainElement.removeChild(mainElement.lastChild);
+
         const selectedSeats = document.querySelectorAll('.row .selected');
 
-        let seatsIds = { seatIds: [] };
+        let seatsIds = [];
         for (let selectedSeat of selectedSeats) {
             let seatId = selectedSeat.querySelector('.seat-id').value;
-            seatsIds.seatIds.push(seatId)
+            seatsIds.push(seatId)
         }
 
-        $.ajax({
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify(seatsIds),
-            url: '/api/projections/seats/booking',
-            success: function () {
-                //TODO: implement some frontend functionality for successful booking
-                window.location.href = "/";
-            }
-        });
+        if (seatsIds.length > 0) {
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(seatsIds),
+                url: '/api/projections/seats/booking',
+                success: function () {
+                    window.location.href = "/";
+                },
+                error: function (err) {
+                    let errElement = document.createElement('p');
+                    errElement.setAttribute('class', 'container-fluid justify-content-center text');
+                    errElement.setAttribute("style", 'color:red');
+                    errElement.innerText = err.responseText;
+
+                    mainElement = document.getElementById('mainElement');
+                    mainElement.appendChild(errElement);
+                }
+            });
+        }
     });
 </script>

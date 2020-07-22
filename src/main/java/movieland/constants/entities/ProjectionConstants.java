@@ -38,4 +38,5 @@ public class ProjectionConstants {
     public static final String HALL_IS_NOT_FREE_IN_THE_GIVEN_PERIOD = "The hall is not free during the given period of time, try another hours... ;(";
     public static final String SUCH_MOVIE_PROJECTION_ALREADY_EXISTS = "In the given cinema there is already such movie projection at the given time";
     public static final String MOVIE_AND_HALL_ARE_NOT_UPDATABLE = "The movie and hall can not be updated";
+    public static final String SEAT_IS_OCCUPIED = "The seat in row %d and column %d is already occupied.";
 }

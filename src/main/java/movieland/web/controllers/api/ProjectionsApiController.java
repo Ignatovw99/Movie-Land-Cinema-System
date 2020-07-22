@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,7 +38,13 @@ public class ProjectionsApiController {
     }
 
     @PostMapping("/seats/booking")
-    public ResponseEntity<List<SeatViewModel>> bookSeatsForProjection(/*@RequestBody*/) {
-        return ResponseEntity.ok(new ArrayList<>());
+    public ResponseEntity<List<SeatViewModel>> bookSeatsForProjection(@RequestBody Set<String> seatIds) {
+        Set<SeatServiceModel> bookedSeatsServiceModel = projectionsService.bookSeats(seatIds);
+
+        List<SeatViewModel> bookedSeatViewModels = bookedSeatsServiceModel.stream()
+                .map(seatServiceModel -> modelMapper.map(seatServiceModel, SeatViewModel.class))
+                .collect(Collectors.toUnmodifiableList());
+
+        return ResponseEntity.ok(bookedSeatViewModels);
     }
 }
