@@ -1,0 +1,94 @@
+<th:block th:fragment="navbar" xmlns:th="http://www.thymeleaf.org"
+>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" th:href="@{/}"><img src="/images/logo.png" alt="Movie Land"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <div class="dropdown">
+                        <a class="nav-link" id="cinemasDropdown" role="button" data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Cinemas</a>
+                        <div class="dropdown-menu" aria-labelledby="cinemasDropdown">
+                            <a class="dropdown-item" th:href="@{/todo}">Show Details</a>
+                            <a class="dropdown-item" th:href="@{/cinemas/create}">Create</a>
+                            <a class="dropdown-item" th:href="@{/cinemas/all}">Show All</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <div class="dropdown">
+                        <a class="nav-link" id="hallsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">Halls</a>
+                        <div class="dropdown-menu" aria-labelledby="hallsDropdown">
+                            <a class="dropdown-item" th:href="@{/halls/create}">Create</a>
+                            <a class="dropdown-item" th:href="@{/halls/all}">Show All</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <div class="dropdown">
+                        <a class="nav-link" id="moviesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">Movies</a>
+                        <div class="dropdown-menu" aria-labelledby="moviesDropdown">
+                            <a class="dropdown-item" th:href="@{/todo}">Show Details</a>
+                            <a class="dropdown-item" th:href="@{/movies/create}">Create</a>
+                            <a class="dropdown-item" th:href="@{/movies/all}">Show All</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <div class="dropdown">
+                        <a class="nav-link" id="programmeDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">Programme</a>
+                        <div id="programmeDiv" class="dropdown-menu" aria-labelledby="programmeDropdown">
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <div class="dropdown">
+                        <a class="nav-link" id="projectionsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">Projections</a>
+                        <div class="dropdown-menu" aria-labelledby="projectionsDropdown">
+                            <a class="dropdown-item" th:href="@{/projections/create}">Create</a>
+                        </div>
+                    </div>
+                </li>
+<!--                <li class="nav-item active">-->
+<!--                    <a class="nav-link" th:href="@{/login}">Login</a>-->
+<!--                </li>-->
+<!--                <li class="nav-item active">-->
+<!--                    <a class="nav-link" th:href="@{/register}">Register</a>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">${Your profile}</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/api/cinemas/all',
+                success: function (cinemas) {
+                    for (let cinema of cinemas) {
+                        $('#programmeDiv')
+                            .append(
+                                $('<a/>')
+                                    .attr({'class': 'dropdown-item'})
+                                    .attr({'href': '/programmes/cinema/' + cinema.id})
+                                    .text(cinema.name)
+                            );
+                    }
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            })
+        });
+    </script>
+</th:block>

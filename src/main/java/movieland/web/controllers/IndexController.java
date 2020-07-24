@@ -8,11 +8,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/")
-public class IndexController {
+public class IndexController extends BaseController {
 
     @GetMapping
     @Page(name = "index")
-    public ModelAndView index(ModelAndView modelAndView) {
-        return modelAndView;
+    public ModelAndView index() {
+        return view();
     }
 }

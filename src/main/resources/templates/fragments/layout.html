@@ -1,90 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="view" type="java.lang.String"*/-->
-<!--/*@thymesVar id="title" type="java.lang.String"*/-->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title th:text="${title}"></title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="shortcut icon" href="/images/favicon.ico">
-    <script src="/js/jquery-3.4.1.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <!--<th:block th:include="~{fragments/head}"></th:block>-->
+    <th:block th:include="~{fragments/head}"></th:block>
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#"><img src="/images/logo.png"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#clients">Programme</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#cource">Cinemas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#resource">Movies</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">${Your profile}</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!--<th:block th:include="~{fragments/navbar}"></th:block>-->
-</header>
+    <th:block th:include="~{fragments/navbar}"></th:block>
 <main>
     <th:block th:replace="${view}"></th:block>
 </main>
-<footer>
-    <div class="row justify-content-center">
-        <div class="col-sm3 my-auto">
-            <img src="/images/logo.png">
-        </div>
-        <div class="col-sm3 my-auto">
-            <small>Address</small>
-        </div>
-        <div class="col-sm3 my-auto">
-            <small>Social</small>
-            <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-            <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-        </div>
-        <div class="col-sm2"></div>
-        <div class="col-sm2"></div>
-        <div class="col-sm3"></div>
-    </div>
-</footer>
-<!-- <div id="contact" class="offset">
-        <footer>
-            <div class="row justify-content-center">
-                <div class="col-md-5 text-center">
-                    <img src="bulma-logo.png">
-                    <p>
-                        At our core is a collection of design and development solutions that represent everything your business needs to compete in the modern marketplace.
-                    </p>
-                    <strong>Contact Info</strong>
-                    <p>(888) 888 -8888 <br> email@cinema.com</p>
-                    <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-                </div>
-
-                <hr class="socket">
-                &copy; Cinema
-            </div>
-        </footer>
-    </div> -->
-<!--<th:block th:include="~{fragments/footer}"></th:block>-->
+    <th:block th:include="~{fragments/footer}"></th:block>
 </body>
 </html>

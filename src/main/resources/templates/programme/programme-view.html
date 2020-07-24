@@ -58,8 +58,8 @@
 
                     for (let projection of projections) {
                         let projectionStartingDateTime = new Date(projection.startingTime);
-                        let projectionButton = $('<form action="/cinemas/all">\n' +
-                            '                        <button class="btn btn-info m-2">' + projectionStartingDateTime.getHours() + ':' + ('0' + (projectionStartingDateTime.getMinutes() + 1)).slice(-2) + '</button>\n' +
+                        let projectionButton = $('<form action="/projections/' +  projection.id + '">\n' +
+                            '                        <button class="btn btn-info m-2">' + ('0' + projectionStartingDateTime.getHours()).slice(-2) + ':' + ('0' + (projectionStartingDateTime.getMinutes() + 1)).slice(-2) + '</button>\n' +
                             '                    </form>');
 
                         projectionsElement.append(projectionButton);
