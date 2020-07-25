@@ -1,8 +1,9 @@
 package movieland.web.controllers;
 
-import movieland.constants.GlobalConstants;
 import movieland.errors.BaseHttpException;
 import org.springframework.web.servlet.ModelAndView;
+
+import static movieland.constants.GlobalConstants.*;
 
 public class BaseController {
 
@@ -15,7 +16,14 @@ public class BaseController {
 
     ModelAndView view(Object viewModel) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject(GlobalConstants.MODEL_NAME, viewModel);
+        modelAndView.addObject(MODEL_NAME, viewModel);
+        return modelAndView;
+    }
+
+    ModelAndView view(String viewName) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName(BASE_VIEW_TEMPLATE);
+        modelAndView.addObject(VIEW_TEMPLATE_KEY, viewName);
         return modelAndView;
     }
 
