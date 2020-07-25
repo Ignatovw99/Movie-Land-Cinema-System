@@ -1,0 +1,45 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">User Registration</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="movieland.domain.models.binding.user.UserRegisterBindingModel"*/-->
+    <form th:action="@{/register}" th:method="POST" th:object="${model}">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter email..." required th:field="*{email}"
+                   th:styleappend="${#fields.hasErrors('email')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('email')}" >
+                <small class="text-danger" th:errors="*{email}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" class="form-control" id="fullName" placeholder="Enter your full name..." th:field="*{fullName}">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password..." required th:field="*{password}"
+                   th:styleappend="${#fields.hasErrors('password')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('password')}" >
+                <small class="text-danger" th:errors="*{password}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="Enter confirm password..." required th:field="*{confirmPassword}"
+                   th:styleappend="${#fields.hasErrors('confirmPassword')} ? 'border-color: red'">
+            <th:block th:if="${#fields.hasErrors('confirmPassword')}" >
+                <small class="text-danger" th:errors="*{confirmPassword}"></small>
+                <br />
+            </th:block>
+        </div>
+        <div class="d-flex justify-content-end">
+            <div class="m-3">
+                <button type="submit" class="btn btn-secondary">Register</button>
+            </div>
+        </div>
+    </form>
+</div>
