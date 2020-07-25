@@ -1,10 +1,13 @@
 package movieland.domain.entities;
 
+import movieland.constants.entities.UserConstants;
 import movieland.domain.entities.base.BaseEntity;
+import movieland.validation.annotations.email.Email;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -14,6 +17,8 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
 
     private String password;
+
+    private String fullName;
 
     private Set<UserAuthority> authorities;
 
@@ -30,6 +35,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     @Column(name = "email", nullable = false, unique = true, updatable = false)
+    @Email
     @NotNull
     public String getUsername() {
         return email;
@@ -42,12 +48,22 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     @Column(name = "password", nullable = false)
     @NotNull
+    @Size(min = UserConstants.PASSWORD_MIN_SIZE)
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Column(name = "full_name")
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override
