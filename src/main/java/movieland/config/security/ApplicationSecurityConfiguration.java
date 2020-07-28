@@ -10,8 +10,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
+
+import static movieland.config.security.permissions.ApplicationUserPermission.*;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -37,34 +46,42 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .disable()
 //                .and()
                 .authorizeRequests()
-                .antMatchers("/cinemas/all").authenticated()
-                .anyRequest().permitAll()
-//                    .antMatchers("/", "/login", "/register").permitAll()
-//                    .antMatchers("/css/**", "/js/**").permitAll()
-//                    .antMatchers("/admin/**").hasAuthority("ADMIN")
-//                    .anyRequest().authenticated()
+//                .anyRequest().permitAll()
+                    .antMatchers("/css/*", "/js/*", "/images/*").permitAll()
+                    .antMatchers("/").permitAll()
+                    .antMatchers("/login", "/register").anonymous()
+
+                    .antMatchers("/api/cinemas/all").permitAll()
+
+                    .antMatchers("/programmes/cinema/{id}", "/api/programmes/cinema/{id}/date/{date}").permitAll()
+
+                    .antMatchers("/projections/{id}", "/api/projections/{id}/seats").permitAll()
+
+                    .antMatchers("/api/projections/seats/booking").hasAuthority(SEAT_BOOKING.getPermission())
+                    .anyRequest().authenticated()
                 .and()
                 .formLogin()
 //                    .loginPage("/login")
-                .defaultSuccessUrl("/")
-                .usernameParameter("email")
+                    .defaultSuccessUrl("/")
+                    .usernameParameter("email")
                 .and()
                 .rememberMe()
-                .key("REMEMBERMEKEY")
-                .userDetailsService(usersService)
-                .rememberMeCookieName("REMEMBER-ME-COOKIE")
-                .rememberMeParameter("remember-me")
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
+                    .key("REMEMBERMEKEY")
+                    .userDetailsService(usersService)
+                    .rememberMeCookieName("REMEMBER-ME-COOKIE")
+                    .rememberMeParameter("remember-me")
+                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(7))
                 .and()
                 .logout()
-                .logoutUrl("/logout")
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "REMEMBER-ME-COOKIE")
-                .logoutSuccessUrl("/")
+                    .logoutUrl("/logout")
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID", "REMEMBER-ME-COOKIE")
+                    .logoutSuccessUrl("/")
                 .and()
                 .exceptionHandling()
-                .accessDeniedPage("/error/unauthorized");
+                    .accessDeniedPage("/error/unauthorized")
+                    .authenticationEntryPoint(delegatingAuthenticationEntryPoint());
     }
 
     @Override
@@ -78,5 +95,14 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
         authProvider.setPasswordEncoder(passwordEncoder);
         authProvider.setUserDetailsService(usersService);
         return authProvider;
+    }
+
+    @Bean
+    public DelegatingAuthenticationEntryPoint delegatingAuthenticationEntryPoint() {
+        LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
+        entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
+        DelegatingAuthenticationEntryPoint defaultEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
+        defaultEntryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
+        return defaultEntryPoint;
     }
 }
