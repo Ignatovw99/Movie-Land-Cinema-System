@@ -1,6 +1,7 @@
 package movieland.web.controllers;
 
 import movieland.domain.models.binding.user.UserRegisterBindingModel;
+import movieland.domain.models.service.UserServiceModel;
 import movieland.services.interfaces.UsersService;
 import movieland.validation.user.UsersRegistrationValidator;
 import movieland.web.annotations.Page;
@@ -41,7 +42,10 @@ public class UsersController extends BaseController {
         if (bindingResult.hasErrors()) {
             return view("user/user-register");
         }
-        //TODO register user in the database
+
+        UserServiceModel userToRegister = modelMapper.map(userRegisterBindingModel, UserServiceModel.class);
+        usersService.register(userToRegister, userRegisterBindingModel.getConfirmPassword());
+
         return redirect("/login");
     }
 }

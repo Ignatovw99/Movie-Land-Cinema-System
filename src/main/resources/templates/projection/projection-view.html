@@ -47,7 +47,7 @@
     <p class="container-fluid justify-content-center text">
         You have selected '<span id="count">0</span>' seats for a price of $<span class="mr-5" id="price">0</span>
     </p>
-    <div class="mb-5">
+    <div>
         <p class="container-fluid justify-content-center text mt-4 mb-2">
             <button class="book-button btn btn-info mb-2">Book :)</button>
         </p>
@@ -152,11 +152,11 @@
                 success: function () {
                     window.location.href = "/";
                 },
-                error: function (err) {
+                error: function () {
                     let errElement = document.createElement('p');
                     errElement.setAttribute('class', 'container-fluid justify-content-center text');
                     errElement.setAttribute("style", 'color:red');
-                    errElement.innerText = err.responseText;
+                    errElement.innerHTML = 'You have to authenticate to book some tickets -' + ' <a href="/login">Login</a>';
 
                     mainElement = document.getElementById('mainElement');
                     mainElement.appendChild(errElement);

@@ -48,7 +48,6 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     @Column(name = "password", nullable = false)
     @NotNull
-    @Size(min = UserConstants.PASSWORD_MIN_SIZE)
     public String getPassword() {
         return password;
     }
