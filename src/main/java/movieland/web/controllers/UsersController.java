@@ -1,11 +1,13 @@
 package movieland.web.controllers;
 
+import movieland.domain.models.binding.user.UserLoginBindingModel;
 import movieland.domain.models.binding.user.UserRegisterBindingModel;
 import movieland.domain.models.service.UserServiceModel;
 import movieland.services.interfaces.UsersService;
 import movieland.validation.user.UsersRegistrationValidator;
 import movieland.web.annotations.Page;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,19 @@ public class UsersController extends BaseController {
         this.usersService = usersService;
         this.usersRegistrationValidator = usersRegistrationValidator;
         this.modelMapper = modelMapper;
+    }
+
+    //TODO: create /error custom page and url
+    @GetMapping("/login")
+    @Page(name = "user/user-login")
+    public ModelAndView login(UserLoginBindingModel userLoginBindingModel) {
+        return view(userLoginBindingModel);
+    }
+
+    @PostMapping("/login")
+    public ModelAndView loginFailure(@ModelAttribute(MODEL_NAME) UserLoginBindingModel userLoginBindingModel) {
+        userLoginBindingModel.setAreCredentialsInvalid(true);
+        return view("user/user-login");
     }
 
     @GetMapping("/register")
