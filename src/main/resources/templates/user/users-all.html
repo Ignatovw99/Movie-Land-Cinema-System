@@ -1,0 +1,39 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">All Users</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="java.util.List<movieland.domain.models.view.user.UserViewModel>"*/-->
+    <table class="table table-striped text-center">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Email</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">Change Role</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="user : ${model}" th:object="${user}">
+            <tr>
+                <td scope="copl" th:text="${userStat.index + 1}"></td>
+                <td scope="col" th:text="*{email}"></td>
+                <td scope="col" th:text="*{fullName}"></td>
+                <td scope="col" th:text="*{#strings.substringAfter(role, 'ROLE_')}"></td>
+                <th:block th:if="*{role == 'ROLE_USER'}">
+                    <td scope="col"><a class="btn btn-info" th:href="@{/halls/update/{id}(id=*{id})}" th:text="Update"></a></td>
+                </th:block>
+                <th:block th:if="*{role == 'ROLE_ADMIN'}">
+                    <td scope="col"><a class="btn btn-danger" th:href="@{/halls/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+                </th:block>
+                <th:block th:if="*{email != #authentication.name}">
+                    <td scope="col"><a class="btn btn-danger" th:href="@{/halls/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+                </th:block>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>

@@ -20,7 +20,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
-import static movieland.config.security.permissions.ApplicationUserPermission.*;
+import static movieland.config.security.permissions.ApplicationUserPermission.SEAT_BOOKING;
+import static movieland.config.security.permissions.ApplicationUserRole.ADMIN;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -57,6 +58,9 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                     .antMatchers("/projections/{id}", "/api/projections/{id}/seats").permitAll()
 
                     .antMatchers("/api/projections/seats/booking").hasAuthority(SEAT_BOOKING.getPermission())
+
+                    .antMatchers("/admin/**").hasRole(ADMIN.name())
+
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -80,7 +84,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                     .logoutSuccessUrl("/")
                 .and()
                 .exceptionHandling()
-                    .accessDeniedPage("/error/unauthorized")
+                    .accessDeniedPage("/error/unauthorized") // TODO create an custom page for unauthorized requests
                     .authenticationEntryPoint(delegatingAuthenticationEntryPoint());
     }
 

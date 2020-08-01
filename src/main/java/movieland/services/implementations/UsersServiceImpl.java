@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static movieland.config.security.permissions.ApplicationUserRole.USER;
 import static movieland.constants.entities.UserConstants.*;
@@ -99,5 +100,13 @@ public class UsersServiceImpl implements UsersService {
                             userAuthoritiesRepository.saveAndFlush(userAuthority);
                         })
                 );
+    }
+
+    @Override
+    public List<UserServiceModel> findAll() {
+        return usersRepository.findAll()
+                .stream()
+                .map(user -> modelMapper.map(user, UserServiceModel.class))
+                .collect(Collectors.toUnmodifiableList());
     }
 }
