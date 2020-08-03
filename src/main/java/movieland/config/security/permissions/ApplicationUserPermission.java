@@ -9,7 +9,7 @@ public enum ApplicationUserPermission {
     PROGRAMME_WRITE("programme:write"),
     GENRE_READ("genre:read"),
     MOVIE_WRITE("movie:write"),
-    GENRE_WRITE("movie:write"),
+    GENRE_WRITE("genre:write"),
     CINEMA_READ("cinema:read"),
     CINEMA_WRITE("cinema:write"),
     HALL_READ("hall:read"),

@@ -12,25 +12,42 @@
             <th scope="col">Email</th>
             <th scope="col">Full Name</th>
             <th scope="col">Role</th>
-            <th scope="col">Change Role</th>
+            <th scope="col">Manage Role</th>
             <th scope="col"></th>
         </tr>
         </thead>
         <tbody>
         <th:block th:each="user : ${model}" th:object="${user}">
             <tr>
-                <td scope="copl" th:text="${userStat.index + 1}"></td>
+                <td scope="col" th:text="${userStat.index + 1}"></td>
                 <td scope="col" th:text="*{email}"></td>
                 <td scope="col" th:text="*{fullName}"></td>
                 <td scope="col" th:text="*{#strings.substringAfter(role, 'ROLE_')}"></td>
-                <th:block th:if="*{role == 'ROLE_USER'}">
-                    <td scope="col"><a class="btn btn-info" th:href="@{/halls/update/{id}(id=*{id})}" th:text="Update"></a></td>
+                <th:block th:if="*{role == 'ROLE_USER' && email != #authentication.name}">
+                    <td scope="col">
+                        <form th:action="@{/admin/users/promote}" th:method="POST" class="mx-1">
+                            <input hidden="hidden" name="id" th:value="*{id}">
+                            <!--                        <input type="hidden" name="_csrf" value="80417983-fe8b-45c7-963e-31f6915a1560">-->
+                            <button class="btn btn-info">Promote</button>
+                        </form>
+                    </td>
                 </th:block>
-                <th:block th:if="*{role == 'ROLE_ADMIN'}">
-                    <td scope="col"><a class="btn btn-danger" th:href="@{/halls/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+                <th:block th:if="*{role == 'ROLE_ADMIN' && email != #authentication.name}">
+                    <td scope="col">
+
+                        <form th:action="@{/admin/users/demote}" th:method="POST" class="mx-1">
+                            <input hidden="hidden" name="id" th:value="*{id}">
+                            <!--                        <input type="hidden" name="_csrf" value="80417983-fe8b-45c7-963e-31f6915a1560">-->
+                            <button class="btn btn-danger">Demote</button>
+                        </form>
+                    </td>
                 </th:block>
                 <th:block th:if="*{email != #authentication.name}">
                     <td scope="col"><a class="btn btn-danger" th:href="@{/halls/delete/{id}(id=*{id})}" th:text="Delete"></a></td>
+                </th:block>
+                <th:block th:if="*{email == #authentication.name}">
+                    <td scope="col"></td>
+                    <td scope="col"></td>
                 </th:block>
             </tr>
         </th:block>

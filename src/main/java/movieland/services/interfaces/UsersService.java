@@ -12,4 +12,6 @@ public interface UsersService extends UserDetailsService {
     void seedDatabaseWithAuthorities();
 
     List<UserServiceModel> findAll();
+
+    void manageUserRole(String userId, boolean isDemotion);
 }

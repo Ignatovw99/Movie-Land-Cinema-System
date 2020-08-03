@@ -17,7 +17,6 @@ public class UsersValidationServiceImpl implements UsersValidationService {
 
     private boolean isEmailValid(String email) {
         return email != null
-                && email.isEmpty()
                 && Pattern.compile(UserConstants.EMAIL_PATTERN).matcher(email).matches();
     }
     @Override

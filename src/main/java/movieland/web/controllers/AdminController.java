@@ -7,8 +7,7 @@ import movieland.web.annotations.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -38,5 +37,17 @@ public class AdminController extends BaseController {
                 .collect(Collectors.toUnmodifiableList());
 
         return view(userViewModels);
+    }
+
+    @PostMapping("/users/promote")
+    public ModelAndView promoteUser(@RequestParam String id) {
+        usersService.manageUserRole(id, false);
+        return redirect("/admin/users/all");
+    }
+
+    @PostMapping("/users/demote")
+    public ModelAndView demoteUser(@RequestParam String id) {
+        usersService.manageUserRole(id, true);
+        return redirect("/admin/users/all");
     }
 }

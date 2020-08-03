@@ -16,6 +16,8 @@ public class UserConstants {
     public static final String PASSWORD_INVALID_LENGTH = "Password should be at least %d symbols.";
     public static final String CONFIRM_PASS_NOT_VALID = "Passwords do not match.";
     public static final String USER_NOT_FOUND = "User not found.";
+    public static final String SELF_MODIFYING_NOT_ALLOWED = "User can not modify himself.";
+    public static final String ROOT_ADMIN_NOT_UPDATABLE = "The role of root admin can not be changed.";
 
     public static final String EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z]+\\.[a-z]{2,4}$";
     public static final int PASSWORD_MIN_SIZE = 5;

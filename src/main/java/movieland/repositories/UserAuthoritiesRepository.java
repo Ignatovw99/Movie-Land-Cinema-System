@@ -1,5 +1,6 @@
 package movieland.repositories;
 
+import movieland.domain.entities.User;
 import movieland.domain.entities.UserAuthority;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ public interface UserAuthoritiesRepository extends JpaRepository<UserAuthority, 
     List<UserAuthority> findAllByIsRoleIsTrue();
 
     UserAuthority findByAuthority(String authority);
+
+    UserAuthority findByIsRoleIsTrueAndUsersEquals(User user);
 }
