@@ -1,13 +1,11 @@
 package movieland.domain.entities;
 
-import movieland.constants.entities.UserConstants;
 import movieland.domain.entities.base.BaseEntity;
 import movieland.validation.annotations.email.Email;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -74,6 +72,16 @@ public class User extends BaseEntity implements UserDetails {
     )
     public Set<UserAuthority> getAuthorities() {
         return authorities;
+    }
+
+    public void addAuthority(UserAuthority userAuthority) {
+        authorities.add(userAuthority);
+        userAuthority.getUsers().add(this);
+    }
+
+    public void removeAuthority(UserAuthority userAuthority) {
+        authorities.remove(userAuthority);
+        userAuthority.getUsers().remove(this);
     }
 
     public void setAuthorities(Set<UserAuthority> authorities) {

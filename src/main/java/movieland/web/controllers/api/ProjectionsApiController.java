@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,8 +39,8 @@ public class ProjectionsApiController {
     }
 
     @PostMapping("/seats/booking")
-    public ResponseEntity<List<SeatViewModel>> bookSeatsForProjection(@RequestBody Set<String> seatIds) {
-        Set<SeatServiceModel> bookedSeatsServiceModel = projectionsService.bookSeats(seatIds);
+    public ResponseEntity<List<SeatViewModel>> bookSeatsForProjection(@RequestBody Set<String> seatIds, Principal principal) {
+        Set<SeatServiceModel> bookedSeatsServiceModel = projectionsService.bookSeats(seatIds, principal.getName());
 
         List<SeatViewModel> bookedSeatViewModels = bookedSeatsServiceModel.stream()
                 .map(seatServiceModel -> modelMapper.map(seatServiceModel, SeatViewModel.class))

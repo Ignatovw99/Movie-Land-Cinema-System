@@ -9,10 +9,7 @@ import movieland.domain.models.service.SeatServiceModel;
 import movieland.errors.invalid.InvalidProgrammeException;
 import movieland.errors.invalid.InvalidProjectionException;
 import movieland.errors.invalid.SeatNotFreeException;
-import movieland.errors.notfound.CinemaNotFoundException;
-import movieland.errors.notfound.HallNotFoundException;
-import movieland.errors.notfound.MovieNotFoundException;
-import movieland.errors.notfound.ProjectionNotFoundException;
+import movieland.errors.notfound.*;
 import movieland.repositories.*;
 import movieland.services.interfaces.ProjectionsService;
 import movieland.services.interfaces.SeatsService;
@@ -48,6 +45,8 @@ public class ProjectionsServiceImpl implements ProjectionsService {
 
     private final SeatsRepository seatsRepository;
 
+    private final UsersRepository usersRepository;
+
     private final SeatsService seatsService;
 
     private final CinemasRepository cinemasRepository;
@@ -57,13 +56,14 @@ public class ProjectionsServiceImpl implements ProjectionsService {
     private final Clock clock;
 
     @Autowired
-    public ProjectionsServiceImpl(ProjectionsRepository projectionsRepository, ProjectionsValidationService projectionsValidationService, MoviesRepository moviesRepository, HallsRepository hallsRepository, ProgrammesRepository programmesRepository, SeatsRepository seatsRepository, SeatsService seatsService, CinemasRepository cinemasRepository, ModelMapper modelMapper, Clock clock) {
+    public ProjectionsServiceImpl(ProjectionsRepository projectionsRepository, ProjectionsValidationService projectionsValidationService, MoviesRepository moviesRepository, HallsRepository hallsRepository, ProgrammesRepository programmesRepository, SeatsRepository seatsRepository, UsersRepository usersRepository, SeatsService seatsService, CinemasRepository cinemasRepository, ModelMapper modelMapper, Clock clock) {
         this.projectionsRepository = projectionsRepository;
         this.projectionsValidationService = projectionsValidationService;
         this.moviesRepository = moviesRepository;
         this.hallsRepository = hallsRepository;
         this.programmesRepository = programmesRepository;
         this.seatsRepository = seatsRepository;
+        this.usersRepository = usersRepository;
         this.seatsService = seatsService;
         this.cinemasRepository = cinemasRepository;
         this.modelMapper = modelMapper;
@@ -244,7 +244,10 @@ public class ProjectionsServiceImpl implements ProjectionsService {
 
     @Override
     @Transactional(rollbackOn = SeatNotFreeException.class)
-    public Set<SeatServiceModel> bookSeats(Set<String> seatIds) {
+    public Set<SeatServiceModel> bookSeats(Set<String> seatIds, String userEmail) {
+        User user = usersRepository.findByUsername(userEmail)
+                .orElseThrow(() -> new UserNotFoundException(UserConstants.USER_NOT_FOUND));
+
         List<Seat> selectedSeats = seatsRepository.findAllById(seatIds);
 
         Set<SeatServiceModel> bookedSeats = new HashSet<>();
@@ -255,6 +258,7 @@ public class ProjectionsServiceImpl implements ProjectionsService {
                         throw new SeatNotFreeException(String.format(SEAT_IS_OCCUPIED, seat.getRow(), seat.getColumn()));
                     }
                     seat.setIsFree(false);
+                    seat.setBookedBy(user);
                     seat = seatsRepository.saveAndFlush(seat);
                     bookedSeats.add(modelMapper.map(seat, SeatServiceModel.class));
                 });

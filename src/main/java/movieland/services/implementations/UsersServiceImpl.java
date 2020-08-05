@@ -156,18 +156,15 @@ public class UsersServiceImpl implements UsersService {
         user.setAuthorities(new HashSet<>());
         usersRepository.saveAndFlush(user);
 
-        Set<UserAuthority> newUserAuthorities = new HashSet<>();
-
         newRole.getGrantedAuthorities()
                 .forEach(grantedAuthority -> {
                     UserAuthority authority = userAuthoritiesRepository.findByAuthority(grantedAuthority.getAuthority());
                     if (authority == null) {
                         return;
                     }
-                    newUserAuthorities.add(authority);
+                    user.addAuthority(authority);
                 });
 
-        user.setAuthorities(newUserAuthorities);
         usersRepository.saveAndFlush(user);
     }
 }

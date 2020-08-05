@@ -17,5 +17,5 @@ public interface ProjectionsService extends CrudService<ProjectionServiceModel, 
 
     Set<SeatServiceModel> findAllSeatsByProjectionId(String projectionId);
 
-    Set<SeatServiceModel> bookSeats(Set<String> seatIds);
+    Set<SeatServiceModel> bookSeats(Set<String> seatIds, String userEmail);
 }

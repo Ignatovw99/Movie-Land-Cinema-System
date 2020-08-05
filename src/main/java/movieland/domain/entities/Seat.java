@@ -25,6 +25,8 @@ public class Seat extends BaseEntity implements Comparable<Seat> {
     @JsonManagedReference
     private Projection projection;
 
+    private User bookedBy;
+
     public Seat() {
         isFree = true;
         isBlocked = false;
@@ -114,6 +116,16 @@ public class Seat extends BaseEntity implements Comparable<Seat> {
     public Seat projection(Projection projection) {
         this.projection = projection;
         return this;
+    }
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "booked_by")
+    public User getBookedBy() {
+        return bookedBy;
+    }
+
+    public void setBookedBy(User bookedBy) {
+        this.bookedBy = bookedBy;
     }
 
     @Override
