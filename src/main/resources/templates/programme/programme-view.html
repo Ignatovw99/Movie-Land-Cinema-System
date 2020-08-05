@@ -4,7 +4,7 @@
         <h1 class="m-3" th:text="'Programme of cinema' + ' \'' + ${model.cinemaName} + '\''"></h1>
     </div>
 
-    <div class="container-fluid ml-5 mb-5">
+    <div class="container-fluid d-flex justify-content-center mb-3">
         <strong class="ml-3 mr-5">Start Date: <strong th:text="${#temporals.format(model.startDate, 'dd-MM-yyyy')}"></strong></strong>
         <button class="btn-secondary mr-5" id="prev">Prev</button>
         <input disabled type="text" class="text-center mr-5" id="field" />
