@@ -333,4 +333,6 @@ public class ProjectionsServiceTest extends TestBase {
             assertEquals(projection.getMovie().getTitle(), createdProjection.getMovie().getTitle());
         });
     }
+
+//TODO Tests
 }

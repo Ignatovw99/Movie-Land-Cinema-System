@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
+import java.security.Principal;
+
+import static movieland.constants.GlobalConstants.IS_AUTHENTICATION_FAILED;
 import static movieland.constants.GlobalConstants.MODEL_NAME;
 
 @Controller
@@ -34,15 +38,14 @@ public class UsersController extends BaseController {
 
     //TODO: create /error custom page and url
     @GetMapping("/login")
-    @Page(name = "user/user-login")
-    public ModelAndView login(UserLoginBindingModel userLoginBindingModel) {
+    @Page(title = "Login", name = "user/user-login")
+    public ModelAndView login(UserLoginBindingModel userLoginBindingModel, HttpSession session) {
+        Object isAuthenticationFailedAttribute = session.getAttribute(IS_AUTHENTICATION_FAILED);
+        if (isAuthenticationFailedAttribute != null) {
+            userLoginBindingModel.setAreCredentialsInvalid((boolean) isAuthenticationFailedAttribute);
+            session.removeAttribute(IS_AUTHENTICATION_FAILED);
+        }
         return view(userLoginBindingModel);
-    }
-
-    @PostMapping("/login")
-    public ModelAndView loginFailure(@ModelAttribute(MODEL_NAME) UserLoginBindingModel userLoginBindingModel) {
-        userLoginBindingModel.setAreCredentialsInvalid(true);
-        return view("user/user-login");
     }
 
     @GetMapping("/register")
@@ -62,5 +65,11 @@ public class UsersController extends BaseController {
         usersService.register(userToRegister, userRegisterBindingModel.getConfirmPassword());
 
         return redirect("/login");
+    }
+
+    @GetMapping("/users/bookings")
+    @Page(title = "My Movie Bookings", name = "user/user-bookings")
+    public ModelAndView getAllUserMovieBookings(Principal principal) {
+        return view(usersService.findAllProjectionBookingsByUserEmail(principal.getName()));
     }
 }

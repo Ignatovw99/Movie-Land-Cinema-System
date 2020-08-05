@@ -11,4 +11,6 @@ public class GlobalConstants {
     public static final String VIEW_TEMPLATE_KEY = "view";
 
     public static final String MODEL_NAME = "model";
+
+    public static final String IS_AUTHENTICATION_FAILED = "is_auth_successful";
 }

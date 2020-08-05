@@ -1,5 +1,6 @@
 package movieland.config.security;
 
+import movieland.config.security.handlers.CustomAuthenticationFailureHandler;
 import movieland.services.interfaces.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -66,7 +68,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .formLogin()
                     .loginPage("/login")
                     .defaultSuccessUrl("/")
-                    .failureForwardUrl("/login") //TODO see how it will be with failureHandler
+                    .failureHandler(customAuthenticationFailureHandler())
                     .usernameParameter("email")
                 .and()
                 .rememberMe()
@@ -108,5 +110,10 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
         DelegatingAuthenticationEntryPoint defaultEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
         defaultEntryPoint.setDefaultEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"));
         return defaultEntryPoint;
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 }
