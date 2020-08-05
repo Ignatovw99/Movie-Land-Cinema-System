@@ -1,0 +1,34 @@
+<div class="container-fluid w-70 bg-form" id="mainElement" xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="container-fluid d-flex justify-content-center">
+        <h1 class="m-3">My Movie Bookings</h1>
+    </div>
+
+    <!--/*@thymesVar id="model" type="java.util.List<movieland.domain.entities.projections.ProjectionBookingDetails>"*/-->
+    <table class="table table-striped text-center">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Movie</th>
+            <th scope="col">Cinema</th>
+            <th scope="col">Hall</th>
+            <th scope="col">Starting Time</th>
+            <th scope="col">Number of Seats</th>
+            <th scope="col">Total Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="user : ${model}" th:object="${user}">
+            <tr>
+                <td scope="col" th:text="${userStat.index + 1}"></td>
+                <td scope="col" th:text="*{movieTitle}"></td>
+                <td scope="col" th:text="*{cinemaName}"></td>
+                <td scope="col" th:text="*{hallName}"></td>
+                <td scope="col" th:text="*{#temporals.format(startingTime, 'dd-MM-yyyy hh:mm')}"></td>
+                <td scope="col" th:text="*{bookedSeats}"></td>
+                <td scope="col" th:text="*{totalPrice + ' $'}"></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>

@@ -3,9 +3,11 @@ package movieland.services.implementations;
 import movieland.config.security.permissions.ApplicationUserRole;
 import movieland.domain.entities.User;
 import movieland.domain.entities.UserAuthority;
+import movieland.domain.entities.projections.ProjectionBookingDetails;
 import movieland.domain.models.service.UserServiceModel;
 import movieland.errors.exceptions.UserNotValidException;
 import movieland.errors.notfound.UserNotFoundException;
+import movieland.repositories.ProjectionsRepository;
 import movieland.repositories.UserAuthoritiesRepository;
 import movieland.repositories.UsersRepository;
 import movieland.services.interfaces.UsersService;
@@ -36,6 +38,8 @@ public class UsersServiceImpl implements UsersService {
 
     private final UserAuthoritiesRepository userAuthoritiesRepository;
 
+    private final ProjectionsRepository projectionsRepository;
+
     private final UsersValidationService usersValidationService;
 
     private final PasswordEncoder passwordEncoder;
@@ -43,9 +47,10 @@ public class UsersServiceImpl implements UsersService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UsersServiceImpl(UsersRepository usersRepository, UserAuthoritiesRepository userAuthoritiesRepository, UsersValidationService usersValidationService, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public UsersServiceImpl(UsersRepository usersRepository, UserAuthoritiesRepository userAuthoritiesRepository, ProjectionsRepository projectionsRepository, UsersValidationService usersValidationService, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.usersRepository = usersRepository;
         this.userAuthoritiesRepository = userAuthoritiesRepository;
+        this.projectionsRepository = projectionsRepository;
         this.usersValidationService = usersValidationService;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
@@ -166,5 +171,12 @@ public class UsersServiceImpl implements UsersService {
                 });
 
         usersRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public List<ProjectionBookingDetails> findAllProjectionBookingsByUserEmail(String userEmail) {
+        return projectionsRepository.findAllProjectionBookingsByUser(userEmail)
+                .stream()
+                .collect(Collectors.toUnmodifiableList());
     }
 }
