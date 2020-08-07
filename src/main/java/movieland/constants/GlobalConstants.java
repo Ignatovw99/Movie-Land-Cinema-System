@@ -13,4 +13,6 @@ public class GlobalConstants {
     public static final String MODEL_NAME = "model";
 
     public static final String IS_AUTHENTICATION_FAILED = "is_auth_successful";
+
+    public static final String LOGIN_REDIRECT_URL = "login_redirect_url";
 }

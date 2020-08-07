@@ -153,10 +153,13 @@
                     window.location.href = "/";
                 },
                 error: function () {
+                    /*<![CDATA[*/
+                    let projectionId = '[[${model.id}]]';
+                    /*]]>*/
                     let errElement = document.createElement('p');
                     errElement.setAttribute('class', 'container-fluid justify-content-center text');
                     errElement.setAttribute("style", 'color:red');
-                    errElement.innerHTML = 'You have to authenticate to book some tickets -' + ' <a href="/login">Login</a>';
+                    errElement.innerHTML = 'You have to authenticate to book some tickets -' + ' <a href="/login?redirect=/projections/' + projectionId + '">Login</a>';
 
                     mainElement = document.getElementById('mainElement');
                     mainElement.appendChild(errElement);
