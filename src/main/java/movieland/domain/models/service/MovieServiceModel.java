@@ -23,6 +23,8 @@ public class MovieServiceModel extends BaseServiceModel {
 
     private Integer ageRestriction;
 
+    private String imageUrl;
+
     private GenreServiceModel genre;
 
     public MovieServiceModel() {
@@ -98,6 +100,14 @@ public class MovieServiceModel extends BaseServiceModel {
 
     public void setAgeRestriction(Integer ageRestriction) {
         this.ageRestriction = ageRestriction;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public GenreServiceModel getGenre() {

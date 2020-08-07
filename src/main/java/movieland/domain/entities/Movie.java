@@ -34,6 +34,8 @@ public class Movie extends BaseEntity {
 
     private Integer ageRestriction;
 
+    private String imageUrl;
+
     private Genre genre;
 
     public Movie() {
@@ -131,6 +133,15 @@ public class Movie extends BaseEntity {
 
     public void setAgeRestriction(Integer ageRestriction) {
         this.ageRestriction = ageRestriction;
+    }
+
+    @Column(name = "image_url")
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @ManyToOne

@@ -5,6 +5,7 @@ import movieland.domain.models.binding.movie.MovieUpdateBindingModel;
 import movieland.domain.models.service.MovieServiceModel;
 import movieland.domain.models.view.movie.MovieDeleteViewModel;
 import movieland.domain.models.view.movie.MovieViewModel;
+import movieland.services.interfaces.CloudinaryService;
 import movieland.services.interfaces.MoviesService;
 import movieland.validation.movie.MoviesCreateValidator;
 import movieland.validation.movie.MoviesUpdateValidator;
@@ -16,16 +17,22 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static movieland.constants.GlobalConstants.MODEL_NAME;
+import static movieland.constants.ValidationErrorCodes.NULL_ERROR_VALUE;
+import static movieland.constants.entities.MovieConstants.MOVIE_PICTURE_FIELD;
+import static movieland.constants.entities.MovieConstants.MOVIE_PICTURE_NOT_NULL;
 
 @Controller
 @RequestMapping("/movies")
 public class MoviesController extends BaseController {
 
     private final MoviesService moviesService;
+
+    private final CloudinaryService cloudinaryService;
 
     private final MoviesCreateValidator moviesCreateValidator;
 
@@ -34,8 +41,9 @@ public class MoviesController extends BaseController {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public MoviesController(MoviesService moviesService, MoviesCreateValidator moviesCreateValidator, MoviesUpdateValidator moviesUpdateValidator, ModelMapper modelMapper) {
+    public MoviesController(MoviesService moviesService, CloudinaryService cloudinaryService, MoviesCreateValidator moviesCreateValidator, MoviesUpdateValidator moviesUpdateValidator, ModelMapper modelMapper) {
         this.moviesService = moviesService;
+        this.cloudinaryService = cloudinaryService;
         this.moviesCreateValidator = moviesCreateValidator;
         this.moviesUpdateValidator = moviesUpdateValidator;
         this.modelMapper = modelMapper;
@@ -48,13 +56,21 @@ public class MoviesController extends BaseController {
     }
 
     @PostMapping("/create")
-    public ModelAndView addMovieConfirm(@ModelAttribute(name = MODEL_NAME) MovieCreateBindingModel movieCreateBindingModel, BindingResult bindingResult) {
+    public ModelAndView addMovieConfirm(@ModelAttribute(name = MODEL_NAME) MovieCreateBindingModel movieCreateBindingModel, BindingResult bindingResult) throws IOException {
         moviesCreateValidator.validate(movieCreateBindingModel, bindingResult);
         if (bindingResult.hasErrors()) {
             return view("movie/movie-create");
         }
 
+        String imageUrl = cloudinaryService.uploadImage(movieCreateBindingModel.getMoviePicture());
+        if (imageUrl == null) {
+            bindingResult.rejectValue(MOVIE_PICTURE_FIELD, NULL_ERROR_VALUE, MOVIE_PICTURE_NOT_NULL);
+            return view("movie/movie-create");
+        }
+
         MovieServiceModel movieToCreateServiceModel = modelMapper.map(movieCreateBindingModel, MovieServiceModel.class);
+        movieToCreateServiceModel.setImageUrl(imageUrl);
+
         moviesService.create(movieToCreateServiceModel);
 
         return redirect("/");

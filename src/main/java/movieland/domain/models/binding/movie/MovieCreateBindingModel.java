@@ -4,6 +4,7 @@ import movieland.config.mappings.CustomMappable;
 import movieland.domain.models.service.MovieServiceModel;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -29,6 +30,8 @@ public class MovieCreateBindingModel implements CustomMappable {
     private BigDecimal budget;
 
     private Integer ageRestriction;
+
+    private MultipartFile moviePicture;
 
     private String genreId;
 
@@ -105,6 +108,14 @@ public class MovieCreateBindingModel implements CustomMappable {
 
     public void setAgeRestriction(Integer ageRestriction) {
         this.ageRestriction = ageRestriction;
+    }
+
+    public MultipartFile getMoviePicture() {
+        return moviePicture;
+    }
+
+    public void setMoviePicture(MultipartFile moviePicture) {
+        this.moviePicture = moviePicture;
     }
 
     public String getGenreId() {

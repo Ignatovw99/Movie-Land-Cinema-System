@@ -86,5 +86,9 @@ public class MoviesCreateValidator implements Validator {
         } else if (genreToAssign != null && genreToAssign.getIsAgeRestrictionRequired() && (movieCreateBindingModel.getAgeRestriction() < AGE_RESTRICTION_MIN || movieCreateBindingModel.getAgeRestriction() > AGE_RESTRICTION_MAX)) {
             errors.rejectValue(AGE_RESTRICTION_FIELD, RANGE_ERROR, AGE_RESTRICTION_RANGE);
         }
+
+        if (movieCreateBindingModel.getMoviePicture() == null) {
+            errors.rejectValue(MOVIE_PICTURE_FIELD, NULL_ERROR_VALUE, MOVIE_PICTURE_NOT_NULL);
+        }
     }
 }

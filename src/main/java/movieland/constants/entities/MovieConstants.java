@@ -14,6 +14,7 @@ public class MovieConstants {
     public static final String BUDGET_FIELD = "budget";
     public static final String AGE_RESTRICTION_FIELD = "ageRestriction";
     public static final String GENRE_FIELD = "genre";
+    public static final String MOVIE_PICTURE_FIELD = "moviePicture";
     public static final String GENRE_CREATE_BINDING_MODEL_FIELD = "genreId";
 
     // Validation constants
@@ -43,6 +44,8 @@ public class MovieConstants {
     public static final String AGE_RESTRICTION_MIN_VALUE = "Age restriction should not be less than 12";
     public static final String AGE_RESTRICTION_MAX_VALUE = "Age restriction should not be greater than 21";
     public static final String AGE_RESTRICTION_RANGE = "Age restriction should be between 12 and 21";
+
+    public static final String MOVIE_PICTURE_NOT_NULL = "Movie picture should not be empty";
 
     public static final String GENRE_NOT_NULL = "Genre should not be null";
 
