@@ -72,15 +72,17 @@ public class ProjectionsCreateValidator implements Validator {
 
         if (projectionCreateBindingModel.getStartingTime() == null) {
             errors.rejectValue(STARTING_DATE_FILED, NULL_ERROR_VALUE, START_DATE_NOT_NULL);
-        } else if (LocalDate.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalDate()) || LocalTime.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalTime())) {
-            errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, String.format(STARTING_DATE_CAN_BE_IN_PAST, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))));
+        } else if (LocalDate.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalDate())) {
+            if (LocalTime.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalTime())) {
+                errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, String.format(STARTING_DATE_CAN_BE_IN_PAST, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))));
+            }
         } else if (!projectionsService.isStaringTimeInRangeOfWorkingHours(projectionCreateBindingModel.getCinemaId(), projectionCreateBindingModel.getStartingTime())) {
             errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, STARTING_TIME_NOT_IN_CINEMA_WORKING_HOURS);
         } else if (!isStartingTimeInRangeOfAvailableProgramme(projectionCreateBindingModel.getStartingTime(), projectionCreateBindingModel.getCinemaId())) {
             errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, NO_AVAILABLE_PROGRAMME_AT_THIS_TIME);
-        } else if (!projectionsService.isHallFree(projectionCreateBindingModel.getHallId(), projectionCreateBindingModel.getMovieId(), projectionCreateBindingModel.getStartingTime())) {
+        } else if (projectionCreateBindingModel.getHallId() != null && projectionCreateBindingModel.getMovieId() != null && !projectionsService.isHallFree(projectionCreateBindingModel.getHallId(), projectionCreateBindingModel.getMovieId(), projectionCreateBindingModel.getStartingTime())) {
             errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, HALL_NOT_AVAILABLE_DURING_GIVEN_TIME);
-        } else if (projectionsService.isMovieAlreadyProjectedInCinemaAtTheGivenTime(projectionCreateBindingModel.getMovieId(), projectionCreateBindingModel.getCinemaId(), projectionCreateBindingModel.getStartingTime())) {
+        } else if (projectionCreateBindingModel.getMovieId() != null && projectionsService.isMovieAlreadyProjectedInCinemaAtTheGivenTime(projectionCreateBindingModel.getMovieId(), projectionCreateBindingModel.getCinemaId(), projectionCreateBindingModel.getStartingTime())) {
             errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, PROJECTION_WITH_THIS_MOVIE_EXISTS_AT_THIS_TIME);
         }
     }
