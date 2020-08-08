@@ -14,6 +14,7 @@ import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
@@ -71,8 +72,8 @@ public class ProjectionsCreateValidator implements Validator {
 
         if (projectionCreateBindingModel.getStartingTime() == null) {
             errors.rejectValue(STARTING_DATE_FILED, NULL_ERROR_VALUE, START_DATE_NOT_NULL);
-        } else if (LocalDate.now().plusDays(1).isAfter(projectionCreateBindingModel.getStartingTime().toLocalDate())) {
-            errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, String.format(STARTING_DATE_CAN_BE_IN_PAST, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        } else if (LocalDate.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalDate()) || LocalTime.now().isAfter(projectionCreateBindingModel.getStartingTime().toLocalTime())) {
+            errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, String.format(STARTING_DATE_CAN_BE_IN_PAST, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))));
         } else if (!projectionsService.isStaringTimeInRangeOfWorkingHours(projectionCreateBindingModel.getCinemaId(), projectionCreateBindingModel.getStartingTime())) {
             errors.rejectValue(STARTING_DATE_FILED, INVALID_VALUE, STARTING_TIME_NOT_IN_CINEMA_WORKING_HOURS);
         } else if (!isStartingTimeInRangeOfAvailableProgramme(projectionCreateBindingModel.getStartingTime(), projectionCreateBindingModel.getCinemaId())) {

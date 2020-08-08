@@ -32,7 +32,6 @@ public class ProgrammesApiController {
     }
 
     @GetMapping("/cinema/{id}/date/{date}")
-    //TODO add validation for cinema when front end is ready
     public ResponseEntity<CinemaProgrammeDateViewModel> getMoviesWithAllTheirProjectionsByCinemaAndDate(@PathVariable("id") String cinemaId, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         Map<LocalDate, CinemaProgrammeDateViewModel> cinemaProgrammeProjectionsByDate = programmesService.getCurrantActiveCinemaProgrammeWithItsProjections(cinemaId);
         CinemaProgrammeDateViewModel cinemaProgrammeDateViewModel = cinemaProgrammeProjectionsByDate.get(date);

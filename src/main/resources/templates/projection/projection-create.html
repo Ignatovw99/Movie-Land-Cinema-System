@@ -176,7 +176,7 @@
     $(document).ready(function () {
 
         $(function () {
-            $('#startingTime').val(today.toISOString().substr(0, 19));
+            $('#startingTime').val(new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours() + 4, today.getMinutes(), 0, 0).toISOString().substr(0, 19));
         });
         /*<![CDATA[*/
         let cinemaId = '[[${model.cinemaId}]]';

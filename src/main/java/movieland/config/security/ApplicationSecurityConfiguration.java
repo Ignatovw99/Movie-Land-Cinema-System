@@ -46,6 +46,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 //                    .csrfTokenRepository(csrfTokenRepository())
                 .disable()
 //                .and()
+                //TODO secure endpoints
                 .authorizeRequests()
                     .antMatchers("/css/*", "/js/*", "/images/*").permitAll()
                     .antMatchers("/").permitAll()
@@ -57,11 +58,11 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 
                     .antMatchers("/projections/{id}", "/api/projections/{id}/seats").permitAll()
 
+                    .antMatchers("/users/bookings").authenticated()
+
                     .antMatchers("/api/projections/seats/booking").hasAuthority(SEAT_BOOKING.getPermission())
 
-                    .antMatchers("/admin/**").hasRole(ADMIN.name())
-
-                    .anyRequest().authenticated()
+                    .antMatchers("/**").hasRole(ADMIN.name())
                 .and()
                 .formLogin()
                     .loginPage("/login")

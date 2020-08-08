@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,7 +19,7 @@ public class User extends BaseEntity implements UserDetails {
 
     private String fullName;
 
-    private Set<UserAuthority> authorities;
+    private Set<UserAuthority> authorities = new HashSet<>();
 
     private boolean isAccountNonExpired;
 

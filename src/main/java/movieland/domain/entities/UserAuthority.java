@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ public class UserAuthority extends BaseEntity implements GrantedAuthority {
 
     private Boolean isRole;
 
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     public UserAuthority() {
     }

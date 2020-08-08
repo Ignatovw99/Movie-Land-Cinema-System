@@ -81,10 +81,8 @@ public class UsersServiceImpl implements UsersService {
 
         userServiceModel.setPassword(passwordEncoder.encode(userServiceModel.getPassword()));
 
-        UserAuthority userRole = userAuthoritiesRepository.findByAuthority(USER.getRole());
-
         User userEntity = modelMapper.map(userServiceModel, User.class);
-        userEntity.setAuthorities(new HashSet<>(List.of(userRole)));
+        assignRoleAndAuthoritiesToUser(userEntity, USER);
         userEntity = usersRepository.save(userEntity);
 
         return modelMapper.map(userEntity, UserServiceModel.class);
@@ -161,14 +159,7 @@ public class UsersServiceImpl implements UsersService {
         user.setAuthorities(new HashSet<>());
         usersRepository.saveAndFlush(user);
 
-        newRole.getGrantedAuthorities()
-                .forEach(grantedAuthority -> {
-                    UserAuthority authority = userAuthoritiesRepository.findByAuthority(grantedAuthority.getAuthority());
-                    if (authority == null) {
-                        return;
-                    }
-                    user.addAuthority(authority);
-                });
+        assignRoleAndAuthoritiesToUser(user, newRole);
 
         usersRepository.saveAndFlush(user);
     }
@@ -178,5 +169,16 @@ public class UsersServiceImpl implements UsersService {
         return projectionsRepository.findAllProjectionBookingsByUser(userEmail)
                 .stream()
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    private void assignRoleAndAuthoritiesToUser(User user, ApplicationUserRole role) {
+        role.getGrantedAuthorities()
+                .forEach(grantedAuthority -> {
+                    UserAuthority authority = userAuthoritiesRepository.findByAuthority(grantedAuthority.getAuthority());
+                    if (authority == null) {
+                        return;
+                    }
+                    user.addAuthority(authority);
+                });
     }
 }

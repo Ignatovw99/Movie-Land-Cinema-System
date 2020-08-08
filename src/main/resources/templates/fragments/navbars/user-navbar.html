@@ -19,10 +19,18 @@
                     <div class="dropdown">
                         <a class="nav-link" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
                            aria-expanded="false">Your profile</a>
-                        <div class="dropdown-menu" aria-labelledby="userDropdown">
-                            <div class="dropdown-item" th:text="${'Hello, ' + #strings.substring(#authentication.principal.fullName, 0, #strings.indexOf(#authentication.principal.fullName, ' '))}"></div>
-                            <a class="dropdown-item" th:href="@{/users/bookings}">My Bookings</a>
-                        </div>
+                        <th:block th:if="${#strings.contains(#authentication.principal.fullName, ' ')}">
+                            <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                <div class="dropdown-item" th:text="${'Hello, ' + #strings.substring(#authentication.principal.fullName, 0, #strings.indexOf(#authentication.principal.fullName, ' '))}"></div>
+                                <a class="dropdown-item" th:href="@{/users/bookings}">My Bookings</a>
+                            </div>
+                        </th:block>
+                        <th:block th:if="${!#strings.contains(#authentication.principal.fullName, ' ')}">
+                            <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                <div class="dropdown-item" th:text="${'Hello, ' + #authentication.principal.fullName}"></div>
+                                <a class="dropdown-item" th:href="@{/users/bookings}">My Bookings</a>
+                            </div>
+                        </th:block>
                     </div>
                 </li>
                 <li class="nav-item active">
