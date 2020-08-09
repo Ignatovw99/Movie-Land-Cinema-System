@@ -87,7 +87,7 @@ public class MoviesCreateValidator implements Validator {
             errors.rejectValue(AGE_RESTRICTION_FIELD, RANGE_ERROR, AGE_RESTRICTION_RANGE);
         }
 
-        if (movieCreateBindingModel.getMoviePicture() == null) {
+        if (movieCreateBindingModel.getMoviePicture().isEmpty()) {
             errors.rejectValue(MOVIE_PICTURE_FIELD, NULL_ERROR_VALUE, MOVIE_PICTURE_NOT_NULL);
         }
     }

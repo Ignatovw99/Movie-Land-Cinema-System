@@ -31,6 +31,8 @@ public class MovieViewModel extends BaseViewModel implements CustomMappable {
 
     private String genreName;
 
+    private String imageUrl;
+
     public MovieViewModel() {
     }
 
@@ -112,6 +114,14 @@ public class MovieViewModel extends BaseViewModel implements CustomMappable {
 
     public void setGenreName(String genreName) {
         this.genreName = genreName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
