@@ -57,7 +57,7 @@ public class CinemasController extends BaseController {
         CinemaServiceModel cinemaServiceModel = modelMapper.map(cinemaCreateBindingModel, CinemaServiceModel.class);
         cinemasService.create(cinemaServiceModel);
 
-        return redirect("/");
+        return redirect("/cinemas/all");
     }
 
     @GetMapping("/update/{id}")

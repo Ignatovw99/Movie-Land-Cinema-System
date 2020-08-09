@@ -57,7 +57,7 @@ public class GenresController extends BaseController {
         GenreServiceModel genreToCreateServiceModel = modelMapper.map(genreCreateBindingModel, GenreServiceModel.class);
         genresService.create(genreToCreateServiceModel);
 
-        return redirect("/");
+        return redirect("/genres/all");
     }
 
     @GetMapping("/update/{id}")
@@ -92,7 +92,7 @@ public class GenresController extends BaseController {
     @PostMapping("/delete")
     public ModelAndView deleteGenreConfirm(@RequestParam String id) {
         GenreServiceModel deletedGenreServiceModel = genresService.delete(id);
-        return redirect("/");
+        return redirect("/genres/all");
     }
 
     @GetMapping("/all")

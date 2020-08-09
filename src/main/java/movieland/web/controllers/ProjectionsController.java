@@ -54,9 +54,9 @@ public class ProjectionsController extends BaseController {
         projectionServiceModel.setProgramme(new ProgrammeServiceModel());
         projectionServiceModel.getProgramme().setCinema(projectionCinemaServiceModel);
 
-        projectionsService.create(projectionServiceModel);
+        ProjectionServiceModel createdProjectionServiceModel = projectionsService.create(projectionServiceModel);
 
-        return redirect("/");
+        return redirect("/projections/" + createdProjectionServiceModel.getId());
     }
 
     @GetMapping("/{id}")

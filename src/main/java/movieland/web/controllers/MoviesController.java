@@ -73,7 +73,7 @@ public class MoviesController extends BaseController {
 
         moviesService.create(movieToCreateServiceModel);
 
-        return redirect("/");
+        return redirect("/movies/all");
     }
 
     @GetMapping("/update/{id}")
@@ -106,7 +106,7 @@ public class MoviesController extends BaseController {
     @PostMapping("/delete")
     public ModelAndView deleteMovieConfirm(@RequestParam String id) {
         MovieServiceModel deletedMovieServiceModel = moviesService.delete(id);
-        return redirect("/");
+        return redirect("/movies/all");
     }
 
     @GetMapping("/all")

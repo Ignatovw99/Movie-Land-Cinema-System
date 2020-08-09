@@ -48,9 +48,9 @@ public class ProgrammesController extends BaseController {
         }
 
         ProgrammeServiceModel programmeServiceModel = modelMapper.map(programmeCreateBindingModel, ProgrammeServiceModel.class);
-        programmesService.createNext(programmeServiceModel);
+        ProgrammeServiceModel createdProgrammeServiceModel = programmesService.createNext(programmeServiceModel);
 
-        return redirect("/");
+        return redirect("/programmes/cinema/" + createdProgrammeServiceModel.getCinema().getId());
     }
 
     @GetMapping("/cinema/{id}")

@@ -57,7 +57,7 @@ public class HallsController extends BaseController {
         HallServiceModel hallServiceModel = modelMapper.map(hallCreateBindingModel, HallServiceModel.class);
         hallsService.create(hallServiceModel);
 
-        return redirect("/");
+        return redirect("/halls/all");
     }
 
     @GetMapping("/update/{id}")
@@ -77,7 +77,7 @@ public class HallsController extends BaseController {
 
         HallServiceModel hallToUpdateServiceModel = modelMapper.map(hallUpdateBindingModel, HallServiceModel.class);
         hallsService.update(hallToUpdateServiceModel.getId(), hallToUpdateServiceModel);
-        return redirect("/");
+        return redirect("/halls/all");
     }
 
     @GetMapping("/delete/{id}")
@@ -91,7 +91,7 @@ public class HallsController extends BaseController {
     @PostMapping("/delete")
     public ModelAndView deleteHallConfirm(@RequestParam String id) {
         hallsService.delete(id);
-        return redirect("/");
+        return redirect("/hall/all");
     }
 
     @GetMapping("/all")
