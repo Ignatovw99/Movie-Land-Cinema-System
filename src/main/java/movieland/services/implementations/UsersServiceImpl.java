@@ -26,8 +26,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static movieland.config.security.permissions.ApplicationUserRole.ADMIN;
-import static movieland.config.security.permissions.ApplicationUserRole.USER;
+import static movieland.config.security.permissions.ApplicationUserRole.*;
 import static movieland.constants.entities.UserConstants.*;
 
 @Service
@@ -88,7 +87,6 @@ public class UsersServiceImpl implements UsersService {
         return modelMapper.map(userEntity, UserServiceModel.class);
     }
 
-    @Async
     @Override
     public void seedDatabaseWithAuthorities() {
 
@@ -169,6 +167,20 @@ public class UsersServiceImpl implements UsersService {
         return projectionsRepository.findAllProjectionBookingsByUser(userEmail)
                 .stream()
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public void createRootAdmin() {
+        UserAuthority rootAdminRole = userAuthoritiesRepository.findByAuthority(ROOT_ADMIN.getRole());
+        if (usersRepository.existsByAuthoritiesEquals(rootAdminRole)) {
+            return;
+        }
+        User rootAdmin = new User();
+        rootAdmin.setUsername("root@movieland.com");
+        rootAdmin.setPassword(passwordEncoder.encode("Root admin"));
+        rootAdmin.setFullName("Root admin");
+        assignRoleAndAuthoritiesToUser(rootAdmin, ROOT_ADMIN);
+        usersRepository.saveAndFlush(rootAdmin);
     }
 
     private void assignRoleAndAuthoritiesToUser(User user, ApplicationUserRole role) {

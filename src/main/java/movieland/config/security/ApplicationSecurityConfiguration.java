@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import static movieland.config.security.permissions.ApplicationUserPermission.SEAT_BOOKING;
 import static movieland.config.security.permissions.ApplicationUserRole.ADMIN;
+import static movieland.config.security.permissions.ApplicationUserRole.ROOT_ADMIN;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -55,14 +56,14 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 
                     .antMatchers("/programmes/cinema/{id}", "/api/programmes/cinema/{id}/date/{date}").permitAll()
 
-                    .antMatchers("/projections/create").hasRole(ADMIN.name())
+                    .antMatchers("/projections/create").hasAnyRole(ADMIN.name(), ROOT_ADMIN.name())
                     .antMatchers("/projections/{id}", "/api/projections/{id}/seats").permitAll()
 
                     .antMatchers("/users/bookings").authenticated()
 
                     .antMatchers("/api/projections/seats/booking").hasAuthority(SEAT_BOOKING.getPermission())
 
-                    .antMatchers("/**").hasRole(ADMIN.name())
+                    .antMatchers("/**").hasAnyRole(ADMIN.name(), ROOT_ADMIN.name())
                 .and()
                 .formLogin()
                     .loginPage("/login")

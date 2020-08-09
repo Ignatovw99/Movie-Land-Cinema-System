@@ -28,5 +28,6 @@ public class MovieLandCinemaSystemApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         programmesService.createAnActiveProgrammeForAllCinemasWithInactiveOnes();
         usersService.seedDatabaseWithAuthorities();
+        usersService.createRootAdmin();
     }
 }

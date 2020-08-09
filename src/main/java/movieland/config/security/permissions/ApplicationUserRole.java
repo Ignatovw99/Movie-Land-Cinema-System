@@ -19,7 +19,7 @@ public enum ApplicationUserRole {
     MOVIE_MODERATOR(mergeAuthorities(USER.permissions, new HashSet<>(List.of(GENRE_READ, MOVIE_WRITE)))),
     MOVIE_ADMIN(mergeAuthorities(MOVIE_MODERATOR.permissions, new HashSet<>(List.of(GENRE_WRITE)))),
     ADMIN(mergeAuthorities(mergeAuthorities(CINEMA_ADMIN.permissions, MOVIE_ADMIN.permissions), new HashSet<>(List.of()))),
-    ROOT_ADMIN(new HashSet<>());
+    ROOT_ADMIN(new HashSet<>(ADMIN.permissions));
 
     private static Set<ApplicationUserPermission> mergeAuthorities(Set<ApplicationUserPermission> oldPermissions, Set<ApplicationUserPermission> newPermissions) {
         return Stream.of(oldPermissions, newPermissions)

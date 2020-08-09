@@ -17,4 +17,6 @@ public interface UsersService extends UserDetailsService {
     void manageUserRole(String userId, boolean isDemotion);
 
     List<ProjectionBookingDetails> findAllProjectionBookingsByUserEmail(String userEmail);
+
+    void createRootAdmin();
 }

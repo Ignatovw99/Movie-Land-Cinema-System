@@ -59,7 +59,7 @@ public class Programme extends BaseEntity {
         this.cinema = cinema;
     }
 
-    @OneToMany(targetEntity = Projection.class, mappedBy = "programme")
+    @OneToMany(targetEntity = Projection.class, mappedBy = "programme", cascade = CascadeType.ALL)
     public Set<Projection> getProjections() {
         return projections;
     }
