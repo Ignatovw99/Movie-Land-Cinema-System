@@ -152,17 +152,27 @@
                 success: function () {
                     window.location.href = "/";
                 },
-                error: function () {
-                    /*<![CDATA[*/
-                    let projectionId = '[[${model.id}]]';
-                    /*]]>*/
-                    let errElement = document.createElement('p');
-                    errElement.setAttribute('class', 'container-fluid justify-content-center text');
-                    errElement.setAttribute("style", 'color:red');
-                    errElement.innerHTML = 'You have to authenticate to book some tickets -' + ' <a href="/login?redirect=/projections/' + projectionId + '">Login</a>';
+                error: function (error) {
+                    if (error.status === 500) {
+                        let errElement = document.createElement('p');
+                        errElement.setAttribute('class', 'container-fluid justify-content-center text');
+                        errElement.setAttribute("style", 'color:red');
+                        errElement.innerText = error.responseJSON.message;
 
-                    mainElement = document.getElementById('mainElement');
-                    mainElement.appendChild(errElement);
+                        mainElement = document.getElementById('mainElement');
+                        mainElement.appendChild(errElement);
+                    } else {
+                        /*<![CDATA[*/
+                        let projectionId = '[[${model.id}]]';
+                        /*]]>*/
+                        let errElement = document.createElement('p');
+                        errElement.setAttribute('class', 'container-fluid justify-content-center text');
+                        errElement.setAttribute("style", 'color:red');
+                        errElement.innerHTML = 'You have to authenticate to book some tickets -' + ' <a href="/login?redirect=/projections/' + projectionId + '">Login</a>';
+
+                        mainElement = document.getElementById('mainElement');
+                        mainElement.appendChild(errElement);
+                    }
                 }
             });
         }

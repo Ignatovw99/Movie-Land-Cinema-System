@@ -39,4 +39,5 @@ public class ProjectionConstants {
     public static final String SUCH_MOVIE_PROJECTION_ALREADY_EXISTS = "In the given cinema there is already such movie projection at the given time";
     public static final String MOVIE_AND_HALL_ARE_NOT_UPDATABLE = "The movie and hall can not be updated";
     public static final String SEAT_IS_OCCUPIED = "The seat in row %d and column %d is already occupied.";
+    public static final String CAN_NOT_BOOK = "This projection is already over.";
 }

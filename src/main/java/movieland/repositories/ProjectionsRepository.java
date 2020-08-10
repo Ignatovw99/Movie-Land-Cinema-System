@@ -1,6 +1,7 @@
 package movieland.repositories;
 
 import movieland.domain.entities.Projection;
+import movieland.domain.entities.Seat;
 import movieland.domain.entities.projections.ProjectionBookingDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,6 @@ public interface ProjectionsRepository extends JpaRepository<Projection, String>
             "WHERE u.username = :username " +
             "GROUP BY p ")
     Set<ProjectionBookingDetails> findAllProjectionBookingsByUser(@Param("username") String username);
+
+    Projection findBySeats(Seat seat);
 }

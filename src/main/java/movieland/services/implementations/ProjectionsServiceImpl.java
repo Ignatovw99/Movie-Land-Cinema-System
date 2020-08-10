@@ -250,6 +250,12 @@ public class ProjectionsServiceImpl implements ProjectionsService {
 
         List<Seat> selectedSeats = seatsRepository.findAllById(seatIds);
 
+        Projection projection = projectionsRepository.findBySeats(selectedSeats.get(0));
+
+        if (LocalDateTime.now(clock).isAfter(projection.getStartingTime())) {
+            throw new RuntimeException(CAN_NOT_BOOK);
+        }
+
         Set<SeatServiceModel> bookedSeats = new HashSet<>();
 
         selectedSeats

@@ -47,9 +47,13 @@
                         .append(
                             $('<h2>' + movie.title + '</h2>')
                         ).append(
-                            $('<p>' + movie.description + '</p>')
+                            $('<h6>' + movie.description.substring(0, 19) + '...' + '</h6>')
                         ).append(
-                            $('<p>Running time: ' + movie.runningTime + '</p>')
+                            $('<div>Genre: ' + movie.genreName + '</div>')
+                        ).append(
+                            $('<div>Running time: ' + movie.runningTime + '</div>')
+                        ).append(
+                            $('<div>Country: ' + movie.country + '</div>')
                         );
                     movieBlock.append(movieElement);
 
