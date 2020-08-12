@@ -25,6 +25,10 @@ public class PageInterceptor extends HandlerInterceptorAdapter {
                 String pageTitle = requestMethodPageMetadata.title();
                 String pageName = requestMethodPageMetadata.name();
 
+                if (modelAndView == null) {
+                    modelAndView = new ModelAndView();
+                }
+
                 if (pageTitle.isEmpty()) {
                     modelAndView.addObject(PAGE_TITLE_KEY, APPLICATION_DEFAULT_TITLE_PAGE);
                 } else {

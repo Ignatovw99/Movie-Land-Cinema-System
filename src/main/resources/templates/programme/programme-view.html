@@ -47,7 +47,7 @@
                         .append(
                             $('<h2>' + movie.title + '</h2>')
                         ).append(
-                            $('<h6>' + movie.description.substring(0, 19) + '...' + '</h6>')
+                            $('<h6>' + movie.description.concat(' '.repeat(20)).substring(0, 35) + '...' + '</h6>')
                         ).append(
                             $('<div>Genre: ' + movie.genreName + '</div>')
                         ).append(
@@ -65,7 +65,7 @@
                     for (let projection of projections) {
                         let projectionStartingDateTime = new Date(projection.startingTime);
                         let projectionButton = $('<form action="/projections/' +  projection.id + '">\n' +
-                            '                        <button class="btn btn-info m-2">' + ('0' + projectionStartingDateTime.getHours()).slice(-2) + ':' + ('0' + (projectionStartingDateTime.getMinutes() + 1)).slice(-2) + '</button>\n' +
+                            '                        <button class="btn btn-info m-2">' + ('0' + projectionStartingDateTime.getHours()).slice(-2) + ':' + ('0' + (projectionStartingDateTime.getMinutes())).slice(-2) + '</button>\n' +
                             '                    </form>');
 
                         projectionsElement.append(projectionButton);

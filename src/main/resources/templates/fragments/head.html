@@ -1,12 +1,13 @@
 <th:block th:fragment="head" xmlns:th="http://www.thymeleaf.org">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <!--/*@thymesVar id="faviconUrl" type="java.lang.String"*/-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title th:text="${title}"></title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link rel="shortcut icon" th:href="${faviconUrl}">
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
 </th:block>

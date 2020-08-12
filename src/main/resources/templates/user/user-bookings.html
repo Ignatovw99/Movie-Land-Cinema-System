@@ -24,7 +24,7 @@
                 <td scope="col" th:text="*{movieTitle}"></td>
                 <td scope="col" th:text="*{cinemaName}"></td>
                 <td scope="col" th:text="*{hallName}"></td>
-                <td scope="col" th:text="*{#temporals.format(startingTime, 'dd-MM-yyyy hh:mm')}"></td>
+                <td scope="col" th:text="*{#temporals.format(startingTime, 'dd-MM-yyyy HH:mm')}"></td>
                 <td scope="col" th:text="*{bookedSeats}"></td>
                 <td scope="col" th:text="*{totalPrice + ' $'}"></td>
             </tr>
