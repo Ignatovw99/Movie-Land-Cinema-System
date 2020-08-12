@@ -1,0 +1,1 @@
+web: java -jar target/movie-land-cinema-system-1.0.0-SNAPSHOT.jar
