@@ -23,7 +23,7 @@ public class AuthenticationRedirectInterceptor extends HandlerInterceptorAdapter
             Class<?> controllerClass = requestMethod.getDeclaringClass();
 
             //RESTful request should not be stored in session
-            if (requestMethod.isAnnotationPresent(GetMapping.class) && controllerClass.isAnnotationPresent(Controller.class) && !request.getRequestURI().equals("/login")) {
+            if (requestMethod.isAnnotationPresent(GetMapping.class) && controllerClass.isAnnotationPresent(Controller.class) && !request.getRequestURI().equals("/login") && !request.getRequestURI().equals("/register")) {
                 String authRedirectUrl = request.getRequestURI() + (request.getQueryString() == null ? "" : request.getQueryString());
                 request.getSession().setAttribute(LOGIN_REDIRECT_URL, authRedirectUrl);
             }
