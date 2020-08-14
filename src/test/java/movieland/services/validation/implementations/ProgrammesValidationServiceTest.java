@@ -1,12 +1,15 @@
 package movieland.services.validation.implementations;
 
 import movieland.TestBase;
+import movieland.config.DataInitializer;
 import movieland.domain.models.service.ProgrammeServiceModel;
 import movieland.services.implementations.ProgrammesServiceTest;
 import movieland.services.validation.ProgrammesValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -16,7 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
+//Exclude DataInitializer configuration
+@ComponentScan(
+        basePackages = "movieland",
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = { DataInitializer.class })
+        })
 public class ProgrammesValidationServiceTest extends TestBase {
+
+    @MockBean
+    private DataInitializer dataInitializer;
 
     @MockBean
     private Clock clock;

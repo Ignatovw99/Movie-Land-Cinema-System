@@ -1,6 +1,7 @@
 package movieland.services.implementations;
 
 import movieland.TestBase;
+import movieland.config.DataInitializer;
 import movieland.constants.entities.ProjectionConstants;
 import movieland.domain.entities.*;
 import movieland.domain.models.service.ProjectionServiceModel;
@@ -14,6 +15,8 @@ import movieland.services.validation.ProjectionsValidationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -26,7 +29,16 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+//Exclude DataInitializer configuration
+@ComponentScan(
+        basePackages = "movieland",
+        excludeFilters = {
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = { DataInitializer.class })
+        })
 public class ProjectionsServiceTest extends TestBase {
+
+    @MockBean
+    private DataInitializer dataInitializer;
 
     @MockBean
     private ProjectionsRepository projectionsRepository;
@@ -219,6 +231,7 @@ public class ProjectionsServiceTest extends TestBase {
     @Test
     public void create_WhenProjectionStartsBeforeTheOpeningHourOfCinema_ShouldThrowException() {
         DEFAULT_HALL.getCinema().setOpeningTime(projectionServiceModel.getStartingTime().plusHours(1).toLocalTime());
+        doReturn(Clock.fixed(projectionServiceModel.getStartingTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()).instant()).when(clock).instant();
 
         assertThrows(
                 InvalidProjectionException.class,
@@ -229,6 +242,7 @@ public class ProjectionsServiceTest extends TestBase {
     @Test
     public void create_WhenProjectionStartsAfterTheClosingHourOfCinema_ShouldThrowException() {
         DEFAULT_HALL.getCinema().setClosingTime(DEFAULT_STARTING_TIME.minusHours(1).toLocalTime());
+        doReturn(Clock.fixed(DEFAULT_STARTING_TIME.minusHours(2).toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault()).instant()).when(clock).instant();
 
         assertThrows(
                 InvalidProjectionException.class,
