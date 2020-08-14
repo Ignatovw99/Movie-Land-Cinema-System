@@ -2,7 +2,6 @@ package movieland.web.controllers.api;
 
 import movieland.domain.models.view.programme.CinemaProgrammeDateViewModel;
 import movieland.services.interfaces.ProgrammesService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;

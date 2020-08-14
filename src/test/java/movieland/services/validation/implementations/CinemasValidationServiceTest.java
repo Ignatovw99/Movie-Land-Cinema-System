@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static movieland.constants.entities.CinemaConstants.*;
+import static movieland.constants.entities.CinemaConstants.NAME_LENGTH_MIN_VALUE;
+import static movieland.constants.entities.CinemaConstants.PHONE_NUMBER_LENGTH;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CinemasValidationServiceTest extends TestBase {
 

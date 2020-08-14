@@ -12,8 +12,9 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 public class ProgrammesValidationServiceTest extends TestBase {
 

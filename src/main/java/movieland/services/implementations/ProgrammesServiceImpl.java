@@ -3,7 +3,7 @@ package movieland.services.implementations;
 import movieland.constants.entities.CinemaConstants;
 import movieland.domain.entities.Cinema;
 import movieland.domain.entities.Programme;
-import movieland.domain.models.service.*;
+import movieland.domain.models.service.ProgrammeServiceModel;
 import movieland.domain.models.view.movie.MovieViewModel;
 import movieland.domain.models.view.programme.CinemaProgrammeDateViewModel;
 import movieland.domain.models.view.projection.ProjectionViewModel;
@@ -24,7 +24,9 @@ import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static movieland.constants.entities.ProgrammeConstants.*;
 

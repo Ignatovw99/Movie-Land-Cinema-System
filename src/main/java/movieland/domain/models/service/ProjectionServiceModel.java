@@ -1,10 +1,8 @@
 package movieland.domain.models.service;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import movieland.domain.entities.Seat;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 public class ProjectionServiceModel extends BaseServiceModel {
 

@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static movieland.constants.entities.MovieConstants.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MoviesValidationServiceTest extends TestBase {
 
