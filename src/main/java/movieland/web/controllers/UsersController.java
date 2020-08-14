@@ -7,19 +7,18 @@ import movieland.services.interfaces.UsersService;
 import movieland.validation.user.UsersRegistrationValidator;
 import movieland.web.annotations.Page;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 
-import static movieland.constants.GlobalConstants.*;
+import static movieland.constants.GlobalConstants.IS_AUTHENTICATION_FAILED;
+import static movieland.constants.GlobalConstants.MODEL_NAME;
 
 @Controller
 public class UsersController extends BaseController {
@@ -36,17 +35,13 @@ public class UsersController extends BaseController {
         this.modelMapper = modelMapper;
     }
 
-    //TODO: create /error custom page and url
     @GetMapping("/login")
     @Page(title = "Login", name = "user/user-login")
-    public ModelAndView login(UserLoginBindingModel userLoginBindingModel, HttpSession session, @RequestParam(required = false) String redirect) {
+    public ModelAndView login(UserLoginBindingModel userLoginBindingModel, HttpSession session) {
         Object isAuthenticationFailedAttribute = session.getAttribute(IS_AUTHENTICATION_FAILED);
         if (isAuthenticationFailedAttribute != null) {
             userLoginBindingModel.setAreCredentialsInvalid((boolean) isAuthenticationFailedAttribute);
             session.removeAttribute(IS_AUTHENTICATION_FAILED);
-        }
-        if (redirect != null) {
-            session.setAttribute(LOGIN_REDIRECT_URL, redirect);
         }
         return view(userLoginBindingModel);
     }

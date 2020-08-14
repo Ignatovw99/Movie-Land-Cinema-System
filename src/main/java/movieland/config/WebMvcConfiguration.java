@@ -1,5 +1,6 @@
 package movieland.config;
 
+import movieland.web.interceptors.AuthenticationRedirectInterceptor;
 import movieland.web.interceptors.FaviconInterceptor;
 import movieland.web.interceptors.PageInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +15,19 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     private final FaviconInterceptor faviconInterceptor;
 
+    private final AuthenticationRedirectInterceptor authenticationRedirectInterceptor;
+
     @Autowired
-    public WebMvcConfiguration(PageInterceptor pageInterceptor, FaviconInterceptor faviconInterceptor) {
+    public WebMvcConfiguration(PageInterceptor pageInterceptor, FaviconInterceptor faviconInterceptor, AuthenticationRedirectInterceptor authenticationRedirectInterceptor) {
         this.pageInterceptor = pageInterceptor;
         this.faviconInterceptor = faviconInterceptor;
+        this.authenticationRedirectInterceptor = authenticationRedirectInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(pageInterceptor);
         registry.addInterceptor(faviconInterceptor);
+        registry.addInterceptor(authenticationRedirectInterceptor);
     }
 }
