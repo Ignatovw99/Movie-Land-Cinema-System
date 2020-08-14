@@ -75,7 +75,7 @@ public class MoviesUpdateValidator implements Validator {
         }
 
         if (movieUpdateBindingModel.getRunningTime() == null) {
-            errors.rejectValue(RUNNING_TIME_FIELD, NULL_ERROR_VALUE, DIRECTOR_NOT_NULL);
+            errors.rejectValue(RUNNING_TIME_FIELD, NULL_ERROR_VALUE, RUNNING_TIME_NOT_NULL);
         } else if (movieUpdateBindingModel.getRunningTime() < RUNNING_TIME_MIN || movieUpdateBindingModel.getRunningTime() > RUNNING_TIME_MAX) {
             errors.rejectValue(RUNNING_TIME_FIELD, RANGE_ERROR, RUNNING_TIME_RANGE);
         }

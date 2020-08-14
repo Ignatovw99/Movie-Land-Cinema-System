@@ -100,7 +100,7 @@
     $(document).ready(function () {
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8000/api/genres/all',
+            url: '/api/genres/all',
             success: function (genres) {
                 /*<![CDATA[*/
                 let genreId = '[[${model.genreId}]]';
@@ -132,7 +132,7 @@
         /*]]>*/
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8000/api/genres/is-age-restriction-required/' + genreId,
+            url: '/api/genres/is-age-restriction-required/' + genreId,
             success: function (isAgeRestrictionRequired) {
                 if (isAgeRestrictionRequired) {
                     $('#ageRestrictionBlock').removeAttr('hidden');
@@ -150,7 +150,7 @@
     $('#genreId').change(function () {
         $.ajax({
             type: 'GET',
-            url: 'http://localhost:8000/api/genres/is-age-restriction-required/' + $('#genreId').val(),
+            url: '/api/genres/is-age-restriction-required/' + $('#genreId').val(),
             success: function (isAgeRestrictionRequired) {
                 if (isAgeRestrictionRequired) {
                     $('#ageRestrictionBlock').removeAttr('hidden');
