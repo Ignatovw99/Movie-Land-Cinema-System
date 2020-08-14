@@ -16,6 +16,7 @@ import movieland.services.interfaces.ProgrammesService;
 import movieland.services.validation.ProgrammesValidationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -140,6 +141,7 @@ public class ProgrammesServiceImpl implements ProgrammesService {
 
     //This is scheduled task, which has to be executed every day at midnight (12am)
     @Scheduled(cron = "0 0 0 * * ?")
+    @CacheEvict(value = "programmes", allEntries = true)
     @Transactional
     @Override
     public void createAnActiveProgrammeForAllCinemasWithInactiveOnes() {
