@@ -64,11 +64,13 @@ public class SeatsServiceImpl implements SeatsService {
 
         for (int row = 1; row <= rows; row++) {
             for (int col = 1; col <= columns; col++) {
+                boolean isSeatBlocked = checkIsBlocked(stateOfEmergency, col);
+
                 Seat seat = new Seat()
                         .row(row)
                         .column(col)
-                        .isFree(true)
-                        .isBlocked(checkIsBlocked(stateOfEmergency, col))
+                        .isFree(!isSeatBlocked) // When seat is blocked , it should not be free
+                        .isBlocked(isSeatBlocked)
                         .price(calculatePrice(row, col, columns))
                         .projection(projection);
                 seats.add(seat);
