@@ -7,7 +7,7 @@
     <artifactId>movie-land-cinema-system</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>movie-land-cinema-system</name>
     <description>Cinema Booking System based on Spring Boot Framework</description>
@@ -86,6 +86,7 @@
     </dependencies>
 
     <build>
+        <finalName>movie-land-cinema-system</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
