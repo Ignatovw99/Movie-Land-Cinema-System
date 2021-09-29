@@ -3,6 +3,8 @@ FROM maven:3.6.3 AS maven
 LABEL MAINTAINER="lyuboslavw@gmail.com"
 
 WORKDIR /app/src
+COPY pom.xml /app/src/
+RUN mvn dependency:go-offline
 COPY . /app/src
 # Compile and package the application to an executable JAR
 RUN mvn clean package -Dmaven.test.skip
